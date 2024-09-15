@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const RouterStyle = styled.div`
+export const LayoutStyle = styled.div`
   display: flex;
 `;
 

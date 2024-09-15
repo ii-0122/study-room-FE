@@ -1,15 +1,12 @@
-import Header from '../components/header/Header';
-import Sidebar from '../components/sidebar/Sidebar';
-import { MainContentArea, RouterStyle } from './Router.style';
+import { Route, Routes } from 'react-router-dom';
+import LoginPage from '../pages/login/LoginPage';
+import RegisterPage from '../pages/register/RegisterPage';
 
 export default function Router() {
   return (
-    <RouterStyle>
-      <Sidebar />
-      <MainContentArea>
-        <Header />
-        <div>컨텐츠 영역</div>
-      </MainContentArea>
-    </RouterStyle>
+    <Routes>
+      <Route path="/login" element={<LoginPage />}></Route>
+      <Route path="/register" element={<RegisterPage />}></Route>
+    </Routes>
   );
 }
