@@ -1,23 +1,23 @@
-import { DefaultTheme } from 'styled-components';
+export type ColorKey = "main" | "mainStrong" | "lineGray" | "btnOk" | "btnWarn" | "bgDarkGray" | "bgGray" | "bgLightGray" | "bgYellowNote" | "labelGray" | "plannerTimeGray" | "plannerGray";
+export type ButtonSize = "large" | "medium" | "small";
+export type BorderRadius = "large" | "medium" | "small";
+export type Shadows = string;
 
-export interface Colors {
-  main: string;
-  mainStrong: string;
-  lineGray: string;
-  btnOk: string;
-  btnWarn: string;
-  bgDarkGray: string;
-  bgGray: string;
-  bgLightGray: string;
-  bgYellowNote: string;
-  labelGray: string;
-  plannerTimeGray: string;
-  plannerGray: string;
-}
-
-export interface Shadows {
-  boxShadow: string;
-}
+interface DefaultTheme {
+  color: Record<ColorKey, string>;
+  studyRoomButton: {
+    [key in ButtonSize] : {
+      width: string;
+      height: string;
+    };
+  };
+  borderRadius: {
+    [key in BorderRadius]: string;
+  };
+  shadow: {
+    boxShadow: string;
+  };
+};
 
 export const theme: DefaultTheme = {
   color: {
@@ -30,9 +30,30 @@ export const theme: DefaultTheme = {
     bgGray: '#E5E5E5',
     bgLightGray: '#F9F9F9',
     bgYellowNote: '#FFF9EE',
-    labelGray: `#9A9A9A`,
-    plannerTimeGray: `#7C7C7C`,
-    plannerGray: `#C7C7C7`,
+    labelGray: '#9A9A9A',
+    plannerTimeGray: '#7C7C7C',
+    plannerGray: '#C7C7C7',
+  },
+
+  studyRoomButton: {
+    large: {
+      width: "439px",
+      height: "77px",
+    },
+    medium: {
+      width: "328px",
+      height: "68px",
+    },
+    small: {
+      width: "262px",
+      height: "92px",
+    },
+  },
+
+  borderRadius: {
+    large: "20px",
+    medium: "10px",
+    small: "5px",
   },
 
   shadow: {
