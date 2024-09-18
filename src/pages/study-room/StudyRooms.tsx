@@ -1,9 +1,9 @@
-import CheckBox from "@/components/checkBox/CheckBox";
+import { MainContentArea, StudyRoomsStyle } from "./StudyRooms.style";
 import SelectBox from "./components/filter/SelectBox";
 import Search from "./components/search/Search";
-import { MainContentArea, StudyRoomsStyle } from "./StudyRooms.style";
 import CreateButton from "./components/button/CreateButton";
 import StudyGrid from "./components/item/StudyGrid";
+import CheckBox from "./components/filter/CheckBox";
 
 function StudyRooms() {
   return (

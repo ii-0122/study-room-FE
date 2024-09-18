@@ -4,8 +4,8 @@ export const CheckBoxStyle = styled.div`
 	display: flex;
 
 	.checkbox-wrap {
-		position: relative;
     display: flex;
+		position: relative;
     align-items: center;
 		font-size: 20px;
 		margin-left: 20px;
