@@ -1,7 +1,8 @@
-import { forwardRef } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import * as S from './InputForm.style';
+import { forwardRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import RepeatDaysSelector from './RepeatDaySelector';
+import * as S from './InputForm.style';
+import { ITodoBox } from '@/models/todoBox.model';
 
 export interface TodoFormDatas {
   id: string;
@@ -19,8 +20,9 @@ interface InputFormProps extends React.HTMLProps<HTMLFormElement> {
   setIsAddFormOpened?: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEditFormOpened?: React.Dispatch<React.SetStateAction<boolean>>;
   setEditIndex?: React.Dispatch<React.SetStateAction<number | null>>;
-  index?: number;
-  existingData?: TodoFormDatas;
+  currentIndex?: number;
+  currentData?: TodoFormDatas;
+  todos: ITodoBox[];
 }
 
 export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
@@ -31,8 +33,9 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
       setEditIndex,
       setTodos,
       formType,
-      index,
-      existingData,
+      currentIndex,
+      currentData,
+      todos,
       ...props
     },
     ref
@@ -47,9 +50,13 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
       mode: 'onSubmit',
       defaultValues: {
         repeatDays: [],
-        ...existingData,
+        ...currentData,
       },
     });
+    const [todosExceptCurrent, setTodosExceptCurrent] = useState(() => {
+      return todos.filter((_, index) => index !== currentIndex);
+    });
+
     const startTime = watch('startTime');
     const endTime = watch('endTime');
 
@@ -58,10 +65,9 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
         return '나머지 시간도 입력해주세요.';
       }
 
-      if (endTime && startTime && endTime < startTime) {
-        return '올바른 시간을 입력해주세요.';
+      if (endTime && startTime) {
+        return compareTime(todosExceptCurrent, startTime, endTime);
       }
-
       return true;
     };
 
@@ -83,15 +89,27 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
       console.log(data);
 
       if (formType === 'add') {
-        setTodos((prev) => [...prev, { ...data, id: Date.now().toString() }]);
+        setTodos((prev) => {
+          const updatedTodos = [
+            ...prev,
+            { ...data, id: Date.now().toString() },
+          ];
+          updatedTodos.sort(sortTodos);
+          return updatedTodos;
+        });
         if (setIsAddFormOpened) {
           setIsAddFormOpened(false);
         }
       }
-      if (formType === 'edit' && index !== undefined) {
+      if (formType === 'edit' && currentIndex !== undefined) {
         setTodos((prev) => {
           const updatedTodos = [...prev];
-          updatedTodos[index] = { ...updatedTodos[index], ...data };
+          updatedTodos[currentIndex] = {
+            ...updatedTodos[currentIndex],
+            ...data,
+          };
+          updatedTodos.sort(sortTodos);
+
           return updatedTodos;
         });
         if (setIsEditFormOpened) {
@@ -107,15 +125,18 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     const handleTimeClick = (id: string) => {
       const inputElement = document.getElementById(id) as HTMLInputElement;
       if (inputElement) {
+        if (!inputElement.value) {
+          inputElement.value = '00:00';
+        }
         inputElement.showPicker();
       }
     };
 
     const handleDelButton = () => {
-      if (index !== undefined) {
+      if (currentIndex !== undefined) {
         setTodos((prev) => {
           const updatedTodos = [...prev];
-          updatedTodos.splice(index, 1);
+          updatedTodos.splice(currentIndex, 1);
           return updatedTodos;
         });
       }
@@ -127,20 +148,6 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     return (
       <S.InputFormStyle>
         <S.Form onSubmit={handleSubmit(onSubmit)} ref={ref}>
-          <S.Title>
-            <div className="label-error">
-              <label htmlFor="title">과목</label>
-              {errors.title && (
-                <span className="errorText">{errors.title.message}</span>
-              )}
-            </div>
-            <input
-              className="textInputBox"
-              id="title"
-              {...register('title', { validate: validateTextLength })}
-            />
-          </S.Title>
-
           <S.Detail>
             <div className="label-error">
               <label htmlFor="detail">할 일</label>
@@ -161,6 +168,20 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
               })}
             />
           </S.Detail>
+
+          <S.Title>
+            <div className="label-error">
+              <label htmlFor="title">과목</label>
+              {errors.title && (
+                <span className="errorText">{errors.title.message}</span>
+              )}
+            </div>
+            <input
+              className="textInputBox"
+              id="title"
+              {...register('title', { validate: validateTextLength })}
+            />
+          </S.Title>
 
           <label>시간</label>
           <S.Time>
@@ -239,3 +260,62 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     );
   }
 );
+
+function subtractMinutes(time: string, minutes: number) {
+  const [hours, mins] = time.split(':').map(Number);
+  const totalMinutes = hours * 60 + mins - minutes;
+
+  const newHours = Math.floor(totalMinutes / 60) % 24;
+  const newMinutes = totalMinutes % 60;
+
+  return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+}
+
+function compareTime(todos: ITodoBox[], startTime: string, endTime: string) {
+  const endTimeMinus10 = subtractMinutes(endTime, 10);
+
+  if (endTime < startTime) {
+    return '올바른 시간을 입력해주세요.';
+  }
+  if (endTimeMinus10 < startTime) {
+    return '10분 이상 설정해주세요.';
+  }
+
+  if (isTimeOverlap(todos, startTime, endTime)) {
+    return '겹치는 일정이 존재합니다.';
+  }
+
+  return true;
+}
+
+const sortTodos = (a: TodoFormDatas, b: TodoFormDatas) => {
+  const startA = a.startTime ? a.startTime.split(':').map(Number) : [24, 0];
+  const startB = b.startTime ? b.startTime.split(':').map(Number) : [24, 0];
+  return startA[0] - startB[0] || startA[1] - startB[1];
+};
+
+const isTimeOverlap = (
+  todos: ITodoBox[],
+  startTime: string,
+  endTime: string
+) => {
+  const toMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const startMinute = toMinutes(startTime);
+  const endMinute = toMinutes(endTime);
+
+  for (const todo of todos) {
+    if (todo.startTime && todo.endTime) {
+      const existingStart = toMinutes(todo.startTime);
+      const existingEnd = toMinutes(todo.endTime);
+
+      if (startMinute < existingEnd && endMinute > existingStart) {
+        return true;
+      }
+    }
+  }
+  return false;
+};

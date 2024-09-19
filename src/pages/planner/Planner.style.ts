@@ -118,7 +118,15 @@ export const NoData = styled.div`
 `;
 
 export const RightPanel = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 500px;
   height: 100%;
   padding: ${panelPadding};
+`;
+
+export const StudiedTime = styled.div`
+  font-weight: 600;
+  font-size: 24px;
+  margin: 24px 0px;
 `;

@@ -30,13 +30,13 @@ export const InfoArea = styled.div`
   flex-direction: column;
 `;
 
-export const TitleStyle = styled.div`
-  height: 24px;
+export const DetailStyle = styled.div`
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 `;
-export const DetailStyle = styled.div`
+export const TitleStyle = styled.div`
   font-size: 20px;
   font-weight: 400;
+  height: 20px;
 `;

@@ -1,9 +1,9 @@
 import { useState, forwardRef, Ref, SetStateAction, Dispatch } from 'react';
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
-import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
-import * as S from './DatePicker.style';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import * as S from './DatePicker.style';
 
 interface CustomInputProps extends React.HTMLProps<HTMLDivElement> {
   value?: string;

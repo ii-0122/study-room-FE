@@ -1,15 +1,18 @@
-import CustomDatePicker from '@/components/datePicker/DatePicker';
-import TodoBox, { TodoBoxProps } from './components/todoBox/TodoBox';
-import TimeLine from './components/timeLine/TimeLine';
 import { useEffect, useRef, useState } from 'react';
+import CustomDatePicker from '@/components/datePicker/DatePicker';
+import TodoBox from './components/todoBox/TodoBox';
+import TimeLine from './components/timeLine/TimeLine';
+import TimeTable from './components/timeTable/TimeTable';
 import { InputForm } from './components/inputForm/InputForm';
+import { colorMap } from '@/data/colorMap';
+import { ITodoBox } from '@/models/todoBox.model';
 import * as S from './Planner.style';
 
 export default function Planner() {
   const [timeLineFullHeight, setTimeLineFullHeight] = useState(0);
   const [isEditFormOpened, setIsEditFormOpened] = useState<boolean>(false);
   const [isAddFormOpened, setIsAddFormOpened] = useState<boolean>(false);
-  const [todos, setTodos] = useState<TodoBoxProps[]>(testData);
+  const [todos, setTodos] = useState<ITodoBox[]>(testData);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const timeLineHeightRef = useRef<HTMLDivElement | null>(null);
   const inputFormRef = useRef<HTMLFormElement | null>(null);
@@ -81,6 +84,7 @@ export default function Planner() {
                           onClick={() => {
                             handleTodoBoxClick(index);
                           }}
+                          color={colorMap[index]}
                         ></TodoBox>
                       </S.EachContentWrapper>
                       {isEditFormOpened && index === editIndex && (
@@ -88,9 +92,10 @@ export default function Planner() {
                           setIsEditFormOpened={setIsEditFormOpened}
                           setTodos={setTodos}
                           formType="edit"
-                          existingData={todo}
+                          currentData={todo}
                           setEditIndex={setEditIndex}
-                          index={index}
+                          currentIndex={index}
+                          todos={todos}
                         />
                       )}
                     </div>
@@ -110,6 +115,7 @@ export default function Planner() {
                 setTodos={setTodos}
                 formType="add"
                 setEditIndex={setEditIndex}
+                todos={todos}
               />
             ) : null}
           </S.TodosWrapper>
@@ -117,13 +123,19 @@ export default function Planner() {
       </S.LeftPanel>
       <S.RightPanel>
         <div className="label">오늘의 스터디 시간</div>
+        <S.StudiedTime>XX시간 XX분 공부했어요!</S.StudiedTime>
+        <TimeTable
+          todos={todos.map((todo, index) => {
+            return { ...todo, color: colorMap[index] };
+          })}
+        />
       </S.RightPanel>
     </S.PlannerWrapper>
   );
 }
 
-const testData: TodoBoxProps[] = [
-  { id: '1', detail: '할일1', startTime: '', endTime: '' },
+const testData: ITodoBox[] = [
+  { id: '1', detail: '할일1', startTime: '08:33', endTime: '08:52' },
   {
     id: '2',
     title: '제목2',
@@ -140,7 +152,13 @@ const testData: TodoBoxProps[] = [
   },
   { id: '4', title: '제목4', detail: '할일4', startTime: '', endTime: '' },
   { id: '5', title: '제목5', detail: '할일5', startTime: '', endTime: '' },
-  { id: '6', title: '제목6', detail: '할일6', startTime: '', endTime: '' },
+  {
+    id: '6',
+    title: '제목6',
+    detail: '할일6',
+    startTime: '19:00',
+    endTime: '21:00',
+  },
   { id: '7', title: '제목1', detail: '할일1', startTime: '', endTime: '' },
   // { id: '8', title: '제목2', detail: '할일2', startTime: '', endTime: '' },
   // { id: '9', title: '제목3', detail: '할일3', startTime: '', endTime: '' },

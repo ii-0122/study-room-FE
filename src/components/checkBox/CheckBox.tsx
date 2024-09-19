@@ -4,16 +4,16 @@ import { CheckBoxStyle } from './CheckBox.style';
 export default function CheckBox() {
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(e.target.checked);
   };
 
   return (
     <CheckBoxStyle
       position="right"
       isChecked={isChecked}
-      onClick={(event) => {
-        event?.stopPropagation();
+      onClick={(e) => {
+        e?.stopPropagation();
       }}
     >
       <label className="custom-checkbox">

@@ -24,6 +24,7 @@ export const TimeWrapper = styled.div`
 `;
 export const StartTime = styled.div`
   font-weight: 600;
+  margin-bottom: 8px;
 `;
 export const EndTime = styled.div`
   font-weight: 400;
