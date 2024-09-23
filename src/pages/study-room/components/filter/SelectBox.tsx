@@ -1,10 +1,9 @@
-import { SelectBoxStyle } from "./SelectBox.style";
-import { TbTriangleInvertedFilled } from "react-icons/tb";
+import { TbTriangleInvertedFilled } from 'react-icons/tb';
+import * as S from './SelectBox.style';
 
 function SelectBox() {
-
   return (
-    <SelectBoxStyle>
+    <S.SelectBoxStyle>
       <div className="select-wrap">
         <select id="study-select" name="전체 스터디">
           <option value="all">전체 스터디</option>
@@ -13,8 +12,8 @@ function SelectBox() {
         </select>
         <TbTriangleInvertedFilled className="triangle" />
       </div>
-    </SelectBoxStyle>
+    </S.SelectBoxStyle>
   );
-};
+}
 
 export default SelectBox;

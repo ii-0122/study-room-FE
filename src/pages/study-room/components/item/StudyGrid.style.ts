@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StudyGridStyle = styled.div`
   display: grid;
@@ -16,7 +16,7 @@ export const StudyGridStyle = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #D9D9D9;
+    background: #d9d9d9;
     border-radius: ${({ theme }) => theme.borderRadius.large};
   }
 `;

@@ -1,39 +1,39 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const CheckBoxStyle = styled.div`
-	display: flex;
+  display: flex;
 
-	.checkbox-wrap {
+  .checkbox-wrap {
     display: flex;
-		position: relative;
+    position: relative;
     align-items: center;
-		font-size: 20px;
-		margin-left: 20px;
+    font-size: 20px;
+    margin-left: 20px;
 
-		input {
+    input {
       position: relative;
-			appearance: none;
-			width: 20px;
+      appearance: none;
+      width: 20px;
       height: 20px;
       margin-right: 10px;
       border-radius: 4px;
       cursor: pointer;
-			background-color: ${({ theme }) => theme.color.bgGray};
-			border: 1px solid ${({ theme }) => theme.color.plannerGray};
+      background-color: ${({ theme }) => theme.color.bgGray};
+      border: 1px solid ${({ theme }) => theme.color.plannerGray};
 
       &:checked {
-				background-color: ${({ theme }) => theme.color.mainStrong};
-				border: 1px solid #2B81FF;
+        background-color: ${({ theme }) => theme.color.mainStrong};
+        border: 1px solid #2b81ff;
       }
 
-			&:checked::after {
-				position: absolute;
-				content: "✔";
-				color: white;
-				font-size: 14px;
-				left: 3px;
-				top: 1px;
-			}
-		}
-	}
+      &:checked::after {
+        position: absolute;
+        content: '✔';
+        color: white;
+        font-size: 14px;
+        left: 3px;
+        top: 1px;
+      }
+    }
+  }
 `;

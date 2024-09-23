@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const SelectBoxStyle = styled.div`
   display: flex;
-  
+
   .select-wrap {
     position: relative;
     display: flex;
@@ -16,7 +16,7 @@ export const SelectBoxStyle = styled.div`
       border: none;
       appearance: none;
       box-sizing: border-box;
-			outline: none;
+      outline: none;
       background: transparent;
       width: 100%;
       height: 100%;
@@ -32,9 +32,9 @@ export const SelectBoxStyle = styled.div`
   }
 
   select option {
-    background: ${({ theme }) => theme.color.bgLightGray}; 
+    background: ${({ theme }) => theme.color.bgLightGray};
     font-size: 18px;
     border-radius: 4px;
-    border-color: #E4E4E4;
+    border-color: #e4e4e4;
   }
 `;

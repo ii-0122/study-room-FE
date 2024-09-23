@@ -1,6 +1,6 @@
-import { FaLock, FaLockOpen } from "react-icons/fa";
-import { MdPerson } from "react-icons/md";
-import { Hashtag, Hashtags, ItemContainer, ItemContent, ItemFooter, ItemTitle, ParticipantCount, Privacy, StudyItemStyle, Title } from "./StudyItem.style";
+import { FaLock, FaLockOpen } from 'react-icons/fa';
+import { MdPerson } from 'react-icons/md';
+import * as S from './StudyItem.style';
 
 interface StudyItemProps {
   title: string;
@@ -9,31 +9,38 @@ interface StudyItemProps {
   isPublic: boolean;
   maxParticipants: number;
   currentParticipants: number;
-};
+}
 
-function StudyItem({ title, imageUrl, hashtags = [], isPublic, maxParticipants, currentParticipants }: StudyItemProps) {
+function StudyItem({
+  title,
+  imageUrl,
+  hashtags = [],
+  isPublic,
+  maxParticipants,
+  currentParticipants,
+}: StudyItemProps) {
   return (
-    <StudyItemStyle>
-      <ItemContainer imageUrl={imageUrl}>
-        <ItemContent>
-          <Privacy>{isPublic ? <FaLockOpen /> : <FaLock />}</Privacy>
-          <Title>{title}</Title>
-          <ParticipantCount>
+    <S.StudyItemStyle>
+      <S.ItemContainer imageUrl={imageUrl}>
+        <S.ItemContent>
+          <S.Privacy>{isPublic ? <FaLockOpen /> : <FaLock />}</S.Privacy>
+          <S.Title>{title}</S.Title>
+          <S.ParticipantCount>
             <MdPerson />
             {currentParticipants}/{maxParticipants}
-          </ParticipantCount>
-        </ItemContent>
-      </ItemContainer>
-      <ItemFooter>
-        <ItemTitle>{title}</ItemTitle>
-        <Hashtags>
+          </S.ParticipantCount>
+        </S.ItemContent>
+      </S.ItemContainer>
+      <S.ItemFooter>
+        <S.ItemTitle>{title}</S.ItemTitle>
+        <S.Hashtags>
           {hashtags.map((hashtag, index) => (
-            <Hashtag key={index}>#{hashtag}</Hashtag>
+            <S.Hashtag key={index}>#{hashtag}</S.Hashtag>
           ))}
-        </Hashtags>
-      </ItemFooter>
-    </StudyItemStyle>
+        </S.Hashtags>
+      </S.ItemFooter>
+    </S.StudyItemStyle>
   );
-};
+}
 
 export default StudyItem;

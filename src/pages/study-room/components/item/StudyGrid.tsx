@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import StudyItem from "./StudyItem";
-import { ScrollContainer, StudyGridStyle } from "./StudyGrid.style";
+import { useEffect, useState } from 'react';
+import StudyItem from './StudyItem';
+import * as S from './StudyGrid.style';
 
 const dummyData = [
   {
@@ -58,7 +58,8 @@ const dummyData = [
     isPublic: true,
     maxParticipants: 15,
     currentParticipants: 15,
-  }, {
+  },
+  {
     title: '스터디방 8',
     imageUrl: undefined,
     hashtags: undefined,
@@ -130,9 +131,7 @@ const dummyData = [
     maxParticipants: 2,
     currentParticipants: 1,
   },
- 
 ];
-
 
 function StudyGrid() {
   const [studies, setStudies] = useState(dummyData);
@@ -141,38 +140,40 @@ function StudyGrid() {
   // 스크롤 시 데이터 추가 로드
   useEffect(() => {
     const handleScroll = () => {
-      const gridElement = document.getElementById("scrollable-grid");
-      if (gridElement && gridElement.scrollTop + gridElement.clientHeight + 50 > gridElement.scrollHeight) {
+      const gridElement = document.getElementById('scrollable-grid');
+      if (
+        gridElement &&
+        gridElement.scrollTop + gridElement.clientHeight + 50 >
+          gridElement.scrollHeight
+      ) {
         if (!isLoading) {
           setIsLoading(true);
           // 데이터 추가 로드 시뮬
           setTimeout(() => {
-            setStudies(prevStudies => [
-              ...prevStudies,
-            ]);
+            setStudies((prevStudies) => [...prevStudies]);
             setIsLoading(false);
           }, 1000);
         }
       }
     };
 
-    const gridElement = document.getElementById("scrollable-grid");
+    const gridElement = document.getElementById('scrollable-grid');
     if (gridElement) {
-      gridElement.addEventListener("scroll", handleScroll);
+      gridElement.addEventListener('scroll', handleScroll);
     }
 
     return () => {
       if (gridElement) {
-        gridElement.removeEventListener("scroll", handleScroll);
+        gridElement.removeEventListener('scroll', handleScroll);
       }
     };
   }, [isLoading]);
 
   return (
-    <ScrollContainer>
-      <StudyGridStyle id="scrollable-grid">
+    <S.ScrollContainer>
+      <S.StudyGridStyle id="scrollable-grid">
         {studies.map((study, index) => (
-          <StudyItem 
+          <StudyItem
             key={index}
             title={study.title}
             imageUrl={study.imageUrl}
@@ -182,9 +183,9 @@ function StudyGrid() {
             currentParticipants={study.currentParticipants}
           />
         ))}
-      </StudyGridStyle>
-    </ScrollContainer>
+      </S.StudyGridStyle>
+    </S.ScrollContainer>
   );
-};
+}
 
 export default StudyGrid;

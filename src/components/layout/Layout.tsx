@@ -15,7 +15,7 @@ export default function Layout({ children }: LayoutProps) {
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
 
-  const isStudyRoomPage = location.pathname.startsWith('/study-room');
+  const isStudyRoomPage = location.pathname.startsWith('/study-room/');
 
   return (
     <LayoutStyle>
@@ -27,4 +27,4 @@ export default function Layout({ children }: LayoutProps) {
       {isStudyRoomPage && <RSidebar />}
     </LayoutStyle>
   );
-};
+}

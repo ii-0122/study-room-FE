@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StudyItemStyle = styled.div`
   width: 328px;
@@ -8,12 +8,13 @@ export const StudyItemStyle = styled.div`
 `;
 
 export const ItemContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['imageUrl'].includes(prop)
+  shouldForwardProp: (prop) => !['imageUrl'].includes(prop),
 })<{ imageUrl?: string }>`
   position: relative;
   width: 100%;
   height: 207px;
-  background: ${(props) => (props.imageUrl ? `url(${props.imageUrl})` : '#E5E5E5')};
+  background: ${(props) =>
+    props.imageUrl ? `url(${props.imageUrl})` : '#E5E5E5'};
   background-size: cover;
   background-position: center;
   border-radius: ${({ theme }) => theme.borderRadius.medium};

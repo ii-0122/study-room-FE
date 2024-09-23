@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StudyRoomsStyle = styled.div`
   display: flex;
-  
+
   .wrapper {
     display: flex;
     flex-direction: column;
