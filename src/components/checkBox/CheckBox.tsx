@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { CheckBoxStyle } from './CheckBox.style';
 
-export default function CheckBox() {
+interface CheckBoxProps {
+  isVisible?: boolean;
+}
+
+export default function CheckBox({ isVisible = true }: CheckBoxProps) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -10,8 +14,8 @@ export default function CheckBox() {
 
   return (
     <CheckBoxStyle
-      position="right"
       isChecked={isChecked}
+      isVisible={isVisible}
       onClick={(e) => {
         e?.stopPropagation();
       }}

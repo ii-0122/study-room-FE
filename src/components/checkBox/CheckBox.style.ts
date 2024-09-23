@@ -1,41 +1,31 @@
 import styled from 'styled-components';
 
-type CheckBoxPosition = 'left' | 'right';
-
-// CheckBox 사용시, 체크모양의 position이 안맞을 수 있음. 추후 props로 추가해서 수정
 export const CheckBoxStyle = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== 'isChecked' && prop !== 'position',
+  shouldForwardProp: (prop) => !['isChecked', 'isVisible'].includes(prop),
 })<{
   isChecked?: boolean;
-  position?: CheckBoxPosition;
+  isVisible: boolean;
 }>`
   display: flex;
+  ${(props) => !props.isVisible && 'visibility: hidden;'}
 
   .checkBox {
     display: none;
   }
-
-  ${(props) => {
-    if (props.position === 'right') {
-      return 'margin-left : auto;';
-    }
-    if (props.position === 'left') {
-      return 'margin-right : auto;';
-    }
-    return '';
-  }}
 
   .custom-checkbox {
     display: flex;
     align-items: center;
     position: relative;
     cursor: pointer;
+    width: 30px;
+    height: 30px;
   }
 
   .custom-checkbox-content {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
     background-color: transparent;
     border: 2px solid #a7a7a7;
     border-radius: 8px;

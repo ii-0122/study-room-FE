@@ -40,3 +40,8 @@ export const TitleStyle = styled.div`
   font-weight: 400;
   height: 20px;
 `;
+
+export const CheckBoxArea = styled.div`
+  margin-left: auto;
+  margin-right: 30px;
+`;

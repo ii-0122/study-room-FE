@@ -29,7 +29,9 @@ export default function TodoBox({
         <S.DetailStyle>{detail}</S.DetailStyle>
         <S.TitleStyle>{title}</S.TitleStyle>
       </S.InfoArea>
-      <CheckBox />
+      <S.CheckBoxArea>
+        <CheckBox />
+      </S.CheckBoxArea>
     </S.TodoBoxStyle>
   );
 }

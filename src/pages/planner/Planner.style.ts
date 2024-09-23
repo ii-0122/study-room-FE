@@ -1,3 +1,4 @@
+import { scrollMixin } from '@/styles/mixins';
 import styled from 'styled-components';
 
 const panelPadding = '50px 30px';
@@ -44,20 +45,12 @@ export const LeftHeader = styled.div`
 
 export const LeftContentWrapper = styled.div`
   display: flex;
-  overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
   height: 100%;
   width: 800px;
 
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    background: #ccc;
-  }
+  ${scrollMixin.customScrollbar()}
 `;
 
 export const TodosWrapper = styled.div`
