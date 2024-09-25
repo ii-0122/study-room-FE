@@ -12,19 +12,28 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
-  const isAuthPage =
+  const authPagePath =
     location.pathname === '/login' || location.pathname === '/register';
 
-  const isStudyRoomPage = location.pathname.startsWith('/study-room/');
+  const studyRoomPagePath = location.pathname.startsWith('/study-room/');
+
+  const pageTitles: { [key: string]: string } = {
+    '/': '홈',
+    '/profile': '프로필',
+    '/planner': '스터디 플래너',
+    '/study-rooms': '스터디방',
+  };
+
+  const pageTitle = pageTitles[location.pathname];
 
   return (
     <LayoutStyle>
-      {!isAuthPage && !isStudyRoomPage && <Sidebar />}
+      {!authPagePath && <Header title={pageTitle} />}
       <MainContentArea>
-        {!isAuthPage && <Header />}
+        {!authPagePath && !studyRoomPagePath && <Sidebar />}
         {children}
       </MainContentArea>
-      {isStudyRoomPage && <RSidebar />}
+      {studyRoomPagePath && <RSidebar />}
     </LayoutStyle>
   );
 }
