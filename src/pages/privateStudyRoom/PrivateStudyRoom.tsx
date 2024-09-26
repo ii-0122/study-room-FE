@@ -14,7 +14,7 @@ const PrivateStudyRoom: React.FC<PrivateStudyRoomProps> = ({
 }) => {
   const initialCurrentTaskTime = '00:00:00'; // 초기 현재 작업 시간
   const initialTotalStudyTime = '00:05:00'; // 초기 총 공부 시간
-  const profileImage = 'https://via.placeholder.com/622'; // 프로필 이미지 URL
+  const profileImage = ''; // 프로필 이미지 URL
 
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);

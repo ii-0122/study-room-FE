@@ -1,3 +1,4 @@
+import ProfileImageBox from './imagebox/ProfileImageBox';
 import * as S from './StudyProfileBox.style';
 
 interface StudyProfileBoxProps {
@@ -13,7 +14,7 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
   userId,
   initialCurrentTaskTime = '00:00:00',
   initialTotalStudyTime = '00:00:00',
-  profileImage = 'https://via.placeholder.com/622',
+  profileImage = '',
 }) => {
   return (
     <S.StudyProfileBoxStyle $isGroup={isGroup}>
@@ -21,9 +22,7 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
         <div className="time">{initialCurrentTaskTime}</div>
         <div className="time">{initialTotalStudyTime}</div>
       </S.TimeDisplay>
-      <S.ProfileImageContainer $isGroup={isGroup}>
-        <S.ProfileImage src={profileImage} alt="Profile" />
-      </S.ProfileImageContainer>
+      <ProfileImageBox src={profileImage} width="622px" height="622px" />
       {isGroup && userId && (
         <S.UserIdDisplay $isGroup={isGroup}>{userId}</S.UserIdDisplay>
       )}

@@ -28,12 +28,12 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <LayoutStyle>
-      {!authPagePath && <Header title={pageTitle} />}
+      {!authPagePath && !studyRoomPagePath && <Header title={pageTitle} />}
       <MainContentArea>
         {!authPagePath && !studyRoomPagePath && <Sidebar />}
         {children}
+        {studyRoomPagePath && <RSidebar />}
       </MainContentArea>
-      {studyRoomPagePath && <RSidebar />}
     </LayoutStyle>
   );
 }
