@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const StudyRoomsStyle = styled.div`
   display: flex;
+  flex: 1;
 
   .wrapper {
     display: flex;

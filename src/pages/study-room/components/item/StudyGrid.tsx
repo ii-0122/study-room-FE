@@ -1,188 +1,92 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import StudyItem from './StudyItem';
 import * as S from './StudyGrid.style';
+import axios from 'axios';
 
-const dummyData = [
-  {
-    title: '스터디방 1',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['프로그래밍', '자바스크립트'],
-    isPublic: false,
-    maxParticipants: 15,
-    currentParticipants: 4,
-  },
-  {
-    title: '스터디방 2',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 10,
-    currentParticipants: 2,
-  },
-  {
-    title: '스터디방 3',
-    imageUrl: undefined,
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 15,
-  },
-  {
-    title: '스터디방 4',
-    imageUrl: undefined,
-    hashtags: undefined,
-    isPublic: false,
-    maxParticipants: 2,
-    currentParticipants: 1,
-  },
-  {
-    title: '스터디방 5',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['프로그래밍', '자바스크립트'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 4,
-  },
-  {
-    title: '스터디방 6',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 10,
-    currentParticipants: 2,
-  },
-  {
-    title: '스터디방 7',
-    imageUrl: undefined,
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 15,
-  },
-  {
-    title: '스터디방 8',
-    imageUrl: undefined,
-    hashtags: undefined,
-    isPublic: true,
-    maxParticipants: 2,
-    currentParticipants: 1,
-  },
-  {
-    title: '스터디방 9',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['프로그래밍', '자바스크립트'],
-    isPublic: false,
-    maxParticipants: 15,
-    currentParticipants: 4,
-  },
-  {
-    title: '스터디방 10',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 10,
-    currentParticipants: 2,
-  },
-  {
-    title: '스터디방 11',
-    imageUrl: undefined,
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 15,
-  },
-  {
-    title: '스터디방 12',
-    imageUrl: undefined,
-    hashtags: undefined,
-    isPublic: false,
-    maxParticipants: 2,
-    currentParticipants: 1,
-  },
-  {
-    title: '스터디방 13',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['프로그래밍', '자바스크립트'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 4,
-  },
-  {
-    title: '스터디방 14',
-    imageUrl: 'https://via.placeholder.com/328x207',
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 10,
-    currentParticipants: 2,
-  },
-  {
-    title: '스터디방 15',
-    imageUrl: undefined,
-    hashtags: ['리엑트', '웹개발'],
-    isPublic: true,
-    maxParticipants: 15,
-    currentParticipants: 15,
-  },
-  {
-    title: '스터디방 16',
-    imageUrl: undefined,
-    hashtags: undefined,
-    isPublic: true,
-    maxParticipants: 2,
-    currentParticipants: 1,
-  },
-];
+interface Room {
+  _id: string;
+  title: string;
+  tagList: string[];
+  notice?: string;
+  maxNum: number;
+  isPublic: boolean;
+  password?: string;
+  isChat?: boolean;
+  imageUrl?: string;
+  roomManager: string;
+  currentMembers: string[];
+  createdAt: string;
+  currentNum: number;
+}
 
-function StudyGrid() {
-  const [studies, setStudies] = useState(dummyData);
-  const [isLoading, setIsLoading] = useState(false);
+interface FetchRoomsParams {
+  search?: string;
+  isPublic?: boolean;
+  isPossible?: boolean;
+  limit?: number;
+  offset?: number;
+}
 
-  // 스크롤 시 데이터 추가 로드
-  useEffect(() => {
-    const handleScroll = () => {
-      const gridElement = document.getElementById('scrollable-grid');
-      if (
-        gridElement &&
-        gridElement.scrollTop + gridElement.clientHeight + 50 >
-          gridElement.scrollHeight
-      ) {
-        if (!isLoading) {
-          setIsLoading(true);
-          // 데이터 추가 로드 시뮬
-          setTimeout(() => {
-            setStudies((prevStudies) => [...prevStudies]);
-            setIsLoading(false);
-          }, 1000);
-        }
-      }
-    };
+// API 요청 함수
+const fetchRooms = async (params: FetchRoomsParams) => {
+  const { search, isPublic, isPossible, limit, offset } = params;
 
-    const gridElement = document.getElementById('scrollable-grid');
-    if (gridElement) {
-      gridElement.addEventListener('scroll', handleScroll);
-    }
+  const query = new URLSearchParams({
+    search: search || '',
+    isPublic: isPublic !== undefined ? String(isPublic) : '',
+    isPossible: isPossible !== undefined ? String(isPossible) : '',
+    limit: limit !== undefined ? String(limit) : '',
+    offset: offset !== undefined ? String(offset) : '',
+  }).toString();
 
-    return () => {
-      if (gridElement) {
-        gridElement.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [isLoading]);
+  const url = `${import.meta.env.VITE_REACT_APP_API_URL}/rooms?${query}`;
+  console.log('Fetching URL:', url);
+  const res = await axios.get(url);
+  return res.data;
+};
+
+function StudyGrid({
+  filter,
+}: {
+  filter: { isPublic?: boolean; isPossible?: boolean; search?: string };
+}) {
+  const params: FetchRoomsParams = {
+    search: filter.search || '',
+    isPublic: filter.isPublic,
+    isPossible: filter.isPossible,
+    limit: 40,
+    offset: 0, // 예시로 0으로 설정
+  };
+
+  const {
+    data: rooms = [],
+    isLoading,
+    error,
+  } = useQuery<Room[], Error>({
+    queryKey: ['rooms', params],
+    queryFn: () => fetchRooms(params),
+  });
 
   return (
     <S.ScrollContainer>
       <S.StudyGridStyle id="scrollable-grid">
-        {studies.map((study, index) => (
-          <StudyItem
-            key={index}
-            title={study.title}
-            imageUrl={study.imageUrl}
-            hashtags={study.hashtags}
-            isPublic={study.isPublic}
-            maxParticipants={study.maxParticipants}
-            currentParticipants={study.currentParticipants}
-          />
-        ))}
+        {isLoading ? (
+          <div>로딩 중...</div>
+        ) : error ? (
+          <div>{`방 목록을 불러오는 데 실패했습니다: ${error.message}`}</div>
+        ) : (
+          rooms.map((room) => (
+            <StudyItem
+              key={room._id}
+              title={room.title}
+              imageUrl={room.imageUrl}
+              tagList={room.tagList}
+              isPublic={room.isPublic}
+              maxNum={room.maxNum}
+              currentNum={room.currentNum}
+            />
+          ))
+        )}
       </S.StudyGridStyle>
     </S.ScrollContainer>
   );

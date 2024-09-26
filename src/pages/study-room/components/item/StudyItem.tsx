@@ -5,19 +5,19 @@ import * as S from './StudyItem.style';
 interface StudyItemProps {
   title: string;
   imageUrl?: string;
-  hashtags?: string[];
+  tagList?: string[];
   isPublic: boolean;
-  maxParticipants: number;
-  currentParticipants: number;
+  maxNum: number;
+  currentNum: number;
 }
 
 function StudyItem({
   title,
   imageUrl,
-  hashtags = [],
+  tagList = [],
   isPublic,
-  maxParticipants,
-  currentParticipants,
+  maxNum,
+  currentNum,
 }: StudyItemProps) {
   return (
     <S.StudyItemStyle>
@@ -27,15 +27,15 @@ function StudyItem({
           <S.Title>{title}</S.Title>
           <S.ParticipantCount>
             <MdPerson />
-            {currentParticipants}/{maxParticipants}
+            {currentNum}/{maxNum}
           </S.ParticipantCount>
         </S.ItemContent>
       </S.ItemContainer>
       <S.ItemFooter>
         <S.ItemTitle>{title}</S.ItemTitle>
         <S.Hashtags>
-          {hashtags.map((hashtag, index) => (
-            <S.Hashtag key={index}>#{hashtag}</S.Hashtag>
+          {tagList.map((tag, index) => (
+            <S.Hashtag key={index}>{tag}</S.Hashtag>
           ))}
         </S.Hashtags>
       </S.ItemFooter>

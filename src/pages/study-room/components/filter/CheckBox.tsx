@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import * as S from './CheckBox.style';
 
-function CheckBox() {
+interface CheckBoxProps {
+  onFilterChange: (filter: { isPossible?: boolean }) => void;
+}
+
+function CheckBox({ onFilterChange }: CheckBoxProps) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+    const newCheckedState = !isChecked;
+    setIsChecked(newCheckedState);
+    onFilterChange({ isPossible: newCheckedState ? true : undefined });
   };
 
   return (

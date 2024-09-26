@@ -4,10 +4,10 @@ export const StudyGridStyle = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 328px);
   gap: 47px;
-  grid-auto-rows: 330px;
-  overflow-y: scroll;
+  grid-auto-rows: 290px;
+  overflow-y: auto;
   overflow-x: hidden;
-  max-height: 660px;
+  max-height: 670px;
   padding-right: 20px;
   box-sizing: border-box;
 
