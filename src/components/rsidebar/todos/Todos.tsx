@@ -5,7 +5,6 @@ import { GetTodosRes, PutPostTodoReq } from '@/models/studyRoomTodos.model';
 import { formatDateTime } from '../utils/dateFormat';
 import { AxiosError } from 'axios';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import { MdEdit } from 'react-icons/md';
 import { FaPlus } from 'react-icons/fa6';
 import CheckBox from '@/components/checkBox/CheckBox';
 import { MouseEvent, useState } from 'react';
