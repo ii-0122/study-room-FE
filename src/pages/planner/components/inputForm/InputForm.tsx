@@ -79,6 +79,10 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     };
 
     const validateRepeatWeeks = (value: string | undefined) => {
+      if (value && isNaN(parseInt(value))) {
+        return '20주 이내의 숫자를 입력해주세요.';
+      }
+
       if (value && parseInt(value) > 20) {
         return '반복은 최대 20주 가능합니다.';
       }
@@ -148,15 +152,14 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     return (
       <S.InputFormStyle>
         <S.Form onSubmit={handleSubmit(onSubmit)} ref={ref}>
-          <S.Detail>
-            <div className="label-error">
-              <label htmlFor="detail">할 일</label>
+          <S.TodoArea>
+            <S.LabelErrorWrapper>
+              <S.Label htmlFor="detail">할 일</S.Label>
               {errors.detail && (
-                <span className="errorText">{errors.detail.message}</span>
+                <S.ErrorText>{errors.detail.message}</S.ErrorText>
               )}
-            </div>
-            <input
-              className="textInputBox"
+            </S.LabelErrorWrapper>
+            <S.TextInputBox
               id="detail"
               {...register('detail', {
                 required: '필수로 입력해야 합니다.',
@@ -167,94 +170,99 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
                 },
               })}
             />
-          </S.Detail>
+          </S.TodoArea>
 
           <S.Title>
-            <div className="label-error">
-              <label htmlFor="title">과목</label>
+            <S.LabelErrorWrapper>
+              <S.Label htmlFor="title">과목</S.Label>
               {errors.title && (
-                <span className="errorText">{errors.title.message}</span>
+                <S.ErrorText>{errors.title.message}</S.ErrorText>
               )}
-            </div>
-            <input
-              className="textInputBox"
+            </S.LabelErrorWrapper>
+            <S.TextInputBox
               id="title"
               {...register('title', { validate: validateTextLength })}
             />
           </S.Title>
 
-          <label>시간</label>
           <S.Time>
-            <div className="startTime">
-              <label htmlFor="startTime">시작</label>
-              <S.InputTimeStyle
-                id="startTime"
-                type="time"
-                {...register('startTime')}
-                onClick={() => {
-                  handleTimeClick('startTime');
-                }}
-              />
-            </div>
-            <div className="hyphen"></div>
-            <div className="endTime">
-              <label htmlFor="endTime">종료</label>
-              <S.InputTimeStyle
-                id="endTime"
-                type="time"
-                {...register('endTime', {
-                  validate: validateTime,
-                })}
-                onClick={() => {
-                  handleTimeClick('endTime');
-                }}
-              />
-            </div>
-            {errors.endTime && (
-              <p className="errorText">{errors.endTime.message}</p>
-            )}
+            <S.LabelErrorWrapper>
+              <S.Label>시간</S.Label>
+              {errors.endTime && (
+                <S.ErrorText>{errors.endTime.message}</S.ErrorText>
+              )}
+            </S.LabelErrorWrapper>
+            <S.InputTimeWrapper>
+              <S.TimeLabelWrapper>
+                <S.TimeLabel htmlFor="startTime">시작</S.TimeLabel>
+                <S.InputTimeStyle
+                  id="startTime"
+                  type="time"
+                  {...register('startTime')}
+                  onClick={() => {
+                    handleTimeClick('startTime');
+                  }}
+                />
+              </S.TimeLabelWrapper>
+              <S.Hyphen />
+              <S.TimeLabelWrapper>
+                <S.TimeLabel htmlFor="endTime">종료</S.TimeLabel>
+                <S.InputTimeStyle
+                  id="endTime"
+                  type="time"
+                  {...register('endTime', {
+                    validate: validateTime,
+                  })}
+                  onClick={() => {
+                    handleTimeClick('endTime');
+                  }}
+                />
+              </S.TimeLabelWrapper>
+            </S.InputTimeWrapper>
           </S.Time>
           <S.Footer>
             <S.Repeat>
-              <label>반복</label>
+              <S.LabelErrorWrapper>
+                <S.Label>반복</S.Label>
+                {errors.repeatWeeks && (
+                  <S.ErrorText>{errors.repeatWeeks.message}</S.ErrorText>
+                )}
+              </S.LabelErrorWrapper>
               <S.DaysWrapper>
                 <RepeatDaysSelector control={control} />
 
-                <S.WeekInput
-                  id="repeatWeeks"
-                  {...register('repeatWeeks', {
-                    validate: validateRepeatWeeks,
-                  })}
-                />
-                <label htmlFor="repeatWeeks">주 반복</label>
+                <S.WeekWrapper>
+                  <S.WeekInput
+                    id="repeatWeeks"
+                    {...register('repeatWeeks', {
+                      validate: validateRepeatWeeks,
+                    })}
+                  />
+                  <label htmlFor="repeatWeeks">주 반복</label>
+                </S.WeekWrapper>
+                {formType === 'add' ? (
+                  <S.SaveDelWrapper>
+                    <S.SaveButton type="submit">+ 추가하기</S.SaveButton>
+                  </S.SaveDelWrapper>
+                ) : (
+                  <S.SaveDelWrapper>
+                    <S.DelButton
+                      type="button"
+                      onClick={() => {
+                        handleDelButton();
+                        if (setEditIndex) {
+                          setEditIndex(null);
+                        }
+                      }}
+                    >
+                      삭제하기
+                    </S.DelButton>
+                    <S.SaveButton type="submit">수정하기</S.SaveButton>
+                  </S.SaveDelWrapper>
+                )}
               </S.DaysWrapper>
             </S.Repeat>
-            {formType === 'add' ? (
-              <S.SaveDelWrapper>
-                <S.SaveButton type="submit">+ 추가하기</S.SaveButton>
-              </S.SaveDelWrapper>
-            ) : (
-              <S.SaveDelWrapper>
-                <S.DelButton
-                  type="button"
-                  onClick={() => {
-                    handleDelButton();
-                    if (setEditIndex) {
-                      setEditIndex(null);
-                    }
-                  }}
-                >
-                  삭제하기
-                </S.DelButton>
-                <S.SaveButton type="submit">수정하기</S.SaveButton>
-              </S.SaveDelWrapper>
-            )}
           </S.Footer>
-          {errors.repeatWeeks && (
-            <span className="errorText repeatError">
-              {errors.repeatWeeks.message}
-            </span>
-          )}
         </S.Form>
       </S.InputFormStyle>
     );

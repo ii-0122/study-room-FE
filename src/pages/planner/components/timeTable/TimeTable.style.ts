@@ -2,11 +2,9 @@ import styled from 'styled-components';
 
 export const TimeTableContainer = styled.div`
   display: grid;
+  flex: 1;
 
-  width: 368px;
-  height: 746px;
-  width: 70%;
-  height: 100%;
+  width: 18vw;
 
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(24, 1fr);
@@ -23,7 +21,7 @@ export const TimeTableContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.8vw;
+    font-size: 0.9vw;
     font-weight: 600;
     color: #595959;
   }

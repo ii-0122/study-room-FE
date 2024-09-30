@@ -1,3 +1,4 @@
+import ProfileImageBox from '@/components/studyProfileBox/imagebox/ProfileImageBox';
 import * as S from './Chatting.style';
 
 interface ChattingProps {
@@ -18,7 +19,8 @@ export default function Chatting({
   return (
     <S.ChatWrapper isMine={isMine}>
       <S.UserInfoArea>
-        <S.UserProfile isMine={isMine} />
+        {/* @TODO ProfileImageBox에 src(이미지url) 연결 필요*/}
+        <ProfileImageBox width="60px" height="60px" />
         <S.Nickname>{nickname}</S.Nickname>
       </S.UserInfoArea>
       <S.ChatInfoArea>

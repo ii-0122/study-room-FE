@@ -9,3 +9,12 @@ export const formatDateTime = (date?: string) => {
 
   return dayjs().format(`YY.MM.DD.${daysOfWeek[dayjs().day()]} - HH:mm`);
 };
+
+export const isWithinOneDay = (date: string) => {
+  const today = dayjs().startOf('day');
+  const targetDate = dayjs(date).startOf('day');
+
+  const diffDays = targetDate.diff(today, 'day');
+
+  return diffDays >= -1 && diffDays <= 1;
+};

@@ -2,10 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { getTodos, postTodo, putTodo } from '@/apis/planners.api';
 import { GetTodosRes, PutPostTodoReq } from '@/models/studyRoomTodos.model';
-import { formatDateTime } from '../utils/dateFormat';
+import { formatDateTime, isWithinOneDay } from '../utils/dateFormat';
 import { AxiosError } from 'axios';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import { FaPlus } from 'react-icons/fa6';
 import CheckBox from '@/components/checkBox/CheckBox';
 import { MouseEvent, useState } from 'react';
 import useStudyRoomStore from '@/stores/studyRoom.store';
@@ -31,10 +30,26 @@ export default function Todos() {
     mode: 'onSubmit',
   });
 
-  const { data: todos } = useQuery<GetTodosRes[], AxiosError>({
-    queryKey: ['getTodos', selectedDate],
-    queryFn: () => getTodos(selectedDate),
-  });
+  // const { data: todos } = useQuery<GetTodosRes[], AxiosError>({
+  //   queryKey: ['getTodos', selectedDate],
+  //   queryFn: () => getTodos(selectedDate),
+  // });
+
+  // @ 임시데이터
+  const [todos, setTodos] = useState([
+    { todo: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡ', _id: '1', isChecked: false },
+    { todo: 'todo2', _id: '2', isChecked: false },
+    { todo: 'todo3', _id: '3', isChecked: true },
+    { todo: 'todo4', _id: '4', isChecked: true },
+    { todo: 'todo5', _id: '5', isChecked: true },
+    { todo: 'todo6', _id: '6', isChecked: true },
+    { todo: 'todo7', _id: '7', isChecked: true },
+    { todo: 'todo8', _id: '8', isChecked: true },
+    { todo: 'todo9', _id: '9', isChecked: true },
+    { todo: 'todo10', _id: '10', isChecked: true },
+    { todo: 'todo11', _id: '11', isChecked: true },
+    { todo: 'todo12', _id: '12', isChecked: true },
+  ]);
 
   const putMutation = useMutation({
     mutationFn: ({ _id, data }: { data: PutPostTodoReq; _id: string }) =>
@@ -57,18 +72,29 @@ export default function Todos() {
   });
 
   const handleLeftArrow = () => {
-    setSelectedDate(
-      dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD')
-    );
+    if (
+      isWithinOneDay(
+        dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD')
+      )
+    ) {
+      setSelectedDate(
+        dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD')
+      );
+    }
   };
 
   const handleRightArrow = () => {
-    setSelectedDate(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'));
+    if (
+      isWithinOneDay(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'))
+    ) {
+      setSelectedDate(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'));
+    }
   };
 
   const handleEditButton = (e: MouseEvent<SVGElement>, todo: GetTodosRes) => {
     e.stopPropagation();
     setEditingTodo(todo._id);
+    setIsAddFormOpened(false);
     setValue('todo', todo.todo);
     setTimeout(() => {
       setFocus('todo');
@@ -81,10 +107,26 @@ export default function Todos() {
       setFocus('todo');
     }, 0);
     setIsAddFormOpened(true);
+    setEditingTodo(null);
   };
 
   const handleCancelButton = () => {
     setIsAddFormOpened(false);
+  };
+
+  const handleEditCancelButton = () => {
+    setEditingTodo(null);
+  };
+
+  const handleCheckBoxChange = (checked: boolean, todoId: string) => {
+    // @ 임시데이터의 체크박스값 수정
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo._id === todoId ? { ...todo, isChecked: checked } : todo
+      )
+    );
+
+    // @ 백엔드에 데이터 수정 요청 코드 추가
   };
 
   const onPutSubmit = (data: PutPostTodoReq, todo: GetTodosRes) => {
@@ -118,7 +160,7 @@ export default function Todos() {
           if (!todo.todo) {
             return;
           }
-          const todoText = omitLongText(todo.todo, 10);
+          const todoText = omitLongText(todo.todo, 8);
 
           return (
             <S.TodoBox
@@ -128,7 +170,10 @@ export default function Todos() {
               }}
               isSelected={selectedTodo?._id === todo._id ? true : false}
             >
-              <CheckBox />
+              <CheckBox
+                defaultChecked={todo.isChecked}
+                onChange={(checked) => handleCheckBoxChange(checked, todo._id)}
+              />
               {editingTodo === todo._id ? (
                 <S.TodoForm
                   onSubmit={handleSubmit((data) => onPutSubmit(data, todo))}
@@ -150,11 +195,22 @@ export default function Todos() {
                       <S.ErrorText>{errors.todo.message}</S.ErrorText>
                     )}
                   </S.TextAndErrorWrapper>
-                  <S.TodoSaveButton type="submit">저장</S.TodoSaveButton>
+
+                  <S.TodoSaveButton type="submit">
+                    <S.TodoSaveIcon />
+                  </S.TodoSaveButton>
+                  <S.TodoCancelButton
+                    type="button"
+                    onClick={handleEditCancelButton}
+                  >
+                    <S.TodoCancelIcon />
+                  </S.TodoCancelButton>
                 </S.TodoForm>
               ) : (
                 <>
-                  <S.TodoTextArea>{todoText}</S.TodoTextArea>
+                  <S.TodoTextArea isChecked={todo.isChecked}>
+                    {todoText}
+                  </S.TodoTextArea>
                   <S.TodoEditIcon onClick={(e) => handleEditButton(e, todo)} />
                 </>
               )}
@@ -181,17 +237,19 @@ export default function Todos() {
                   <S.ErrorText>{errors.todo.message}</S.ErrorText>
                 )}
               </S.TextAndErrorWrapper>
-              <S.TodoSaveButton type="submit">저장</S.TodoSaveButton>
-              <S.TodoCancelButton onClick={handleCancelButton} />
+              <S.TodoSaveButton type="submit">
+                <S.TodoSaveIcon />
+              </S.TodoSaveButton>
+              <S.TodoCancelButton type="button" onClick={handleCancelButton}>
+                <S.TodoCancelIcon />
+              </S.TodoCancelButton>
             </S.TodoForm>
           </S.TodoBox>
         )}
       </S.TodosArea>
 
       <S.AddButton onClick={handleAddButton}>
-        <S.PlusSign>
-          <FaPlus />
-        </S.PlusSign>
+        <S.PlusSign />
         <S.AddText>추가하기</S.AddText>
       </S.AddButton>
     </S.Wrapper>

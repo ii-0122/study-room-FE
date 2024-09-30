@@ -8,32 +8,34 @@ export default function RepeatDaysSelector({
   control: Control<TodoFormDatas>;
 }) {
   return (
-    <>
+    <S.DaySelectWrapper>
       {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((day) => (
         <div key={day}>
           <Controller
             control={control}
             name="repeatDays"
             render={({ field }) => (
-              <S.DaySelectInput
-                id={day}
-                type="checkbox"
-                value={day}
-                checked={field.value?.includes(day) ?? false}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const newValue = e.target.checked
-                    ? [...(field.value ?? []), value]
-                    : (field.value ?? []).filter((d) => d !== value);
-                  field.onChange(newValue);
-                }}
-              />
+              <>
+                <S.DaySelectInput
+                  id={day}
+                  type="checkbox"
+                  value={day}
+                  checked={field.value?.includes(day) ?? false}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const newValue = e.target.checked
+                      ? [...(field.value ?? []), value]
+                      : (field.value ?? []).filter((d) => d !== value);
+                    field.onChange(newValue);
+                  }}
+                />
+                <label htmlFor={day}>{getDayLabel(day)}</label>
+              </>
             )}
           />
-          <label htmlFor={day}>{getDayLabel(day)}</label>
         </div>
       ))}
-    </>
+    </S.DaySelectWrapper>
   );
 }
 const getDayLabel = (day: string) => {

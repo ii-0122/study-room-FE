@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const SidebarContainer = styled.nav`
   min-width: 240px;
-  min-height: 100vh;
+  min-height: calc(100vh - 100px);
   background-color: white;
   display: flex;
   flex-direction: column;

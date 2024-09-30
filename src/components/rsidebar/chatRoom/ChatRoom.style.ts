@@ -13,23 +13,24 @@ export const ChatRoomWrapper = styled.div`
 export const ChatArea = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 75px); // - input영역 높이
+  height: 90%;
   width: 100%;
   overflow-y: auto;
   &::-webkit-scrollbar {
     display: none;
   }
+  padding-top: 5%;
+  gap: 10px;
 `;
 
 export const InputForm = styled.form`
   display: flex;
-  min-height: 75px;
+  height: 10%;
   width: 100%;
-  flex-shrink: 0;
   border-top: 1px solid ${({ theme }) => theme.color.plannerGray};
   position: absolute;
   bottom: 0;
-  padding: 20px;
+  padding: 12px;
   align-items: center;
   background-color: white;
   border-radius: 0 0 15px 15px;
@@ -42,13 +43,12 @@ export const ChatErrorWrapper = styled.div`
 `;
 
 export const ChatInput = styled.input`
-  font-size: 20px;
+  font-size: 1rem;
   border: none;
   &:focus {
     outline: none;
   }
   flex: 1;
-  border-radius: 8px;
 `;
 
 export const ErrorText = styled.span`
@@ -68,7 +68,7 @@ export const SendIconButton = styled.button`
 `;
 
 export const SendIcon = styled(IoIosSend)`
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   color: ${({ theme }) => theme.color.mainStrong};
 `;

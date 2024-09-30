@@ -3,13 +3,23 @@ import { CheckBoxStyle } from './CheckBox.style';
 
 interface CheckBoxProps {
   isVisible?: boolean;
+  defaultChecked?: boolean;
+  onChange?: (checked: boolean) => void;
 }
 
-export default function CheckBox({ isVisible = true }: CheckBoxProps) {
-  const [isChecked, setIsChecked] = useState(false);
+export default function CheckBox({
+  isVisible = true,
+  defaultChecked,
+  onChange,
+}: CheckBoxProps) {
+  const [isChecked, setIsChecked] = useState(defaultChecked);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(e.target.checked);
+
+    if (onChange) {
+      onChange(e.target.checked);
+    }
   };
 
   return (

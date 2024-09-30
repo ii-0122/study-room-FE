@@ -1,22 +1,28 @@
 import styled from 'styled-components';
 
+export const DaySelectWrapper = styled.div`
+  display: flex;
+  gap: max(0.5vw, 0.3rem);
+  margin-right: 10px;
+`;
+
 export const DaySelectInput = styled.input`
   display: none;
 
   + label {
     content: '';
     display: flex;
-    width: 40px;
-    height: 40px;
+    font-size: max(0.6rem, 0.9vw) !important;
+    width: max(20px, 2em);
+    height: max(20px, 2em);
+
     background-color: #e8e8e8;
-    font-size: 14px !important;
     font-weight: 600;
     border-radius: 50%;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-right: 12px;
   }
 
   &:checked + label {

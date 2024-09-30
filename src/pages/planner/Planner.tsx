@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import CustomDatePicker from '@/components/datePicker/DatePicker';
 import TodoBox from './components/todoBox/TodoBox';
 import TimeLine from './components/timeLine/TimeLine';
@@ -57,12 +57,10 @@ export default function Planner() {
   return (
     <S.PlannerWrapper>
       <S.LeftPanel>
-        <div className="label">오늘의 계획표</div>
+        <div className="label">오늘의 계획</div>
         <S.LeftHeader>
           <CustomDatePicker className="date" />
-          <div className="addButton" onClick={handleAddButton}>
-            +
-          </div>
+          <S.AddButton onClick={handleAddButton}></S.AddButton>
         </S.LeftHeader>
         <S.LeftContentWrapper ref={timeLineHeightRef}>
           {todos.length !== 0 && <S.TimeLineFull height={timeLineFullHeight} />}
@@ -70,7 +68,7 @@ export default function Planner() {
             {todos.length
               ? todos.map((todo, index) => {
                   return (
-                    <div key={todo.id}>
+                    <Fragment key={todo.id}>
                       <S.EachContentWrapper
                         ref={(el) => (editFormRef.current[index] = el)}
                       >
@@ -98,7 +96,7 @@ export default function Planner() {
                           todos={todos}
                         />
                       )}
-                    </div>
+                    </Fragment>
                   );
                 })
               : !isAddFormOpened && (
@@ -122,7 +120,7 @@ export default function Planner() {
         </S.LeftContentWrapper>
       </S.LeftPanel>
       <S.RightPanel>
-        <div className="label">오늘의 스터디 시간</div>
+        <div className="label">오늘의 공부 시간</div>
         <S.StudiedTime>XX시간 XX분 공부했어요!</S.StudiedTime>
         <TimeTable
           todos={todos.map((todo, index) => {
@@ -135,11 +133,16 @@ export default function Planner() {
 }
 
 const testData: ITodoBox[] = [
-  { id: '1', detail: '할일1', startTime: '08:33', endTime: '08:52' },
+  {
+    id: '1',
+    detail: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
+    startTime: '08:33',
+    endTime: '08:52',
+  },
   {
     id: '2',
-    title: '제목2',
-    detail: '할일2',
+    title: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
+    detail: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
     startTime: '09:00',
     endTime: '10:00',
   },
@@ -159,7 +162,7 @@ const testData: ITodoBox[] = [
     startTime: '19:00',
     endTime: '21:00',
   },
-  { id: '7', title: '제목1', detail: '할일1', startTime: '', endTime: '' },
+  // { id: '7', title: '제목1', detail: '할일1', startTime: '', endTime: '' },
   // { id: '8', title: '제목2', detail: '할일2', startTime: '', endTime: '' },
   // { id: '9', title: '제목3', detail: '할일3', startTime: '', endTime: '' },
   // { id: '10', title: '제목4', detail: '할일4', startTime: '', endTime: '' },

@@ -18,14 +18,14 @@ export const CheckBoxStyle = styled.div.withConfig({
     align-items: center;
     position: relative;
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
   }
 
   .custom-checkbox-content {
     display: inline-block;
-    min-width: 30px;
-    min-height: 30px;
+    min-width: 24px;
+    min-height: 24px;
     background-color: transparent;
     border: 2px solid #a7a7a7;
     border-radius: 8px;
@@ -38,10 +38,10 @@ export const CheckBoxStyle = styled.div.withConfig({
     display: ${(props) => (props.isChecked ? 'block' : 'none')};
     content: '';
     position: absolute;
-    left: 8px;
-    top: 1px;
-    width: 8px;
-    height: 16px;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
     border: solid white;
     border-width: 0 3px 3px 0;
     transform: rotate(45deg);

@@ -11,7 +11,6 @@ export default function TimeTable({ todos }: TimeTableProps) {
   const gridArray = new Array(7 * 24).fill(1);
   const [todosWithTime, setTodosWithTime] = useState<ITodoBox[]>([]);
 
-  // 시간은 유효성 검사를 수행했다고 가정. (겹치는 시간 불가) -> 추후 inputForm에서 구현할 것
   useEffect(() => {
     const newTodos = todos.reduce((acc, todo, index) => {
       if (todo.startTime && todo.endTime) {

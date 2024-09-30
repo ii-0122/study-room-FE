@@ -5,30 +5,19 @@ export const ChatWrapper = styled.div.withConfig({
 })<{ isMine: boolean }>`
   display: flex;
   width: 100%;
-  padding: 30px;
-  margin-top: auto;
+  padding: 0 13px;
+
+  gap: 5px;
+
   ${(props) => props.isMine && 'flex-direction : row-reverse'}
 `;
 
 export const UserInfoArea = styled.div`
   display: flex;
   flex-direction: column;
-  width: 72px;
-  height: 97px;
+  width: 60px;
   flex-shrink: 0;
   align-items: center;
-`;
-
-// 임시 스타일 컴포넌트. 추후 프로필 컴포넌트와 교체
-export const UserProfile = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isMine'].includes(prop),
-})<{ isMine: boolean }>`
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  flex-shrink: 0;
-  ${(props) =>
-    props.isMine ? `background-color : blue;` : 'background-color: gray;'}
 `;
 
 export const Nickname = styled.div`
@@ -38,31 +27,32 @@ export const Nickname = styled.div`
 `;
 
 export const ChatInfoArea = styled.div`
-  width: 371px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 `;
 
 export const ChatBox = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isMine'].includes(prop),
 })<{ isMine: boolean }>`
-  width: 90%;
   padding: 10px;
-  font-size: 20px;
+  font-size: 16px;
   border-radius: 10px;
+  line-height: 24px;
+  word-break: break-all;
 
   ${(props) =>
     props.isMine
-      ? `margin-right : auto; background-color : ${props.theme.color.main};`
-      : `margin-left : auto; background-color : ${props.theme.color.bgGray} ;`}
+      ? `margin-left : auto; background-color : ${props.theme.color.main};`
+      : `margin-right : auto; background-color : ${props.theme.color.bgGray} ;`}
 `;
 
 export const CreatedTime = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isMine'].includes(prop),
 })<{ isMine: boolean }>`
-  margin-top: 10px;
+  margin-top: 2px;
   padding: 0px 5px;
+  font-size: 13px;
 
-  ${(props) => (props.isMine ? 'margin-right: auto;' : 'margin-left: auto;')}
+  ${(props) => (props.isMine ? 'margin-left: auto;' : 'margin-right: auto;')}
 `;

@@ -3,13 +3,11 @@ import styled from 'styled-components';
 export const TodoBoxStyle = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.color.bgLightGray};
-  width: 641px;
-  height: 98px;
-  margin: 0px 5px 35px;
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
   box-shadow: ${({ theme }) => theme.shadow.boxShadow};
   align-items: center;
-
   &:hover {
     cursor: pointer;
   }
@@ -20,7 +18,7 @@ export const ColorBarStyle = styled.div.withConfig({
 })<{ barColor?: string }>`
   margin-right: 20px;
   height: 100%;
-  width: 11px;
+  min-width: min(0.6vw, 11px);
   background-color: ${(props) => (props.barColor ? props.barColor : null)};
   border-radius: 8px;
 `;
@@ -28,20 +26,21 @@ export const ColorBarStyle = styled.div.withConfig({
 export const InfoArea = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-evenly;
+  margin-right: 3%;
 `;
 
-export const DetailStyle = styled.div`
-  font-size: 24px;
+export const TodoStyle = styled.div`
+  font-size: clamp(0.8rem, 1.2vw, 1.3rem);
   font-weight: 600;
-  margin-bottom: 12px;
 `;
-export const TitleStyle = styled.div`
-  font-size: 20px;
-  font-weight: 400;
-  height: 20px;
+export const SubjectStyle = styled.div`
+  font-size: clamp(0.8rem, 1.1vw, 1.2rem);
 `;
 
 export const CheckBoxArea = styled.div`
   margin-left: auto;
-  margin-right: 30px;
+  margin-right: 5%;
 `;

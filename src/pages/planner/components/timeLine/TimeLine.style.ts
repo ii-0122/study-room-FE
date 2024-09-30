@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 
 export const TimeLineWrapper = styled.div`
-  font-size: 20px;
+  font-size: max(0.8vw, 14px);
+  /* font-size: 16px; */
 
   position: absolute;
 
-  left: -105px;
+  left: -88px;
   &::after {
     content: '';
     width: 10px;
@@ -14,8 +15,10 @@ export const TimeLineWrapper = styled.div`
     background-color: ${({ theme }) => theme.color.mainStrong};
     border-radius: 50%;
     top: 0px;
-    left: 70px;
+    left: 50px;
   }
+
+  text-align: center;
 `;
 
 export const TimeWrapper = styled.div`

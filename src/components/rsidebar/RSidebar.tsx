@@ -15,7 +15,7 @@ export default function RSidebar() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(formatDateTime());
-    }, 10000);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 

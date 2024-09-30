@@ -3,6 +3,7 @@ import Chatting from './chatting/Chatting';
 import { ChatReq } from '@/models/chat.model';
 import * as S from './ChatRoom.style';
 import { useEffect, useRef, useState } from 'react';
+import dayjs from 'dayjs';
 
 export default function ChatRoom() {
   const myNickname = 'myNickName'; // 추후 닉네임 불러와서 사용
@@ -22,7 +23,11 @@ export default function ChatRoom() {
 
   const onSubmit = (data: ChatReq) => {
     setValue('message', '');
-    const reqData = { ...data, nickname: myNickname };
+    const reqData = {
+      ...data,
+      nickname: myNickname,
+      time: dayjs().format('HH:mm'),
+    };
     setChatArray([...chatArray, reqData]);
 
     // 여기에 송신 api 요청
@@ -90,5 +95,4 @@ const TMP_CHATS = [
     time: '08:54',
     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
   },
-  { nickname: '내 닉네임', message: '내 메시지엔 time 없음?' },
 ];
