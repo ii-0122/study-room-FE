@@ -1,8 +1,9 @@
 import { PutPostTodoReq } from '@/models/studyRoomTodos.model';
 import axios from 'axios';
+import axiosInstance from './axiosInstance.api';
 
-/* 
-작성자 : 이진성 
+/*
+작성자 : 이진성
 날짜 : 2024-09-21
 목적 : PrivateStudyRoom.tsx에서 React-Query를 사용하기 위해서 만든,
 JWT토큰이나 baseURL등 다른 설정들을 포함하지 않은
@@ -11,7 +12,7 @@ JWT토큰이나 baseURL등 다른 설정들을 포함하지 않은
 */
 export const getTodos = async (date: string) => {
   try {
-    const res = await axios.get(`http://localhost:5555/planners?date=${date}`);
+    const res = await axiosInstance.get(`/planners?date=${date}`);
     console.log(res);
     return res.data;
   } catch (error) {

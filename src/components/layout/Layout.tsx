@@ -13,7 +13,7 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
   const authPagePath =
-    location.pathname === '/login' || location.pathname === '/register';
+    location.pathname === '/login' || location.pathname === '/signup';
 
   const studyRoomPagePath = location.pathname.startsWith('/study-room/');
 

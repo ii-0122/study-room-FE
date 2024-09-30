@@ -1,63 +1,55 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { signUp } from '@/apis/auth.api';
+import type { SignUpFormInputs } from '@/types/auth';
 import Button from '@/components/button/Button';
 import Input from '@/components/input/Input';
-import {
-  Container,
-  ErrorMessage,
-  Form,
-  InputContainer,
-  Label,
-  LinkContainer,
-  StyledLink,
-  Span,
-  Title,
-} from '@/styles/AuthFormStyles';
+import * as S from '@/styles/AuthFormStyles';
 
-interface RegisterFormInputs {
-  userId: string;
-  nickname: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export default function RegisterPage() {
+export default function SignUpPage() {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<RegisterFormInputs>();
+  } = useForm<SignUpFormInputs>();
   const navigate = useNavigate();
   const password = watch('password');
 
-  const onSubmit: SubmitHandler<RegisterFormInputs> = () => {
-    navigate('/login');
+  const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
+    try {
+      await signUp(data);
+      alert('회원가입이 성공적으로 완료되었습니다.');
+      navigate('/login');
+    } catch (error) {
+      console.error('회원가입 실패', error);
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    }
   };
 
   return (
-    <Container>
-      <Title>회원가입</Title>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <InputContainer>
-          <Label>아이디</Label>
+    <S.Container>
+      <S.Title>회원가입</S.Title>
+      <S.Form onSubmit={handleSubmit(onSubmit)}>
+        <S.InputContainer>
+          <S.Label>아이디</S.Label>
           <Input
-            hasError={!!errors.userId}
+            hasError={!!errors.id}
             placeholder="아이디"
-            {...register('userId', {
+            {...register('id', {
               required: '아이디를 입력해주세요.',
               pattern: {
-                value: /^[a-zA-Z0-9]{6,16}$/,
+                value: /^[a-z0-9]{6,16}$/,
                 message: '아이디는 영어와 숫자로 구성된 6~16글자여야 합니다.',
               },
             })}
           />
-          {errors.userId && (
-            <ErrorMessage>{errors.userId.message}</ErrorMessage>
-          )}
-        </InputContainer>
-        <InputContainer>
-          <Label>닉네임</Label>
+          {errors.id && <S.ErrorMessage>{errors.id.message}</S.ErrorMessage>}
+        </S.InputContainer>
+        <S.InputContainer>
+          <S.Label>닉네임</S.Label>
           <Input
             hasError={!!errors.nickname}
             placeholder="닉네임"
@@ -71,11 +63,11 @@ export default function RegisterPage() {
             })}
           />
           {errors.nickname && (
-            <ErrorMessage>{errors.nickname.message}</ErrorMessage>
+            <S.ErrorMessage>{errors.nickname.message}</S.ErrorMessage>
           )}
-        </InputContainer>
-        <InputContainer>
-          <Label>비밀번호</Label>
+        </S.InputContainer>
+        <S.InputContainer>
+          <S.Label>비밀번호</S.Label>
           <Input
             hasError={!!errors.password}
             type="password"
@@ -91,11 +83,11 @@ export default function RegisterPage() {
             })}
           />
           {errors.password && (
-            <ErrorMessage>{errors.password.message}</ErrorMessage>
+            <S.ErrorMessage>{errors.password.message}</S.ErrorMessage>
           )}
-        </InputContainer>
-        <InputContainer>
-          <Label>비밀번호 확인</Label>
+        </S.InputContainer>
+        <S.InputContainer>
+          <S.Label>비밀번호 확인</S.Label>
           <Input
             hasError={!!errors.confirmPassword}
             type="password"
@@ -107,17 +99,17 @@ export default function RegisterPage() {
             })}
           />
           {errors.confirmPassword && (
-            <ErrorMessage>{errors.confirmPassword.message}</ErrorMessage>
+            <S.ErrorMessage>{errors.confirmPassword.message}</S.ErrorMessage>
           )}
-        </InputContainer>
+        </S.InputContainer>
         <Button type="submit" size="large">
           회원가입
         </Button>
-      </Form>
-      <LinkContainer>
-        <Span>이미 회원이신가요?</Span>
-        <StyledLink to={'/login'}>로그인</StyledLink>
-      </LinkContainer>
-    </Container>
+      </S.Form>
+      <S.LinkContainer>
+        <S.Span>이미 회원이신가요?</S.Span>
+        <S.StyledLink to={'/login'}>로그인</S.StyledLink>
+      </S.LinkContainer>
+    </S.Container>
   );
 }

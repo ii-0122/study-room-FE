@@ -1,8 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 
+import HomePage from '@/pages/home/HomePage';
 import StudyRooms from '@/pages/study-room/StudyRooms';
 import LoginPage from '@/pages/login/LoginPage';
-import RegisterPage from '@/pages/register/RegisterPage';
+import SignUpPage from '@/pages/signUp/SignUpPage';
 import ProfilePage from '@/pages/profile/ProfilePage';
 import Planner from '@/pages/planner/Planner';
 import PrivateStudyRoom from '@/pages/privateStudyRoom/PrivateStudyRoom';
@@ -10,12 +11,13 @@ import PrivateStudyRoom from '@/pages/privateStudyRoom/PrivateStudyRoom';
 export default function Router() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />}></Route>
-      <Route path="/register" element={<RegisterPage />}></Route>
-      <Route path="/profile" element={<ProfilePage />}></Route>
-      <Route path="/planner" element={<Planner />}></Route>
-      <Route path="/study-rooms" element={<StudyRooms />}></Route>
-      <Route path="/study-room" element={<PrivateStudyRoom />}></Route>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/planner" element={<Planner />} />
+      <Route path="/study-rooms" element={<StudyRooms />} />
+      <Route path="/study-room" element={<PrivateStudyRoom />} />
     </Routes>
   );
 }
