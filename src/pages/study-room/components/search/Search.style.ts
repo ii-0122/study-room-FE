@@ -2,39 +2,36 @@ import styled from 'styled-components';
 
 export const SearchStyle = styled.div`
   .search {
+    display: flex;
     position: relative;
-    width: 703px;
-    height: 64px;
-    border-radius: 10px;
-    border: 2px solid;
+    align-items: center;
+    width: 472px;
+    height: 46px;
+    border-radius: 7px;
+    border: 1.5px solid;
     border-color: ${({ theme }) => theme.color.mainStrong};
 
     input {
-      position: absolute;
+      flex: 1;
       border: none;
       outline: none;
       background: transparent;
-      width: 562px;
-      height: 62px;
-      left: 70px;
-
-      font-size: 16px;
+      height: 42px;
+      width: 100%;
+      font-size: 14px;
     }
 
     .search-icon {
-      position: absolute;
-      padding: 15px 15px;
-      font-size: 64px;
-      left: 10px;
+      font-size: 30px;
+      margin: 0 10px;
       color: ${({ theme }) => theme.color.mainStrong};
     }
 
     .close-icon {
-      position: absolute;
-      padding: 15px 15px;
-      font-size: 64px;
-      right: 10px;
+      font-size: 30px;
+      margin: 0 10px;
       color: ${({ theme }) => theme.color.mainStrong};
+      cursor: pointer;
     }
   }
 `;

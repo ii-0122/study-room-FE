@@ -14,6 +14,7 @@ interface Filter {
 
 function StudyRooms() {
   const [filter, setFilter] = useState<Filter>({});
+  const [hasScrollbar, setHasScrollbar] = useState(false);
 
   const handleFilterChange = (newFilter: Filter) => {
     setFilter((prevFilter) => ({
@@ -34,9 +35,9 @@ function StudyRooms() {
             <Search onSearchChange={handleSearchChange} />
             <SelectBox onFilterChange={handleFilterChange} />
             <CheckBox onFilterChange={handleFilterChange} />
-            <CreateButton />
+            <CreateButton marginRight={hasScrollbar ? '25px' : '20px'} />
           </div>
-          <StudyGrid filter={filter} />
+          <StudyGrid filter={filter} onScrollbarChange={setHasScrollbar} />
         </div>
       </S.MainContentArea>
     </S.StudyRoomsStyle>

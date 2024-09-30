@@ -8,9 +8,8 @@ export const SelectBoxStyle = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 160px;
-    height: 64px;
-    margin-left: 15px;
+    width: auto;
+    height: auto;
 
     select {
       border: none;
@@ -20,20 +19,21 @@ export const SelectBoxStyle = styled.div`
       background: transparent;
       width: 100%;
       height: 100%;
-      font-size: 20px;
+      font-size: 14px;
       text-align: center;
     }
 
     .triangle {
       position: relative;
-      font-size: 18px;
+      font-size: 14px;
       color: ${({ theme }) => theme.color.plannerGray};
+      margin-left: 5px;
     }
   }
 
   select option {
     background: ${({ theme }) => theme.color.bgLightGray};
-    font-size: 18px;
+    font-size: 14px;
     border-radius: 4px;
     border-color: #e4e4e4;
   }

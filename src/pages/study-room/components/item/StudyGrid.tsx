@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import StudyItem from './StudyItem';
 import * as S from './StudyGrid.style';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 interface Room {
   _id: string;
@@ -47,8 +48,10 @@ const fetchRooms = async (params: FetchRoomsParams) => {
 
 function StudyGrid({
   filter,
+  onScrollbarChange,
 }: {
   filter: { isPublic?: boolean; isPossible?: boolean; search?: string };
+  onScrollbarChange: (hasScrollbar: boolean) => void;
 }) {
   const params: FetchRoomsParams = {
     search: filter.search || '',
@@ -66,6 +69,15 @@ function StudyGrid({
     queryKey: ['rooms', params],
     queryFn: () => fetchRooms(params),
   });
+
+  useEffect(() => {
+    const scrollableGrid = document.getElementById('scrollable-grid');
+    if (scrollableGrid) {
+      const hasScrollbar =
+        scrollableGrid.scrollHeight > scrollableGrid.clientHeight;
+      onScrollbarChange(hasScrollbar);
+    }
+  }, [rooms, isLoading, onScrollbarChange]);
 
   return (
     <S.ScrollContainer>

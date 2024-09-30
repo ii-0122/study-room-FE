@@ -2,17 +2,17 @@ import styled from 'styled-components';
 
 export const StudyGridStyle = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 328px);
-  gap: 47px;
-  grid-auto-rows: 290px;
+  grid-template-columns: repeat(4, 226px);
+  grid-auto-rows: 240px;
+  gap: 25px;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 670px;
+  max-height: 520px;
   padding-right: 20px;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
-    width: 9px;
+    width: 5px;
   }
 
   &::-webkit-scrollbar-thumb {

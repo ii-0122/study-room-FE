@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-export const CreateButtonStyle = styled.div`
+export const CreateButtonStyle = styled.div<{ marginRight?: string }>`
   display: flex;
-  margin-left: auto;
-  margin-right: 29px;
+  margin-right: ${({ marginRight }) => marginRight};
 `;
