@@ -14,12 +14,12 @@ export const ProfileImageContainer = styled.div<{
 `;
 
 interface ProfileImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  isDefault: boolean;
+  isDefault?: boolean;
 }
 
 export const ProfileImage = styled.img<ProfileImageProps>`
   border-radius: 50%;
-  width: 80%;
-  height: 80%;
+  width: 85%;
+  height: 85%;
   object-fit: cover;
 `;

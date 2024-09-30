@@ -1,14 +1,18 @@
-import { ButtonSize } from '@/styles/theme';
 import styled from 'styled-components';
 
 export const SCreateButtonStyle = styled.button.withConfig({
   shouldForwardProp: (prop) => !['borderRadius'].includes(prop),
-})<{ size: ButtonSize; borderRadius?: string; fontSize?: string }>`
+})<{
+  width?: string;
+  height?: string;
+  borderRadius?: string;
+  fontSize?: string;
+}>`
   color: white;
   border: none;
   background-color: ${({ theme }) => theme.color.mainStrong};
-  width: ${({ theme, size }) => theme.studyRoomButton[size].width};
-  height: ${({ theme, size }) => theme.studyRoomButton[size].height};
+  width: ${({ width }) => width || 'auto'};
+  height: ${({ height }) => height || 'auto'};
   border-radius: ${({ theme, borderRadius }) =>
     borderRadius || theme.borderRadius};
   font-size: ${({ fontSize }) => fontSize || '16px'};

@@ -1,12 +1,12 @@
 import React from 'react';
 import { IconType } from 'react-icons';
-import { ButtonSize } from '@/styles/theme';
 import * as S from './SCreateButton.style';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   Icon?: IconType;
-  size?: ButtonSize;
+  width?: string;
+  height?: string;
   borderRadius?: string;
   fontSize?: string;
   iconSize?: string;
@@ -14,7 +14,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 function SCreateButton({
   label,
-  size = 'small',
+  width,
+  height,
   Icon,
   borderRadius,
   fontSize = '24px',
@@ -23,7 +24,8 @@ function SCreateButton({
 }: ButtonProps) {
   return (
     <S.SCreateButtonStyle
-      size={size}
+      width={width}
+      height={height}
       borderRadius={borderRadius}
       fontSize={fontSize}
       {...props}

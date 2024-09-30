@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const HeaderContainer = styled.header`
+export const HeaderContainer = styled.header<{ isStudyRoomPage?: boolean }>`
   background-color: white;
   width: 100%;
   height: 80px;

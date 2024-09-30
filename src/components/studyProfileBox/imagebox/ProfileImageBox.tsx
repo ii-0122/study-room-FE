@@ -15,11 +15,10 @@ const ProfileImageBox: React.FC<ProfileImageBoxProps> = ({
   height,
 }) => {
   const imageSrc = src && src.trim() !== '' ? src : defaultImage;
-  const isDefault = imageSrc === defaultImage;
 
   return (
     <S.ProfileImageContainer width={width} height={height}>
-      <S.ProfileImage src={imageSrc} alt={alt} isDefault={isDefault} />
+      <S.ProfileImage src={imageSrc} alt={alt} />
     </S.ProfileImageContainer>
   );
 };

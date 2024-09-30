@@ -20,7 +20,7 @@ export default function Header({ title }: HeaderProps) {
 
   return (
     <S.HeaderContainer>
-      <S.HeaderTitle>{title}</S.HeaderTitle>
+      <S.HeaderTitle>{title}</S.HeaderTitle>{' '}
       <S.ButtonWrapper>
         {user && accessToken ? (
           <>

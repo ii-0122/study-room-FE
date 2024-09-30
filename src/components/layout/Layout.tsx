@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { MainContentArea, LayoutStyle } from './Layout.style';
 import Header from '../header/Header';
 import Sidebar from '../sidebar/Sidebar';
-import RSidebar from '../rsidebar/RSidebar';
+//import RSidebar from '../rsidebar/RSidebar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -32,7 +32,7 @@ export default function Layout({ children }: LayoutProps) {
       <MainContentArea>
         {!authPagePath && !studyRoomPagePath && <Sidebar />}
         {children}
-        {studyRoomPagePath && <RSidebar />}
+        {/* {studyRoomPagePath && <RSidebar />} */}
       </MainContentArea>
     </LayoutStyle>
   );

@@ -2,20 +2,36 @@ import styled from 'styled-components';
 
 export const PrivateStudyRoomStyle = styled.div`
   display: flex;
+  justify-content: space-between;
+  width: 100vw;
+  height: 100vh;
+`;
+
+export const MainContentArea = styled.div`
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   flex: 1;
+  height: 100vh;
+`;
+
+export const StudyRoomWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  margin: 60px 0;
 `;
 
 export const InstructionText = styled.div`
   text-align: center;
   margin: 20px 0;
-  font-size: 35px;
+  font-size: 30px;
 `;
 
 export const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 564px;
+  gap: 433px;
 `;

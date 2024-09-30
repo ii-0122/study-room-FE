@@ -10,12 +10,13 @@ const LeaveButton: React.FC<LeaveButtonProps> = ({ onClick }) => {
   return (
     <SCreateButton
       label="나가기"
-      size="small"
+      width="160px"
+      height="56px"
       Icon={FiLogOut}
       onClick={onClick}
-      borderRadius="15px"
-      fontSize="40px"
-      iconSize="40px"
+      borderRadius="10px"
+      fontSize="24px"
+      iconSize="25px"
     />
   );
 };

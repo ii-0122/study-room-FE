@@ -12,8 +12,9 @@ export const Wrapper = styled.div`
 
 export const DateWrapper = styled.div`
   display: flex;
-  font-size: 40px;
+  font-size: 27px;
   justify-content: space-around;
+  align-items: center;
   font-weight: 600;
   width: 100%;
   margin-top: 20px;
@@ -139,14 +140,13 @@ export const ErrorText = styled.span`
 export const AddButton = styled.button`
   display: flex;
   align-items: center;
-  width: 439px;
-  height: 77px;
+  width: 256px;
+  height: 52px;
   border: none;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.color.mainStrong};
   color: white;
-  font-size: 40px;
-  font-weight: 600;
+  font-size: 25px;
   margin-bottom: 20px;
   padding: 0px 20px;
 
