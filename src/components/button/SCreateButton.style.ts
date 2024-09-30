@@ -22,6 +22,7 @@ export const SCreateButtonStyle = styled.button.withConfig({
   padding-left: 20px;
   position: relative;
   font-weight: 500;
+  cursor: pointer;
 
   .icon {
     display: flex;

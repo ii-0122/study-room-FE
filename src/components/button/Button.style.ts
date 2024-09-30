@@ -26,6 +26,10 @@ export const StyledButton = styled.button<{
   font-size: 20px;
   padding: ${({ size }) => sizeStyles[size].padding};
   font-size: ${({ size }) => sizeStyles[size].fontSize};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 
   &:hover {
     background-color: ${({ theme }) => theme.color.btnOk};

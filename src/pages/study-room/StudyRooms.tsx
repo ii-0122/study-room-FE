@@ -5,6 +5,8 @@ import CreateButton from './components/button/CreateButton';
 import StudyGrid from './components/item/StudyGrid';
 import CheckBox from './components/filter/CheckBox';
 import * as S from './StudyRooms.style';
+import Modal from '@/components/modal/Modal';
+import CreateStudyRoomForm from '@/pages/study-room/components/form/CreateStudyRoomForm';
 
 interface Filter {
   isPublic?: boolean;
@@ -14,7 +16,8 @@ interface Filter {
 
 function StudyRooms() {
   const [filter, setFilter] = useState<Filter>({});
-  const [hasScrollbar, setHasScrollbar] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [_, setHasScrollbar] = useState(false);
 
   const handleFilterChange = (newFilter: Filter) => {
     setFilter((prevFilter) => ({
@@ -27,6 +30,10 @@ function StudyRooms() {
     handleFilterChange({ search });
   };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
   return (
     <S.StudyRoomsStyle>
       <S.MainContentArea>
@@ -35,8 +42,13 @@ function StudyRooms() {
             <Search onSearchChange={handleSearchChange} />
             <SelectBox onFilterChange={handleFilterChange} />
             <CheckBox onFilterChange={handleFilterChange} />
-            <CreateButton marginRight={hasScrollbar ? '25px' : '20px'} />
+            <CreateButton onClick={() => setShowModal(true)} />
           </div>
+          {showModal && (
+            <Modal onClose={handleModalClose}>
+              <CreateStudyRoomForm />
+            </Modal>
+          )}
           <StudyGrid filter={filter} onScrollbarChange={setHasScrollbar} />
         </div>
       </S.MainContentArea>
