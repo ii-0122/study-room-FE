@@ -21,13 +21,16 @@ export default function CreateStudyRoomForm() {
   } = useForm<CreateStudyRoomFormData>({ mode: 'onSubmit' });
 
   const onSubmit: SubmitHandler<CreateStudyRoomFormData> = async (data) => {
+    const formattedData = {
+      ...data,
+      maxNum: Number(data.maxNum),
+    };
+
     try {
-      const result = await createStudyRoom(data);
+      const result = await createStudyRoom(formattedData);
       console.log('공부방 생성 성공:', result);
-      console.log(data);
     } catch (error) {
       console.error('공부방 생성 에러:', error);
-      console.log(data);
     }
   };
 
