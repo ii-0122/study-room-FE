@@ -3,10 +3,11 @@ import * as S from './RSidebar.style';
 import Todos from './todos/Todos';
 import ChatRoom from './chatRoom/ChatRoom';
 import { formatDateTime } from './utils/dateFormat';
+import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
 
 type Tabs = '노트' | '할 일' | '채팅';
 
-export default function RSidebar() {
+const RSidebar = () => {
   const [currentDateTime, setCurrentDateTime] =
     useState<string>(formatDateTime());
 
@@ -56,4 +57,6 @@ export default function RSidebar() {
       </S.Wrapper>
     </S.RSidebarStyle>
   );
-}
+};
+
+export default RSidebar;

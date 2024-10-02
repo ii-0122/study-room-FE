@@ -1,12 +1,20 @@
 import { useForm } from 'react-hook-form';
 import Chatting from './chatting/Chatting';
-import { ChatReq } from '@/models/chat.model';
+import { ChatReq, ChatRes } from '@/models/chat.model';
 import * as S from './ChatRoom.style';
 import { useEffect, useRef, useState } from 'react';
+import { useAuthStore } from '@/stores';
+
 import dayjs from 'dayjs';
+import { useSocket } from '@/socket/SocketContext';
+import useChatStore from '@/stores/chat.store';
 
 export default function ChatRoom() {
-  const myNickname = 'myNickName'; // 추후 닉네임 불러와서 사용
+  const user = useAuthStore((state) => state.user);
+  const myNickname = user.nickname;
+  const socket = useSocket();
+  const chatArray = useChatStore((state) => state.chatArray);
+  const setChatArray = useChatStore.getState().setChatArray;
 
   const {
     register,
@@ -17,8 +25,7 @@ export default function ChatRoom() {
     mode: 'onSubmit',
   });
 
-  // 추후 TMP_CHATS 대신 빈 배열
-  const [chatArray, setChatArray] = useState(TMP_CHATS);
+  // const [chatArray, setChatArray] = useState<ChatRes[]>([]);
   const scrollBottomRef = useRef<HTMLDivElement>(null);
 
   const onSubmit = (data: ChatReq) => {
@@ -28,10 +35,8 @@ export default function ChatRoom() {
       nickname: myNickname,
       time: dayjs().format('HH:mm'),
     };
-    setChatArray([...chatArray, reqData]);
-
-    // 여기에 송신 api 요청
-    console.log(reqData);
+    setChatArray(reqData);
+    sendMessage(data.message);
   };
 
   useEffect(() => {
@@ -40,19 +45,53 @@ export default function ChatRoom() {
     }
   }, [chatArray]);
 
+  // 임시 socket 코드 작성
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.on('notice', (data) => {
+      console.log(data);
+    });
+
+    socket.on('receiveChat', (data) => {
+      setChatArray(data);
+      console.log(data);
+    });
+
+    socket.on('responseChat', (data) => {
+      // 채팅이 잘 보내졌나 확인
+      console.log(data);
+    });
+
+    return () => {
+      socket.off('recieveChat');
+      socket.off('responseChat');
+      socket.off('notice');
+    };
+  }, [socket, myNickname]);
+
+  const sendMessage = (message: string) => {
+    // console.log('채팅보내지는중');
+    if (message) {
+      const payload = { message };
+      socket?.emit('sendChat', payload);
+    }
+  };
+  // end
+
   return (
     <S.ChatRoomWrapper>
       <S.ChatArea>
         {/* {추후 채팅들 배열로 가져와서 사용} */}
-        {chatArray.map((chatInfo, index) => {
-          return (
-            <Chatting
-              key={index}
-              chatInfo={chatInfo}
-              isMine={chatInfo.nickname === myNickname}
-            />
-          );
-        })}
+        {chatArray?.map((chatInfo, index) => (
+          <Chatting
+            key={index}
+            chatInfo={chatInfo}
+            isMine={chatInfo.nickname == myNickname}
+          />
+        ))}
         <div ref={scrollBottomRef} />
       </S.ChatArea>
 
@@ -79,20 +118,20 @@ export default function ChatRoom() {
   );
 }
 
-const TMP_CHATS = [
-  {
-    nickname: 'abc',
-    time: '08:53',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-  {
-    nickname: 'veryLongNickname123',
-    time: '08:54',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-  {
-    nickname: '매우긴닉네임ㅡㅡㅡㅡ',
-    time: '08:54',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-];
+// const TMP_CHATS = [
+//   {
+//     nickname: 'abc',
+//     time: '08:53',
+//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
+//   },
+//   {
+//     nickname: 'veryLongNickname123',
+//     time: '08:54',
+//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
+//   },
+//   {
+//     nickname: '매우긴닉네임ㅡㅡㅡㅡ',
+//     time: '08:54',
+//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
+//   },
+// ];

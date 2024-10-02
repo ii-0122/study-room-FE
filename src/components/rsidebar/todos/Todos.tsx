@@ -1,17 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { getTodos, postTodo, putTodo } from '@/apis/planners.api';
-import { GetTodosRes, PutPostTodoReq } from '@/models/studyRoomTodos.model';
+// import { getTodos, postTodo, putTodo } from '@/apis/planners.api';
+import {
+  CreatePlannerModel,
+  GetTodosRes,
+  PutPostTodoReq,
+  ServerToClientPlanner,
+  UpdatePlannerModel,
+} from '@/models/studyRoomTodos.model';
 import { formatDateTime, isWithinOneDay } from '../utils/dateFormat';
-import { AxiosError } from 'axios';
+// import { AxiosError } from 'axios';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import CheckBox from '@/components/checkBox/CheckBox';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { useForm } from 'react-hook-form';
 import * as S from './Todos.style';
+import { useSocket } from '@/socket/SocketContext';
 
-export default function Todos() {
+const Todos = () => {
+  const socket = useSocket();
+  const todos = useStudyRoomStore((state) => state.todos);
+  const updateTodos = useStudyRoomStore((state) => state.updateTodos);
+  const addTodos = useStudyRoomStore((state) => state.addTodos);
+
   const { selectedTodo, setSelectedTodo } = useStudyRoomStore();
   const [selectedDate, setSelectedDate] = useState(
     dayjs().format('YYYY-MM-DD')
@@ -19,7 +31,7 @@ export default function Todos() {
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
   const [isAddFormOpened, setIsAddFormOpened] = useState(false);
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -30,46 +42,48 @@ export default function Todos() {
     mode: 'onSubmit',
   });
 
+  // const [todos, setTodos] = useState<ServerToClientPlanner[]>([]);
+
   // const { data: todos } = useQuery<GetTodosRes[], AxiosError>({
   //   queryKey: ['getTodos', selectedDate],
   //   queryFn: () => getTodos(selectedDate),
   // });
 
   // @ 임시데이터
-  const [todos, setTodos] = useState([
-    { todo: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡ', _id: '1', isChecked: false },
-    { todo: 'todo2', _id: '2', isChecked: false },
-    { todo: 'todo3', _id: '3', isChecked: true },
-    { todo: 'todo4', _id: '4', isChecked: true },
-    { todo: 'todo5', _id: '5', isChecked: true },
-    { todo: 'todo6', _id: '6', isChecked: true },
-    { todo: 'todo7', _id: '7', isChecked: true },
-    { todo: 'todo8', _id: '8', isChecked: true },
-    { todo: 'todo9', _id: '9', isChecked: true },
-    { todo: 'todo10', _id: '10', isChecked: true },
-    { todo: 'todo11', _id: '11', isChecked: true },
-    { todo: 'todo12', _id: '12', isChecked: true },
-  ]);
+  // const [todos, setTodos] = useState([
+  //   { todo: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡ', _id: '1', isChecked: false },
+  //   { todo: 'todo2', _id: '2', isChecked: false },
+  //   { todo: 'todo3', _id: '3', isChecked: true },
+  //   { todo: 'todo4', _id: '4', isChecked: true },
+  //   { todo: 'todo5', _id: '5', isChecked: true },
+  //   { todo: 'todo6', _id: '6', isChecked: true },
+  //   { todo: 'todo7', _id: '7', isChecked: true },
+  //   { todo: 'todo8', _id: '8', isChecked: true },
+  //   { todo: 'todo9', _id: '9', isChecked: true },
+  //   { todo: 'todo10', _id: '10', isChecked: true },
+  //   { todo: 'todo11', _id: '11', isChecked: true },
+  //   { todo: 'todo12', _id: '12', isChecked: true },
+  // ]);
 
-  const putMutation = useMutation({
-    mutationFn: ({ _id, data }: { data: PutPostTodoReq; _id: string }) =>
-      putTodo(data, _id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['getTodos', selectedDate],
-      });
-    },
-  });
+  // const putMutation = useMutation({
+  //   mutationFn: ({ _id, data }: { data: PutPostTodoReq; _id: string }) =>
+  //     putTodo(data, _id),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ['getTodos', selectedDate],
+  //     });
+  //   },
+  // });
 
-  const postMutation = useMutation({
-    mutationFn: ({ data, date }: { data: PutPostTodoReq; date: string }) =>
-      postTodo(data, date),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['getTodos', selectedDate],
-      });
-    },
-  });
+  // const postMutation = useMutation({
+  //   mutationFn: ({ data, date }: { data: PutPostTodoReq; date: string }) =>
+  //     postTodo(data, date),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ['getTodos', selectedDate],
+  //     });
+  //   },
+  // });
 
   const handleLeftArrow = () => {
     if (
@@ -91,7 +105,10 @@ export default function Todos() {
     }
   };
 
-  const handleEditButton = (e: MouseEvent<SVGElement>, todo: GetTodosRes) => {
+  const handleEditButton = (
+    e: MouseEvent<SVGElement>,
+    todo: ServerToClientPlanner
+  ) => {
     e.stopPropagation();
     setEditingTodo(todo._id);
     setIsAddFormOpened(false);
@@ -120,28 +137,69 @@ export default function Todos() {
 
   const handleCheckBoxChange = (checked: boolean, todoId: string) => {
     // @ 임시데이터의 체크박스값 수정
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo._id === todoId ? { ...todo, isChecked: checked } : todo
-      )
-    );
-
+    // setTodos((prevTodos) =>
+    //   prevTodos.map((todo) =>
+    //     todo._id === todoId ? { ...todo, isChecked: checked } : todo
+    //   )
+    // );
     // @ 백엔드에 데이터 수정 요청 코드 추가
   };
 
-  const onPutSubmit = (data: PutPostTodoReq, todo: GetTodosRes) => {
+  const onPutSubmit = (data: PutPostTodoReq, todo: ServerToClientPlanner) => {
     if (data.todo !== todo.todo) {
-      const _id = todo._id;
-      putMutation.mutate({ data, _id });
+      // const _id = todo._id;
+      // putMutation.mutate({ data, _id });
+      const payload = {
+        plannerId: todo._id,
+        todo: data.todo,
+        isCompleted: data.isComplete,
+      };
+      socket?.emit('modifyPlanner', payload);
     }
     setEditingTodo(null);
   };
 
   const onPostSubmit = (data: PutPostTodoReq) => {
     const date = selectedDate;
-    postMutation.mutate({ data, date });
+    // postMutation.mutate({ data, date });
+    const payload = {
+      date: date,
+      todo: data.todo,
+    };
+    socket?.emit('createPlanner', payload);
     setIsAddFormOpened(false);
   };
+
+  const createPlanner = (newTodo: ServerToClientPlanner) => {
+    addTodos(newTodo);
+  };
+
+  const updatePlanner = (updateTodo: ServerToClientPlanner) => {
+    updateTodos(updateTodo);
+  };
+  // 임시 socket 코드 작성
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    console.log(todos);
+
+    socket.on('responseCreateTodo', (data) => {
+      createPlanner(data);
+      // console.log(data);
+    });
+
+    socket.on('responseUpdatePlanner', (data) => {
+      updatePlanner(data);
+      console.log(data);
+    });
+
+    return () => {
+      socket.off('createPlanner');
+      socket.off('responseUpdatePlanner');
+    };
+  }, [socket, todos]);
+  // end
 
   return (
     <S.Wrapper>
@@ -171,7 +229,7 @@ export default function Todos() {
               isSelected={selectedTodo?._id === todo._id ? true : false}
             >
               <CheckBox
-                defaultChecked={todo.isChecked}
+                defaultChecked={todo.isComplete}
                 onChange={(checked) => handleCheckBoxChange(checked, todo._id)}
               />
               {editingTodo === todo._id ? (
@@ -208,7 +266,7 @@ export default function Todos() {
                 </S.TodoForm>
               ) : (
                 <>
-                  <S.TodoTextArea isChecked={todo.isChecked}>
+                  <S.TodoTextArea isChecked={todo.isComplete}>
                     {todoText}
                   </S.TodoTextArea>
                   <S.TodoEditIcon onClick={(e) => handleEditButton(e, todo)} />
@@ -254,7 +312,9 @@ export default function Todos() {
       </S.AddButton>
     </S.Wrapper>
   );
-}
+};
+
+export default Todos;
 
 const omitLongText = (text: string, limitLength: number) => {
   if (text.length > limitLength) {

@@ -7,6 +7,7 @@ import SignUpPage from '@/pages/signUp/SignUpPage';
 import ProfilePage from '@/pages/profile/ProfilePage';
 import Planner from '@/pages/planner/Planner';
 import PrivateStudyRoom from '@/pages/privateStudyRoom/PrivateStudyRoom';
+import MultiStudyRoom from '@/pages/multiStudyRoom/MultiStudyRoom';
 
 export default function Router() {
   return (
@@ -18,6 +19,7 @@ export default function Router() {
       <Route path="/planner" element={<Planner />} />
       <Route path="/study-rooms" element={<StudyRooms />} />
       <Route path="/study-room" element={<PrivateStudyRoom />} />
+      <Route path="/multi-study-room" element={<MultiStudyRoom />} />
     </Routes>
   );
 }

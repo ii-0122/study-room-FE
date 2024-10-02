@@ -15,7 +15,8 @@ export interface GetTodosRes {
   parentObjectId: string | undefined;
   isComplete: boolean;
   date: string;
-  userId: string;
+  totalTime: number;
+  // userId: string;
 }
 
 export interface PutPostTodoReq {
@@ -32,7 +33,26 @@ export interface PutPostTodoReq {
   repeatDays?: string[];
   repeatWeeks?: number;
   parentObjectId?: string | undefined;
-  isComplete?: boolean;
+  isComplete: boolean;
   date: string;
-  userId: string; // jwt에서 뽑아쓸수?
+  totalTime: number;
+  // userId: string; // jwt에서 뽑아쓸수?
+}
+
+export interface CreatePlannerModel {
+  date: string;
+  todo: string;
+}
+export interface UpdatePlannerModel {
+  plannerId: string;
+  date: string;
+  todo: string;
+}
+
+export interface ServerToClientPlanner {
+  _id: string;
+  date: string;
+  todo: string;
+  isComplete: boolean;
+  totalTime: number;
 }
