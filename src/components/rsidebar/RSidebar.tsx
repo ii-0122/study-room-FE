@@ -3,7 +3,6 @@ import * as S from './RSidebar.style';
 import Todos from './todos/Todos';
 import ChatRoom from './chatRoom/ChatRoom';
 import { formatDateTime } from './utils/dateFormat';
-import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
 
 type Tabs = '노트' | '할 일' | '채팅';
 

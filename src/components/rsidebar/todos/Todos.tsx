@@ -194,7 +194,7 @@ const Todos = () => {
     });
 
     return () => {
-      socket.off('createPlanner');
+      socket.off('responseCreateTodo');
       socket.off('responseUpdatePlanner');
     };
   }, [socket, todos]);
