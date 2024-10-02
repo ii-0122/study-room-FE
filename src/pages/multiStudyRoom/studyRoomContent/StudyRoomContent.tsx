@@ -32,7 +32,7 @@ const MultiStudyRoom = () => {
   const [initialCurrentTaskTime, setInitialCurrentTaskTime] =
     useState('00:00:00'); // 초기 현재 작업 시간
 
-  const initUsersTimer = (currentMember: string[]) => {
+  const initUsersTimers = (currentMember: string[]) => {
     currentMember.forEach((value) => {
       if (value !== user.nickname) {
         const userExists = usersTimerInfo.some(
@@ -82,13 +82,11 @@ const MultiStudyRoom = () => {
         setStudyRoomInfo(data);
         setTotalStudyTime(numberToTimer(data.totalTime));
         setTodos(data.planner);
-        initUsersTimer(data.currentMember);
-        // console.log(data.currentMember);
       });
 
       socket.on('addMemberAndRequestUserInfo', (data) => {
-        // error
-        // setUsersTimerInfo((prevUsers) => [...prevUsers, data]);
+        // console.log(data);
+        setUsersTimerInfo((prevUsers) => [...prevUsers, data]);
       });
 
       return () => {

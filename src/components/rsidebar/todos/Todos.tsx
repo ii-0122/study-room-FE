@@ -182,7 +182,6 @@ const Todos = () => {
     if (!socket) {
       return;
     }
-    console.log(todos);
 
     socket.on('responseCreateTodo', (data) => {
       createPlanner(data);
@@ -191,7 +190,7 @@ const Todos = () => {
 
     socket.on('responseUpdatePlanner', (data) => {
       updatePlanner(data);
-      console.log(data);
+      // console.log(data);
     });
 
     return () => {
