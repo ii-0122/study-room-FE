@@ -1,14 +1,12 @@
-import { useAuthStore } from '@/stores';
 import axiosInstance from './axiosInstance.api';
 import type { SignUpFormInputs } from '@/types/auth';
 import { API_ROUTES } from './apiRoutes';
+import { useAuthStore } from '@/stores/auth.store';
 
 export const login = async (data: { id: string; password: string }) => {
-  const response = await axiosInstance.post(API_ROUTES.LOGIN, data, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.post(API_ROUTES.LOGIN, data);
 
-  const accessToken = response.data.access_token;
+  const accessToken = response.data.accessToken;
   const user = response.data.user;
 
   const { setAuthData } = useAuthStore.getState();
@@ -19,7 +17,7 @@ export const login = async (data: { id: string; password: string }) => {
 };
 
 export const logout = async () => {
-  await axiosInstance.post(API_ROUTES.LOGOUT, {}, { withCredentials: true });
+  await axiosInstance.post(API_ROUTES.LOGOUT);
 
   const { clearAuthData } = useAuthStore.getState();
   clearAuthData();
