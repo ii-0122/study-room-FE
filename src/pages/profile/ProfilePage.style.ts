@@ -49,6 +49,13 @@ export const Input = styled.input`
   }
 `;
 
+export const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
+`;
+
 export const SettingButton = styled.button`
   min-width: 60px;
   min-height: 30px;

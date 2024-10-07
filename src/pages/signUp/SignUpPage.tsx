@@ -1,42 +1,56 @@
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import useDebounce from '@/hooks/useDebounce';
 import { signUp } from '@/apis/auth.api';
 import type { SignUpFormInputs } from '@/types/auth';
 import Button from '@/components/button/Button';
 import Input from '@/components/input/Input';
 import * as S from '@/styles/AuthFormStyles';
+import checkFieldDuplicate from '@/utils/checkFieldDuplicate';
 
 export default function SignUpPage() {
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<SignUpFormInputs>();
+    formState: { errors, isValid },
+    control,
+  } = useForm<SignUpFormInputs>({ mode: 'onChange' });
   const navigate = useNavigate();
-  const password = watch('password');
+  const [idDuplicateError, setIdDuplicateError] = useState<string | null>(null);
+  const [nicknameDuplicateError, setNicknameDuplicateError] = useState<
+    string | null
+  >(null);
+
+  const id = useWatch({ control, name: 'id' });
+  const nickname = useWatch({ control, name: 'nickname' });
+  const password = useWatch({ control, name: 'password' });
+
+  useDebounce(() => checkFieldDuplicate('id', id, setIdDuplicateError), 500, [
+    id,
+  ]);
+  useDebounce(
+    () => checkFieldDuplicate('nickname', nickname, setNicknameDuplicateError),
+    500,
+    [nickname]
+  );
 
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (data) => {
-    try {
-      await signUp(data);
-      alert('회원가입이 성공적으로 완료되었습니다.');
-      navigate('/login');
-    } catch (error) {
-      console.error('회원가입 실패', error);
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-    }
+    const { password, nickname, id } = data;
+
+    await signUp({ password, nickname, id });
+    alert('회원가입이 성공적으로 완료되었습니다.');
+    navigate('/login');
   };
 
   return (
     <S.Container>
       <S.Title>회원가입</S.Title>
-      <S.Form onSubmit={handleSubmit(onSubmit)}>
+      <S.Form onSubmit={handleSubmit(onSubmit)} noValidate>
         <S.InputContainer>
           <S.Label>아이디</S.Label>
           <Input
-            hasError={!!errors.id}
+            hasError={!!errors.id || !!idDuplicateError}
             placeholder="아이디"
             {...register('id', {
               required: '아이디를 입력해주세요.',
@@ -46,12 +60,16 @@ export default function SignUpPage() {
               },
             })}
           />
-          {errors.id && <S.ErrorMessage>{errors.id.message}</S.ErrorMessage>}
+          {(errors.id || idDuplicateError) && (
+            <S.ErrorMessage>
+              {errors.id?.message || idDuplicateError}
+            </S.ErrorMessage>
+          )}
         </S.InputContainer>
         <S.InputContainer>
           <S.Label>닉네임</S.Label>
           <Input
-            hasError={!!errors.nickname}
+            hasError={!!errors.nickname || !!nicknameDuplicateError}
             placeholder="닉네임"
             {...register('nickname', {
               required: '닉네임을 입력해주세요.',
@@ -62,8 +80,10 @@ export default function SignUpPage() {
               },
             })}
           />
-          {errors.nickname && (
-            <S.ErrorMessage>{errors.nickname.message}</S.ErrorMessage>
+          {(errors.nickname || nicknameDuplicateError) && (
+            <S.ErrorMessage>
+              {errors.nickname?.message || nicknameDuplicateError}
+            </S.ErrorMessage>
           )}
         </S.InputContainer>
         <S.InputContainer>
@@ -102,7 +122,7 @@ export default function SignUpPage() {
             <S.ErrorMessage>{errors.confirmPassword.message}</S.ErrorMessage>
           )}
         </S.InputContainer>
-        <Button type="submit" size="large">
+        <Button type="submit" size="large" disabled={!isValid}>
           회원가입
         </Button>
       </S.Form>

@@ -19,7 +19,7 @@ export const SCreateButtonStyle = styled.button.withConfig({
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 20px;
+  padding: 0 10px;
   position: relative;
   font-weight: 500;
   cursor: pointer;
@@ -28,10 +28,13 @@ export const SCreateButtonStyle = styled.button.withConfig({
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-right: 10px;
   }
 
   .label {
     flex: 1;
     text-align: center;
+    white-space: nowrap;
+    margin: 0;
   }
 `;

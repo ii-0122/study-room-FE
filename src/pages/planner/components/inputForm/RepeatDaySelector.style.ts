@@ -4,6 +4,7 @@ export const DaySelectWrapper = styled.div`
   display: flex;
   gap: max(0.5vw, 0.3rem);
   margin-right: 10px;
+  margin-bottom: 8px;
 `;
 
 export const DaySelectInput = styled.input`

@@ -24,20 +24,18 @@ function Search({ onSearchChange }: SearchProps) {
 
   return (
     <S.SearchStyle>
-      <div className="search">
-        <IoIosSearch className="search-icon" />
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="스터디 이름을 검색해보세요."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        {searchText && (
-          <IoIosClose className="close-icon" onClick={handleClear} />
-        )}
-      </div>
+      <IoIosSearch className="search-icon" />
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="공부방 이름을 검색해보세요."
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+      {searchText && (
+        <IoIosClose className="close-icon" onClick={handleClear} />
+      )}
     </S.SearchStyle>
   );
 }

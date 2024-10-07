@@ -4,8 +4,8 @@ import Button from '@/components/button/Button';
 import Input from '@/components/input/Input';
 import type { LoginFormInputs } from '@/types/auth';
 import { login } from '@/apis/auth.api';
-import { useUserStore } from '@/stores';
 import * as S from '@/styles/AuthFormStyles';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const {
@@ -14,19 +14,17 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginFormInputs>();
   const navigate = useNavigate();
-  const { setUserFromCookie } = useUserStore();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       await login(data);
-      setUserFromCookie();
-      alert('로그인 성공!');
       navigate('/');
+      if (location.pathname === '/') {
+        toast.success('로그인 성공');
+      }
     } catch (error) {
-      console.error('로그인 실패', error);
-
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(`로그인 실패`);
       }
     }
   };

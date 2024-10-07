@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { logout } from '@/apis/auth.api';
-import { useAuthStore } from '@/stores';
 import * as S from './Header.style';
+import { useAuthStore } from '@/stores/auth.store';
+import { toast } from 'react-toastify';
 
 interface HeaderProps {
   title: string;
@@ -9,20 +10,20 @@ interface HeaderProps {
 
 export default function Header({ title }: HeaderProps) {
   const navigate = useNavigate();
-  const { user, accessToken, clearAuthData } = useAuthStore();
+  const { accessToken, clearAuthData } = useAuthStore();
 
   const handleLogout = async () => {
     await logout();
     clearAuthData();
-    alert('로그아웃 되었습니다.');
+    toast.success('로그아웃 되었습니다.');
     navigate('/');
   };
 
   return (
     <S.HeaderContainer>
-      <S.HeaderTitle>{title}</S.HeaderTitle>{' '}
+      <S.HeaderTitle>{title}</S.HeaderTitle>
       <S.ButtonWrapper>
-        {user && accessToken ? (
+        {accessToken ? (
           <>
             <S.Button onClick={handleLogout}>로그아웃</S.Button>
             <S.Button onClick={() => navigate('/profile')}>프로필</S.Button>

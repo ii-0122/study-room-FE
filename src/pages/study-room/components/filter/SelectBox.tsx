@@ -1,17 +1,24 @@
-import { TbTriangleInvertedFilled } from 'react-icons/tb';
-import * as S from './SelectBox.style';
 import { useState } from 'react';
+import * as S from './SelectBox.style';
+import { GoArrowSwitch } from 'react-icons/go';
 
 interface SelectBoxProps {
   onFilterChange: (filter: { isPublic?: boolean }) => void;
 }
 
+const options = [
+  { value: 'all', label: '전체 공부방' },
+  { value: 'public', label: '공개 공부방' },
+  { value: 'secret', label: '비공개 공부방' },
+];
+
 function SelectBox({ onFilterChange }: SelectBoxProps) {
   const [selectedValue, setSelectedValue] = useState('all');
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleSelect = (value: string) => {
     setSelectedValue(value);
+    setIsOpen(false);
 
     if (value === 'public') {
       onFilterChange({ isPublic: true });
@@ -24,19 +31,28 @@ function SelectBox({ onFilterChange }: SelectBoxProps) {
 
   return (
     <S.SelectBoxStyle>
-      <div className="select-wrap">
-        <select
-          id="study-select"
-          name="전체 스터디"
-          value={selectedValue}
-          onChange={handleChange}
-        >
-          <option value="all">전체 스터디</option>
-          <option value="public">공개 스터디</option>
-          <option value="secret">비공개 스터디</option>
-        </select>
-        <TbTriangleInvertedFilled className="triangle" />
-      </div>
+      <S.Select onClick={() => setIsOpen(!isOpen)}>
+        <S.Arrow>
+          <GoArrowSwitch />
+        </S.Arrow>
+        <S.SelectedLabel>
+          {options.find((option) => option.value === selectedValue)?.label}
+        </S.SelectedLabel>
+      </S.Select>
+
+      {isOpen && (
+        <S.Options>
+          {options.map((option) => (
+            <S.Option
+              key={option.value}
+              onClick={() => handleSelect(option.value)}
+              isSelected={option.value === selectedValue}
+            >
+              {option.label}
+            </S.Option>
+          ))}
+        </S.Options>
+      )}
     </S.SelectBoxStyle>
   );
 }

@@ -9,8 +9,11 @@ import ImageUpload from '../imageUpload/ImageUpload';
 import { FaPlus, FaStarOfLife } from 'react-icons/fa6';
 import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
 import { createStudyRoom } from '@/apis/studyRooms.api';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function CreateStudyRoomForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -18,7 +21,12 @@ export default function CreateStudyRoomForm() {
     watch,
     setValue,
     setError,
-  } = useForm<CreateStudyRoomFormData>({ mode: 'onSubmit' });
+  } = useForm<CreateStudyRoomFormData>({
+    mode: 'onSubmit',
+    defaultValues: {
+      isPublic: true,
+    },
+  });
 
   const onSubmit: SubmitHandler<CreateStudyRoomFormData> = async (data) => {
     const formattedData = {
@@ -26,12 +34,9 @@ export default function CreateStudyRoomForm() {
       maxNum: Number(data.maxNum),
     };
 
-    try {
-      const result = await createStudyRoom(formattedData);
-      console.log('공부방 생성 성공:', result);
-    } catch (error) {
-      console.error('공부방 생성 에러:', error);
-    }
+    await createStudyRoom(formattedData);
+    toast.success('공부방 생성 성공');
+    navigate(`/study-room/${result._id}`);
   };
 
   const handleKeyDown = (
@@ -43,25 +48,24 @@ export default function CreateStudyRoomForm() {
   };
 
   const isPublic = watch('isPublic', true);
-
   const ImageInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <S.CreateFormWrapper>
-      <S.CreateTitle>스터디방 추가</S.CreateTitle>
+      <S.CreateTitle>공부방 추가</S.CreateTitle>
 
       <S.CreateForm onSubmit={handleSubmit(onSubmit)}>
         <S.FormInputField>
           <S.FormLabel htmlFor="title">
-            스터디 이름
+            공부방 이름
             <FaStarOfLife size={6} color="#599BFC" />
           </S.FormLabel>
           <S.FormInput
             id="title"
-            placeholder="스터디 이름을 작성해 주세요."
+            placeholder="공부방 이름을 작성해 주세요."
             onKeyDown={handleKeyDown}
             {...register('title', {
-              required: '스터디 이름은 필수입니다.',
+              required: '공부방 이름은 필수입니다.',
               maxLength: {
                 value: 30,
                 message: '최대 30자까지 입력할 수 있습니다.',

@@ -5,15 +5,14 @@ import GlobalStyles from './styles/GlobalStyles';
 import { theme } from './styles/theme';
 import Router from './router/Router';
 import Layout from './components/layout/Layout';
-import { useRestoreUser } from './hooks/useRestoreUser';
+import CustomToastContainer from './components/toast/Toast';
 
 const queryClient = new QueryClient();
 
 function App() {
-  useRestoreUser();
-
   return (
     <QueryClientProvider client={queryClient}>
+      <CustomToastContainer />
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <GlobalStyles />

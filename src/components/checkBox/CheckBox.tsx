@@ -1,30 +1,27 @@
-import { useState } from 'react';
 import { CheckBoxStyle } from './CheckBox.style';
 
 interface CheckBoxProps {
   isVisible?: boolean;
   defaultChecked?: boolean;
-  onChange?: (checked: boolean) => void;
+  onChange?: () => void;
+  disabled?: boolean;
 }
 
 export default function CheckBox({
   isVisible = true,
   defaultChecked,
   onChange,
+  disabled = false,
 }: CheckBoxProps) {
-  const [isChecked, setIsChecked] = useState(defaultChecked);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked);
-
     if (onChange) {
-      onChange(e.target.checked);
+      onChange();
     }
   };
 
   return (
     <CheckBoxStyle
-      isChecked={isChecked}
+      isChecked={defaultChecked}
       isVisible={isVisible}
       onClick={(e) => {
         e?.stopPropagation();
@@ -34,8 +31,9 @@ export default function CheckBox({
         <input
           type="checkbox"
           className="checkBox"
-          checked={isChecked}
+          checked={defaultChecked}
           onChange={handleChange}
+          disabled={disabled}
         />
         <span className="custom-checkbox-content"></span>
       </label>
