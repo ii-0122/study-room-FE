@@ -34,9 +34,14 @@ export default function CreateStudyRoomForm() {
       maxNum: Number(data.maxNum),
     };
 
-    await createStudyRoom(formattedData);
-    toast.success('공부방 생성 성공');
-    navigate(`/study-room/${result._id}`);
+    try {
+      const result = await createStudyRoom(formattedData);
+      toast.success('공부방 생성 성공');
+      navigate(`/study-room/${result._id}`);
+    } catch (error) {
+      console.error('방 생성 실패:', error);
+      toast.error('공부방 생성 실패');
+    }
   };
 
   const handleKeyDown = (
