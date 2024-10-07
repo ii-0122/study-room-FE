@@ -1,4 +1,4 @@
-import { useState, forwardRef, Ref, SetStateAction, Dispatch } from 'react';
+import { forwardRef, Ref, SetStateAction, Dispatch } from 'react';
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
@@ -7,17 +7,19 @@ import * as S from './DatePicker.style';
 
 interface CustomInputProps extends React.HTMLProps<HTMLDivElement> {
   value?: string;
-  setStartDate: Dispatch<SetStateAction<Date>>;
+  setSelectedDate: Dispatch<SetStateAction<Date>>;
 }
 
 interface CustomDatePickerProps {
   className?: string;
+  selectedDate: Date;
+  setSelectedDate: Dispatch<SetStateAction<Date>>;
 }
 
 const CustomInput = forwardRef<HTMLDivElement, CustomInputProps>(
-  ({ value, onClick, setStartDate }, ref: Ref<HTMLDivElement>) => {
+  ({ value, onClick, setSelectedDate }, ref: Ref<HTMLDivElement>) => {
     const handlePreviousDate = () => {
-      setStartDate((prev) => {
+      setSelectedDate((prev) => {
         const previousDate = new Date(prev);
         previousDate.setDate(previousDate.getDate() - 1);
         return previousDate;
@@ -25,7 +27,7 @@ const CustomInput = forwardRef<HTMLDivElement, CustomInputProps>(
     };
 
     const handleNextDate = () => {
-      setStartDate((prev) => {
+      setSelectedDate((prev) => {
         const nextDate = new Date(prev);
         nextDate.setDate(nextDate.getDate() + 1);
         return nextDate;
@@ -44,22 +46,24 @@ const CustomInput = forwardRef<HTMLDivElement, CustomInputProps>(
   }
 );
 
-export default function CustomDatePicker({ className }: CustomDatePickerProps) {
-  const [startDate, setStartDate] = useState(new Date());
-
+export default function CustomDatePicker({
+  className,
+  selectedDate,
+  setSelectedDate,
+}: CustomDatePickerProps) {
   return (
     <DatePicker
       wrapperClassName={className}
       locale={ko}
-      selected={startDate}
+      selected={selectedDate}
       dateFormatCalendar="YYYY년 MMMM"
       dateFormat="yyyy.MM.dd (EE)"
       onChange={(date) => {
         if (date) {
-          setStartDate(date);
+          setSelectedDate(date);
         }
       }}
-      customInput={<CustomInput setStartDate={setStartDate} />}
+      customInput={<CustomInput setSelectedDate={setSelectedDate} />}
     />
   );
 }

@@ -1,22 +1,31 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import CustomDatePicker from '@/components/datePicker/DatePicker';
 import TodoBox from './components/todoBox/TodoBox';
 import TimeLine from './components/timeLine/TimeLine';
 import TimeTable from './components/timeTable/TimeTable';
 import { InputForm } from './components/inputForm/InputForm';
+import { getTodos } from '@/apis/planners.api';
+import { GetTodosRes } from '@/models/studyRoomTodos.model';
 import { colorMap } from '@/data/colorMap';
-import { ITodoBox } from '@/models/todoBox.model';
 import * as S from './Planner.style';
 
 export default function Planner() {
   const [timeLineFullHeight, setTimeLineFullHeight] = useState(0);
   const [isEditFormOpened, setIsEditFormOpened] = useState<boolean>(false);
   const [isAddFormOpened, setIsAddFormOpened] = useState<boolean>(false);
-  const [todos, setTodos] = useState<ITodoBox[]>(testData);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
   const timeLineHeightRef = useRef<HTMLDivElement | null>(null);
   const inputFormRef = useRef<HTMLFormElement | null>(null);
   const editFormRef = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const { data: todos, isPending: todosPending } = useQuery<GetTodosRes[]>({
+    queryKey: ['getTodos', selectedDate],
+    queryFn: () => getTodos(dayjs(selectedDate).format('YYYY-MM-DD')) ?? [],
+  });
 
   useEffect(() => {
     if (timeLineHeightRef.current) {
@@ -54,21 +63,45 @@ export default function Planner() {
     }
   }, [isAddFormOpened, isEditFormOpened, editIndex]);
 
+  useEffect(() => {
+    setIsAddFormOpened(false);
+    setIsEditFormOpened(false);
+  }, [selectedDate]);
+
   return (
     <S.PlannerWrapper>
       <S.LeftPanel>
         <div className="label">오늘의 계획</div>
         <S.LeftHeader>
-          <CustomDatePicker className="date" />
-          <S.AddButton onClick={handleAddButton}></S.AddButton>
+          <CustomDatePicker
+            className="date"
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+          <S.AddButton
+            onClick={() => {
+              if (
+                selectedDate.setHours(0, 0, 0, 0) <
+                new Date().setHours(0, 0, 0, 0)
+              ) {
+                alert(
+                  `지난 날짜의 할 일 추가는 불가능합니다. \n${dayjs().format('YYYY-MM-DD')} 이후의 날짜에서 다시 시도해주세요.`
+                );
+                return;
+              }
+              handleAddButton();
+            }}
+          ></S.AddButton>
         </S.LeftHeader>
         <S.LeftContentWrapper ref={timeLineHeightRef}>
-          {todos.length !== 0 && <S.TimeLineFull height={timeLineFullHeight} />}
+          {todos && todos.length !== 0 && (
+            <S.TimeLineFull height={timeLineFullHeight} />
+          )}
           <S.TodosWrapper>
-            {todos.length
+            {todos && todos.length
               ? todos.map((todo, index) => {
                   return (
-                    <Fragment key={todo.id}>
+                    <Fragment key={todo._id}>
                       <S.EachContentWrapper
                         ref={(el) => (editFormRef.current[index] = el)}
                       >
@@ -78,42 +111,45 @@ export default function Planner() {
                         />
                         <TodoBox
                           {...todo}
-                          index={index}
                           onClick={() => {
                             handleTodoBoxClick(index);
                           }}
-                          color={colorMap[index]}
+                          color={colorMap[index] ?? 'gainsboro'}
+                          selectedDate={selectedDate}
                         ></TodoBox>
                       </S.EachContentWrapper>
                       {isEditFormOpened && index === editIndex && (
                         <InputForm
-                          setIsEditFormOpened={setIsEditFormOpened}
-                          setTodos={setTodos}
                           formType="edit"
+                          setIsEditFormOpened={setIsEditFormOpened}
                           currentData={todo}
                           setEditIndex={setEditIndex}
                           currentIndex={index}
                           todos={todos}
+                          selectedDate={selectedDate}
                         />
                       )}
                     </Fragment>
                   );
                 })
-              : !isAddFormOpened && (
+              : !isAddFormOpened &&
+                (todosPending ? (
+                  <S.Loader />
+                ) : (
                   <S.NoData>
                     오늘의 공부 계획을
                     <br />
                     세워보세요!
                   </S.NoData>
-                )}
+                ))}
             {isAddFormOpened ? (
               <InputForm
+                formType="add"
                 ref={inputFormRef}
                 setIsAddFormOpened={setIsAddFormOpened}
-                setTodos={setTodos}
-                formType="add"
                 setEditIndex={setEditIndex}
-                todos={todos}
+                todos={todos ?? []}
+                selectedDate={selectedDate}
               />
             ) : null}
           </S.TodosWrapper>
@@ -122,56 +158,8 @@ export default function Planner() {
       <S.RightPanel>
         <div className="label">오늘의 공부 시간</div>
         <S.StudiedTime>XX시간 XX분 공부했어요!</S.StudiedTime>
-        <TimeTable
-          todos={todos.map((todo, index) => {
-            return { ...todo, color: colorMap[index] };
-          })}
-        />
+        <TimeTable selectedDate={selectedDate} />
       </S.RightPanel>
     </S.PlannerWrapper>
   );
 }
-
-const testData: ITodoBox[] = [
-  {
-    id: '1',
-    detail: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
-    startTime: '08:33',
-    endTime: '08:52',
-  },
-  {
-    id: '2',
-    title: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
-    detail: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ웰',
-    startTime: '09:00',
-    endTime: '10:00',
-  },
-  {
-    id: '3',
-    title: '제목3',
-    detail: '할일3',
-    startTime: '12:00',
-    endTime: '14:00',
-  },
-  { id: '4', title: '제목4', detail: '할일4', startTime: '', endTime: '' },
-  { id: '5', title: '제목5', detail: '할일5', startTime: '', endTime: '' },
-  {
-    id: '6',
-    title: '제목6',
-    detail: '할일6',
-    startTime: '19:00',
-    endTime: '21:00',
-  },
-  // { id: '7', title: '제목1', detail: '할일1', startTime: '', endTime: '' },
-  // { id: '8', title: '제목2', detail: '할일2', startTime: '', endTime: '' },
-  // { id: '9', title: '제목3', detail: '할일3', startTime: '', endTime: '' },
-  // { id: '10', title: '제목4', detail: '할일4', startTime: '', endTime: '' },
-  // { id: '11', title: '제목5', detail: '할일5', startTime: '', endTime: '' },
-  // { id: '12', title: '제목6', detail: '할일6', startTime: '', endTime: '' },
-  // { id: '13', title: '제목1', detail: '할일1', startTime: '', endTime: '' },
-  // { id: '14', title: '제목2', detail: '할일2', startTime: '', endTime: '' },
-  // { id: '15', title: '제목3', detail: '할일3', startTime: '', endTime: '' },
-  // { id: '16', title: '제목4', detail: '할일4', startTime: '', endTime: '' },
-  // { id: '17', title: '제목5', detail: '할일5', startTime: '', endTime: '' },
-  // { id: '18', title: '제목6', detail: '할일6', startTime: '', endTime: '' },
-];

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { TbCalendarRepeat } from 'react-icons/tb';
 
 export const TodoBoxStyle = styled.div`
   display: flex;
@@ -11,15 +12,16 @@ export const TodoBoxStyle = styled.div`
   &:hover {
     cursor: pointer;
   }
+  gap: 3%;
 `;
 
 export const ColorBarStyle = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'barColor',
 })<{ barColor?: string }>`
-  margin-right: 20px;
   height: 100%;
   min-width: min(0.6vw, 11px);
-  background-color: ${(props) => (props.barColor ? props.barColor : null)};
+  background-color: ${(props) =>
+    props.barColor ? props.barColor : 'gainsboro'};
   border-radius: 8px;
 `;
 
@@ -28,8 +30,14 @@ export const InfoArea = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: space-evenly;
-  margin-right: 3%;
+`;
+
+export const InfoTextArea = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 `;
 
 export const TodoStyle = styled.div`
@@ -42,5 +50,17 @@ export const SubjectStyle = styled.div`
 
 export const CheckBoxArea = styled.div`
   margin-left: auto;
-  margin-right: 5%;
+  margin-right: 4%;
+`;
+
+export const RepeatContainer = styled.div`
+  font-size: max(0.8vw, 0.5rem);
+  color: gray;
+  display: flex;
+  align-items: center;
+`;
+
+export const RepeatIcon = styled(TbCalendarRepeat)`
+  font-size: max(0.8vw, 1rem);
+  margin-right: 10px;
 `;

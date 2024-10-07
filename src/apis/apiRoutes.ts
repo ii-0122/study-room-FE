@@ -4,4 +4,5 @@ export const API_ROUTES = {
   SIGNUP: '/auth/signup',
   REFRESH_TOKEN: '/auth/refresh-token',
   ME: '/auth/me',
+  PLANNERS: '/planners',
 };
