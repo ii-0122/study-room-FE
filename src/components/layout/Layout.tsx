@@ -20,8 +20,9 @@ export default function Layout({ children }: LayoutProps) {
   const pageTitles: { [key: string]: string } = {
     '/': '홈',
     '/profile': '프로필',
-    '/planner': '스터디 플래너',
+    '/planner': '플래너',
     '/study-rooms': '공부방',
+    '/ranking': '랭킹',
   };
 
   const pageTitle = pageTitles[location.pathname];
