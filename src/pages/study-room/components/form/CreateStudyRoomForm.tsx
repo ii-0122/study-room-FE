@@ -9,6 +9,7 @@ import ImageUpload from '../imageUpload/ImageUpload';
 import { FaPlus, FaStarOfLife } from 'react-icons/fa6';
 import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
 import { createStudyRoom } from '@/apis/studyRooms.api';
+import { toast } from 'react-toastify';
 
 export default function CreateStudyRoomForm() {
   const {
@@ -26,12 +27,8 @@ export default function CreateStudyRoomForm() {
       maxNum: Number(data.maxNum),
     };
 
-    try {
-      const result = await createStudyRoom(formattedData);
-      console.log('공부방 생성 성공:', result);
-    } catch (error) {
-      console.error('공부방 생성 에러:', error);
-    }
+    await createStudyRoom(formattedData);
+    toast.success('공부방 생성 성공');
   };
 
   const handleKeyDown = (

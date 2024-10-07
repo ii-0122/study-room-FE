@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '@/apis/auth.api';
 import * as S from './Header.style';
 import { useAuthStore } from '@/stores/auth.store';
+import { toast } from 'react-toastify';
 
 interface HeaderProps {
   title: string;
@@ -14,7 +15,7 @@ export default function Header({ title }: HeaderProps) {
   const handleLogout = async () => {
     await logout();
     clearAuthData();
-    alert('로그아웃 되었습니다.');
+    toast.success('로그아웃 되었습니다.');
     navigate('/');
   };
 

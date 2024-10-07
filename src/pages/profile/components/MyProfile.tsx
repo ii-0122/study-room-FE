@@ -1,17 +1,29 @@
-import { IoPersonCircle } from 'react-icons/io5';
-import * as S from '../ProfilePage.style';
-import { FaCamera } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
 import { ChangeEvent, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useAuthStore } from '@/stores/auth.store';
+import { updateProfileFormData } from '@/types/updateProfile';
+import { updateProfile } from '@/apis/users.api';
+import { IoPersonCircle } from 'react-icons/io5';
+import { FaCamera } from 'react-icons/fa';
+import * as S from '../ProfilePage.style';
+import useDebounce from '@/hooks/useDebounce';
+import checkFieldDuplicate from '@/utils/checkFieldDuplicate';
 
 export default function MyProfile() {
-  const [preview, setPreview] = useState<string | null>(null);
-
   const {
-    register: registerProfile,
-    handleSubmit: handleSubmitProfile,
-    formState: { errors: profileErrors },
-  } = useForm({ mode: 'onSubmit' });
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm({ mode: 'onChange' });
+
+  const { user } = useAuthStore();
+
+  const [preview, setPreview] = useState<string | null>(user?.imageUrl || null);
+  const [nicknameDuplicateError, setNicknameDuplicateError] = useState<
+    string | null
+  >(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -24,7 +36,22 @@ export default function MyProfile() {
     }
   };
 
-  const onSubmitProfile = () => {};
+  const nickname = useWatch({ control, name: 'nickname' });
+
+  useDebounce(
+    () => checkFieldDuplicate('nickname', nickname, setNicknameDuplicateError),
+    500,
+    [nickname]
+  );
+
+  const onSubmit = async (data: updateProfileFormData) => {
+    await updateProfile({
+      nickname: data.nickname,
+      introduction: data.introduction,
+      imageUrl: preview || '',
+    });
+    toast.success('프로필 수정 완료!');
+  };
 
   return (
     <S.Container>
@@ -53,27 +80,38 @@ export default function MyProfile() {
           </S.DeleteImageButton>
         </S.ProfilePreviewWrapper>
       </S.InputField>
-      <S.ProfileForm onSubmit={handleSubmitProfile(onSubmitProfile)}>
+      <S.ProfileForm onSubmit={handleSubmit(onSubmit)}>
         <S.InputField>
           <S.Label htmlFor="nickname">닉네임</S.Label>
-          <S.Input
-            id="nickname"
-            {...registerProfile('nickname', {
-              required: '닉네임을 입력해 주세요.',
-            })}
-            defaultValue="닉네임"
-          />
-          {profileErrors.nickname &&
-            typeof profileErrors.nickname.message === 'string' && (
-              <span>{profileErrors.nickname.message}</span>
+          <S.InputWrapper>
+            <S.Input
+              id="nickname"
+              defaultValue={user?.nickname}
+              {...register('nickname', {
+                required: '닉네임을 입력해 주세요.',
+                pattern: {
+                  value: /^[a-zA-Z가-힣0-9]{2,8}$/,
+                  message:
+                    '닉네임은 영어, 한글, 숫자로 구성된 2~8글자여야 합니다.',
+                },
+              })}
+            />
+            {(errors.nickname?.message || nicknameDuplicateError) && (
+              <S.ErrorMessage>
+                {typeof errors.nickname?.message === 'string'
+                  ? errors.nickname?.message
+                  : nicknameDuplicateError}
+              </S.ErrorMessage>
             )}
+          </S.InputWrapper>
         </S.InputField>
         <S.InputField>
           <S.Label htmlFor="introduction">한 줄 소개</S.Label>
           <S.Input
             id="introduction"
-            {...registerProfile('introduction')}
+            defaultValue={user?.introduction}
             placeholder="나를 한 줄로 표현해 주세요!"
+            {...register('introduction')}
           />
         </S.InputField>
         <S.SettingButton type="submit">수정</S.SettingButton>
