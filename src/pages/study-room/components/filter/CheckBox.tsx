@@ -16,15 +16,14 @@ function CheckBox({ onFilterChange }: CheckBoxProps) {
 
   return (
     <S.CheckBoxStyle>
-      <div className="checkbox-wrap">
-        <input
-          type="checkbox"
-          id="checkboxInput"
-          checked={isChecked}
-          onChange={handleCheckboxChange}
-        />
-        <label htmlFor="checkboxInput">바로 참여 가능한 방</label>
-      </div>
+      <div className="checkbox-wrap"></div>
+      <input
+        type="checkbox"
+        id="checkboxInput"
+        checked={isChecked}
+        onChange={handleCheckboxChange}
+      />
+      <label htmlFor="checkboxInput">바로 참여 가능한 방</label>
     </S.CheckBoxStyle>
   );
 }

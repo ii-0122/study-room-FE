@@ -2,14 +2,12 @@ import styled from 'styled-components';
 
 export const StudyGridStyle = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 226px);
-  grid-auto-rows: 240px;
-  gap: 25px;
+  gap: 30px;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 520px;
   padding-right: 20px;
   box-sizing: border-box;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -19,19 +17,16 @@ export const StudyGridStyle = styled.div`
     background: #d9d9d9;
     border-radius: ${({ theme }) => theme.borderRadius.large};
   }
-`;
 
-export const ScrollContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  &:has(::-webkit-scrollbar) {
+    padding-right: 25px;
+  }
 `;
 
 export const LoadingIndicator = styled.div`
   grid-column: span 4;
   text-align: center;
   padding: 20px;
-  font-size: 16px;
   color: #666;
+  font-size: 1rem;
 `;

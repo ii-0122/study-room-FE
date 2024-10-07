@@ -1,16 +1,8 @@
-import { FaLock, FaLockOpen } from 'react-icons/fa';
 import { MdPerson } from 'react-icons/md';
 import * as S from './StudyItem.style';
 import { useRef, useState } from 'react';
-
-interface StudyItemProps {
-  title: string;
-  imageUrl?: string;
-  tagList?: string[];
-  isPublic: boolean;
-  maxNum: number;
-  currentNum: number;
-}
+import { StudyItem } from '@/types/studyRoom';
+import { FaLock, FaUnlock } from 'react-icons/fa6';
 
 function StudyItem({
   title,
@@ -19,7 +11,7 @@ function StudyItem({
   isPublic,
   maxNum,
   currentNum,
-}: StudyItemProps) {
+}: StudyItem) {
   const hashtagsRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -51,12 +43,14 @@ function StudyItem({
     <S.StudyItemStyle>
       <S.ItemContainer imageUrl={imageUrl}>
         <S.ItemContent>
-          <S.Privacy>{isPublic ? <FaLockOpen /> : <FaLock />}</S.Privacy>
-          <S.Title>{title}</S.Title>
-          <S.ParticipantCount>
-            <MdPerson />
-            {currentNum}/{maxNum}
-          </S.ParticipantCount>
+          <S.Privacy>{isPublic ? <FaUnlock /> : <FaLock />}</S.Privacy>
+          <S.TextWrap>
+            <S.Title>{title}</S.Title>
+            <S.ParticipantCount>
+              <MdPerson />
+              {currentNum}/{maxNum}
+            </S.ParticipantCount>
+          </S.TextWrap>
         </S.ItemContent>
       </S.ItemContainer>
       <S.ItemFooter>

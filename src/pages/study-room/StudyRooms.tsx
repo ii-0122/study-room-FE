@@ -17,7 +17,6 @@ interface Filter {
 function StudyRooms() {
   const [filter, setFilter] = useState<Filter>({});
   const [showModal, setShowModal] = useState(false);
-  const [_, setHasScrollbar] = useState(false);
 
   const handleFilterChange = (newFilter: Filter) => {
     setFilter((prevFilter) => ({
@@ -26,32 +25,24 @@ function StudyRooms() {
     }));
   };
 
-  const handleSearchChange = (search: string) => {
-    handleFilterChange({ search });
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
   return (
     <S.StudyRoomsStyle>
-      <S.MainContentArea>
-        <div className="wrapper">
-          <div className="header">
-            <Search onSearchChange={handleSearchChange} />
-            <SelectBox onFilterChange={handleFilterChange} />
-            <CheckBox onFilterChange={handleFilterChange} />
-            <CreateButton onClick={() => setShowModal(true)} />
-          </div>
-          {showModal && (
-            <Modal onClose={handleModalClose}>
-              <CreateStudyRoomForm />
-            </Modal>
-          )}
-          <StudyGrid filter={filter} onScrollbarChange={setHasScrollbar} />
-        </div>
-      </S.MainContentArea>
+      <S.Wrapper>
+        <S.Header>
+          <Search onSearchChange={(search) => handleFilterChange({ search })} />
+          <CreateButton onClick={() => setShowModal(true)} />
+        </S.Header>
+        <S.Filter>
+          <SelectBox onFilterChange={handleFilterChange} />
+          <CheckBox onFilterChange={handleFilterChange} />
+        </S.Filter>
+        {showModal && (
+          <Modal onClose={() => setShowModal(false)}>
+            <CreateStudyRoomForm />
+          </Modal>
+        )}
+        <StudyGrid filter={filter} />
+      </S.Wrapper>
     </S.StudyRoomsStyle>
   );
 }
