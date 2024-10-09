@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-export const StudyGridStyle = styled.div`
+export const StudyGridItem = styled.div`
   display: grid;
   gap: 30px;
   overflow-y: auto;
@@ -23,10 +23,45 @@ export const StudyGridStyle = styled.div`
   }
 `;
 
-export const LoadingIndicator = styled.div`
-  grid-column: span 4;
+export const NoData = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-right: 20px;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.color.plannerGray};
+  font-size: 2rem;
   text-align: center;
-  padding: 20px;
-  color: #666;
-  font-size: 1rem;
+  font-weight: 600;
+  overflow: hidden;
+`;
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+export const Loader = styled.div`
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: ${spin} 1s linear infinite;
+  margin: auto;
+`;
+
+export const ErrorMessage = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-right: 20px;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.color.btnWarn};
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden;
 `;
