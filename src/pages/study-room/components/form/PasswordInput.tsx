@@ -1,5 +1,6 @@
 import Button from '@/components/button/Button';
 import React from 'react';
+import * as S from './PasswordInput.style';
 
 interface PasswordInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -16,11 +17,17 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>비밀번호 입력</h2>
-      <input type="password" onChange={onChange} />
-      <Button type="submit">입장하기</Button>
-    </form>
+    <S.PassWordInputStyle>
+      <S.Form onSubmit={handleSubmit}>
+        <S.Title>비밀번호 입력</S.Title>
+        <S.Wrap>
+          <S.Input type="password" onChange={onChange} />
+          <Button type="submit" size="large">
+            입장하기
+          </Button>
+        </S.Wrap>
+      </S.Form>
+    </S.PassWordInputStyle>
   );
 };
 
