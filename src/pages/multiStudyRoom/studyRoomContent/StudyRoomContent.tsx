@@ -6,57 +6,45 @@ import StartPauseButton from '../../privateStudyRoom/components/button/StartPaus
 import LeaveButton from '../../privateStudyRoom/components/button/LeaveButton';
 import RSidebar from '@/components/rsidebar/RSidebar';
 import { useSocket } from '@/socket/SocketContext';
-import { StudyRoomInfo, TimerInfo } from '@/models/studyRoom.model';
-import { useAuthStore } from '@/stores';
+import { StudyRoomInfo, TimerInfo, TodoTimer } from '@/models/studyRoom.model';
 import Header from '@/components/header/Header';
 import { dataTagSymbol } from '@tanstack/react-query';
-import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
+import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 
 const MultiStudyRoom = () => {
-  // 임시 작성 코드
+  const navigate = useNavigate();
+  // zustand state 연결
   const user = useAuthStore((state) => state.user);
-  const setTodos = useStudyRoomStore((state) => state.setTodos);
+  const selectedTodo = useStudyRoomStore((state) => state.selectedTodo);
+  const todos = useStudyRoomStore((state) => state.todos);
+  const updateTodos = useStudyRoomStore((state) => state.updateTodos);
 
-  // const [userObjectId, setUserObjectId] = useState<string>('');
+  // 내 유저 정보 state
+  const imgUrl =
+    'https://product.cdn.cevaws.com/var/storage/images/_aliases/reference/media/feliway-2017/images/kor-kr/1_gnetb-7sfmbx49emluey4a/6341829-1-kor-KR/1_gNETb-7SfMBX49EMLUeY4A.jpg';
   const [studyRoomInfo, setStudyRoomInfo] = useState<StudyRoomInfo>();
-  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo>({
+  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo | undefined>(
+    undefined
+  );
+  const initInfo = {
     nickname: '',
-    imageUrl:
-      'https://product.cdn.cevaws.com/var/storage/images/_aliases/reference/media/feliway-2017/images/kor-kr/1_gnetb-7sfmbx49emluey4a/6341829-1-kor-KR/1_gNETb-7SfMBX49EMLUeY4A.jpg',
+    imageUrl: '',
     totalTime: 0,
+    timer: '00:00:00',
     state: 'stop',
-    socketId: '',
-  });
-  const [usersTimerInfo, setUsersTimerInfo] = useState<TimerInfo[]>([]);
-  const [initialCurrentTaskTime, setInitialCurrentTaskTime] =
-    useState('00:00:00'); // 초기 현재 작업 시간
-
-  const initUsersTimers = (currentMember: string[]) => {
-    currentMember.forEach((value) => {
-      if (value !== user.nickname) {
-        const userExists = usersTimerInfo.some(
-          (usersTimer) => usersTimer.nickname === value
-        );
-        if (!userExists) {
-          const userTimer = {
-            nickname: value,
-            imageUrl: '',
-            totalTime: 0,
-            state: 'stop',
-            socketId: '',
-          };
-          setUsersTimerInfo((prevUsers) => [...prevUsers, userTimer]);
-        }
-      }
-    });
   };
 
+  // 내 타이머 정보 state
+  const [currentTaskTime, setCurrentTaskTime] = useState<string>('00:00:00');
+  const [todosTimer, setTodosTimer] = useState<TodoTimer[]>([]);
+  const [usersTimerInfo, setUsersTimerInfo] = useState<TimerInfo[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const numberToTimer = (totalTime: number) => {
-    const totalSeconds = Math.floor(totalTime / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60; // 초 계산
+    const hours = Math.floor(totalTime / 3600);
+    const minutes = Math.floor((totalTime % 3600) / 60);
+    const seconds = totalTime % 60; // 초 계산
 
     const formattedTime = [
       String(hours).padStart(2, '0'), // 시간
@@ -67,111 +55,154 @@ const MultiStudyRoom = () => {
     return formattedTime;
   };
 
-  const socket = useSocket();
-
-  useEffect(() => {
-    setMyTimerInfo((prevInfo) => ({
-      ...prevInfo,
-      nickname: user?.nickname,
-    }));
-
-    if (socket) {
-      socket.connect();
-
-      socket.on('getRoomAndMyInfo', (data: StudyRoomInfo) => {
-        setStudyRoomInfo(data);
-        setTotalStudyTime(numberToTimer(data.totalTime));
-        setTodos(data.planner);
-      });
-
-      socket.on('addMemberAndRequestUserInfo', (data) => {
-        // console.log(data);
-        setUsersTimerInfo((prevUsers) => [...prevUsers, data]);
-      });
-
-      return () => {
-        socket.off('getRoomAndMyInfo');
-        socket.off('addMemberAndRequestUserInfo');
-        socket.disconnect();
-      };
+  const timerToNumber = (timer: string) => {
+    const timeParts = timer.split(':');
+    if (timeParts.length !== 3) {
+      return 0;
     }
-  }, [socket, user]);
 
-  const navigate = useNavigate();
-  const [isActive, setIsActive] = useState(false);
-  const [currentTaskTime, setCurrentTaskTime] = useState(
-    initialCurrentTaskTime
-  );
-  const [totalStudyTime, setTotalStudyTime] = useState('00:00:00');
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const hours = parseInt(timeParts[0], 10) || 0; // 시
+    const minutes = parseInt(timeParts[1], 10) || 0; // 분
+    const seconds = parseInt(timeParts[2], 10) || 0; // 초
 
-  const updateTimers = () => {
-    setCurrentTaskTime((prevTime) => {
-      const [hours, minutes, seconds] = prevTime.split(':').map(Number);
-      const newSeconds = seconds + 1;
-      const newMinutes = minutes + Math.floor(newSeconds / 60);
-      const newHours = hours + Math.floor(newMinutes / 60);
-      return `${String(newHours).padStart(2, '0')}:${String(newMinutes % 60).padStart(2, '0')}:${String(newSeconds % 60).padStart(2, '0')}`;
-    });
+    // 초 단위로 변환
+    return hours * 3600 + minutes * 60 + seconds;
+  };
 
-    setTotalStudyTime((prevTotalTime) => {
-      const [totalHours, totalMinutes, totalSeconds] = prevTotalTime
-        .split(':')
-        .map(Number);
-      const totalElapsedSeconds =
-        totalHours * 3600 + totalMinutes * 60 + totalSeconds; // 기존 총 시간(초로 변환)
-      const newTotalSeconds = totalElapsedSeconds + 1; // 1초 추가
-
-      const newHours = Math.floor(newTotalSeconds / 3600);
-      const newMinutes = Math.floor((newTotalSeconds % 3600) / 60);
-      const newSecs = newTotalSeconds % 60;
-
-      return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}:${String(newSecs).padStart(2, '0')}`;
+  const updateMyTotalStudyTime = () => {
+    setMyTimerInfo((prevInfo: TimerInfo | undefined) => {
+      const currentInfo = prevInfo || initInfo;
+      const newTotalTime = currentInfo.totalTime + 1;
+      return {
+        ...currentInfo,
+        totalTime: newTotalTime,
+        timer: numberToTimer(newTotalTime),
+      };
     });
   };
 
+  const updateMyTimers = () => {
+    // 현재 선택된 할 일 타이머 증가
+    //setCurrentTaskTime();
+
+    // 총 공부 시간 증가
+    updateMyTotalStudyTime();
+  };
+
+  const updateOthersTimer = () => {};
+
+  // 타이머 초 증가
   useEffect(() => {
-    if (isActive) {
-      intervalRef.current = setInterval(updateTimers, 1000);
+    if (myTimerInfo?.state === 'start') {
+      intervalRef.current = setInterval(updateMyTimers, 1000);
     }
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isActive]);
+  }, [myTimerInfo?.state]);
 
   const handleStartPause = () => {
-    const localTime = new Date().toLocaleString(); // 현재 로컬 시간
-    if (!isActive) {
-      // 시작 버튼 클릭 시 전송할 데이터
-      setIsActive(true);
-      const data = {
-        nickname: myTimerInfo.nickname,
-        currentTaskTime,
-        localStartTime: localTime,
-      };
-      console.log('시작 버튼 클릭:', JSON.stringify(data));
-    } else {
-      // 일시 정지 버튼 클릭 시 전송할 데이터
-      setIsActive(false);
-      const data = {
-        nickname: myTimerInfo.nickname,
-        currentTaskTime,
-        localPauseTime: localTime,
-      };
-      console.log('일시 정지 버튼 클릭:', JSON.stringify(data));
+    if (myTimerInfo?.state === 'stop') {
+      if (selectedTodo !== null) {
+        const payload = {
+          plannerId: selectedTodo?._id,
+          currentTime: Date.now(),
+          totalTime: currentTaskTime,
+        };
+
+        console.log('시작 버튼 클릭');
+        setMyTimerInfo((prevInfo: TimerInfo | undefined) => {
+          const currentInfo = prevInfo || initInfo;
+          return { ...currentInfo, state: 'start' };
+        });
+        socket?.emit('start', payload);
+      } else {
+        alert(
+          '시작 버튼을 클릭할 수 없습니다.\n 타이머를 시작하려면 할 일을 클릭해주세요'
+        );
+      }
+    } else if (myTimerInfo?.state === 'start') {
+      if (selectedTodo !== null) {
+        const payload = {
+          plannerId: selectedTodo?._id,
+          currentTime: Date.now(),
+          totalTime: timerToNumber(currentTaskTime) * 1000,
+        };
+        console.log('일시 정지 버튼 클릭');
+        setMyTimerInfo((prevInfo: TimerInfo | undefined) => {
+          const currentInfo = prevInfo || initInfo;
+          return { ...currentInfo, state: 'stop' };
+        });
+        const updateTodo = {
+          ...selectedTodo,
+          totalTime: timerToNumber(currentTaskTime) * 1000,
+        };
+        console.log(updateTodo);
+        updateTodos(updateTodo);
+        socket?.emit('stop', payload);
+      }
     }
   };
+  // socket
+  const socket = useSocket();
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.connect();
+
+    socket.on('getRoomAndMyInfo', (data) => {
+      // 첫 소켓 접속 시
+      console.log(data);
+      setStudyRoomInfo(data); // 스터디 방 정보 저장
+      const userData = {
+        nickname: user?.nickname ? user.nickname : '',
+        imageUrl: imgUrl,
+        totalTime: data.totalTime,
+        timer: numberToTimer(data.totalTime),
+        state: 'stop',
+      };
+      setMyTimerInfo(userData);
+    });
+
+    return () => {
+      socket.disconnect();
+      socket.off('getRoomAndMyInfo');
+    };
+  }, [socket, user]);
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.on('addMemberAndRequestUserInfo', (data) => {
+      console.log(data);
+      socket.emit('responseUserInfo', data);
+    });
+
+    socket.on('responseUserInfo', (data) => {
+      console.log(data);
+      const userData = {
+        ...data,
+        timer: numberToTimer(data.totalTime),
+      };
+      setUsersTimerInfo((prevUsers) => [...prevUsers, userData]);
+    });
+
+    return () => {
+      socket.off('addMemberAndRequestUserInfo');
+      socket.off('responseUserInfo');
+    };
+  }, [socket, user, myTimerInfo]);
+
+  useEffect(() => {
+    console.log(selectedTodo);
+  }, [selectedTodo]);
 
   const handleLeaveRoom = () => {
-    const data = {
-      nickname: myTimerInfo.nickname,
-      totalStudyTime,
-      currentTaskTime,
-      exitTime: new Date().toLocaleString(),
-    };
-
-    console.log('나가기 버튼 클릭: ', JSON.stringify(data));
-
     navigate('/study-rooms');
   };
 
@@ -184,10 +215,10 @@ const MultiStudyRoom = () => {
             <StudyProfileBox
               isGroup={true}
               isMe={true}
-              userId={myTimerInfo.nickname}
-              initialCurrentTaskTime={currentTaskTime}
-              initialTotalStudyTime={totalStudyTime}
-              profileImage={myTimerInfo.imageUrl}
+              userId={myTimerInfo?.nickname}
+              initialCurrentTaskTime={'00:00:00'}
+              initialTotalStudyTime={myTimerInfo?.timer}
+              profileImage={myTimerInfo?.imageUrl}
               profileImageWidth="120px"
               profileImageHeight="120px"
             />
@@ -195,10 +226,9 @@ const MultiStudyRoom = () => {
               ? usersTimerInfo.map((data) => (
                   <StudyProfileBox
                     isGroup={true}
-                    isMe={false}
                     userId={data.nickname}
-                    initialCurrentTaskTime={currentTaskTime}
-                    initialTotalStudyTime={totalStudyTime}
+                    initialCurrentTaskTime={'00:00:00'}
+                    initialTotalStudyTime={'00:00:00'}
                     profileImage={data.imageUrl}
                     profileImageWidth="120px"
                     profileImageHeight="120px"
@@ -210,7 +240,10 @@ const MultiStudyRoom = () => {
             우측 사이드바의 할 일을 선택하면 타이머가 시작됩니다.
           </S.InstructionText>
           <S.ButtonContainer>
-            <StartPauseButton isActive={isActive} onClick={handleStartPause} />
+            <StartPauseButton
+              isActive={myTimerInfo?.state === 'start'}
+              onClick={handleStartPause}
+            />
             <LeaveButton onClick={handleLeaveRoom} />
           </S.ButtonContainer>
         </S.StudyRoomWrap>
@@ -218,42 +251,6 @@ const MultiStudyRoom = () => {
       <RSidebar />
     </S.MultiStudyRoomStyle>
   );
-
-  // return (
-  //   <S.MultiStudyRoomStyle>
-  //     <div>
-  //       <S.UserProfileContainer>
-  //         <StudyProfileBox
-  //           isGroup={true}
-  //           userId={myTimerInfo.nickname}
-  //           initialCurrentTaskTime={currentTaskTime}
-  //           initialTotalStudyTime={totalStudyTime}
-  //           profileImage={myProfile.profileImage}
-  //         />
-  //         {userProfiles
-  //           ? userProfiles.map((data, index) => (
-  //               <StudyProfileBox
-  //                 key={index}
-  //                 isGroup={true}
-  //                 userId={data.userId}
-  //                 initialCurrentTaskTime={currentTaskTime}
-  //                 initialTotalStudyTime={totalStudyTime}
-  //                 profileImage={data.profileImage}
-  //               />
-  //             ))
-  //           : null}
-  //       </S.UserProfileContainer>
-  //       <S.InstructionText>
-  //         우측 사이드바의 할 일을 선택하면 타이머가 시작됩니다.
-  //       </S.InstructionText>
-  //       <S.ButtonContainer>
-  //         <StartPauseButton isActive={isActive} onClick={handleStartPause} />
-  //         <LeaveButton onClick={handleLeaveRoom} />
-  //       </S.ButtonContainer>
-  //     </div>
-  //     <RSidebar />
-  //   </S.MultiStudyRoomStyle>
-  // );
 };
 
 export default MultiStudyRoom;

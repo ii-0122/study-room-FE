@@ -1,11 +1,12 @@
+import { useAuthStore } from '@/stores/auth.store';
+import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useAuthStore } from '@/stores';
 import { Socket, io } from 'socket.io-client';
 
 const SocketContext = createContext<typeof Socket | null>(null);
 
 interface SocketProviderProps {
-  studyRoomId: string;
+  studyRoomId: string | undefined;
   children: React.ReactNode;
 }
 
@@ -20,14 +21,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
   const imageUrl = user ? user.imageUrl : ''; // 사용자 이미지 URL
 
   useEffect(() => {
+    if (!roomId) return;
+
     const newSocket = io(`${import.meta.env.VITE_REACT_APP_API_URL}/rooms`, {
       transports: ['websocket'],
       query: { roomId, nickname, imageUrl },
       auth: {
+        // token: Cookies.get('jwt'),
         token: `Bearer ${accessToken}`,
       },
     });
     setSocket(newSocket);
+    // console.log(Cookies.get('jwt'));
   }, [accessToken, user]);
 
   return (

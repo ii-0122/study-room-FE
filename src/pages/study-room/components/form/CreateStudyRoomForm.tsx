@@ -34,7 +34,7 @@ export default function CreateStudyRoomForm() {
       maxNum: Number(data.maxNum),
     };
 
-    await createStudyRoom(formattedData);
+    const result = await createStudyRoom(formattedData);
     toast.success('공부방 생성 성공');
     navigate(`/study-room/${result._id}`);
   };

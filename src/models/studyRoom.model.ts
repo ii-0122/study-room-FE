@@ -14,11 +14,11 @@ export interface OtherUserInfo {
   nickname: string;
   imageUrl: string;
   totalTime: number;
+  timer: string;
   state: string; //'start' | 'stop';
-  socketId: string;
 }
 
-export interface ClientToCServertTimer {
+export interface ClientToCServerTimer {
   timer: number;
   state: string; // 'start' | 'stop';
   socketId: string;
@@ -36,6 +36,11 @@ export interface TimerInfo {
   nickname: string;
   imageUrl: string;
   totalTime: number;
+  timer: string;
   state: string; // 'start' | 'stop';
-  socketId: string;
+}
+
+export interface TodoTimer {
+  _id: string;
+  totalTime: number;
 }

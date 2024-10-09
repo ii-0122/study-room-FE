@@ -1,12 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+// import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-// import { getTodos, postTodo, putTodo } from '@/apis/planners.api';
 import {
-  CreatePlannerModel,
-  GetTodosRes,
   PutPostTodoReq,
   ServerToClientPlanner,
-  UpdatePlannerModel,
 } from '@/models/studyRoomTodos.model';
 import { formatDateTime, isWithinOneDay } from '../utils/dateFormat';
 // import { AxiosError } from 'axios';
@@ -23,6 +19,10 @@ const Todos = () => {
   const todos = useStudyRoomStore((state) => state.todos);
   const updateTodos = useStudyRoomStore((state) => state.updateTodos);
   const addTodos = useStudyRoomStore((state) => state.addTodos);
+  const setTodos = useStudyRoomStore((state) => state.setTodos);
+  const toggleTodoComplete = useStudyRoomStore(
+    (state) => state.toggleTodoComplete
+  );
 
   const { selectedTodo, setSelectedTodo } = useStudyRoomStore();
   const [selectedDate, setSelectedDate] = useState(
@@ -42,49 +42,6 @@ const Todos = () => {
     mode: 'onSubmit',
   });
 
-  // const [todos, setTodos] = useState<ServerToClientPlanner[]>([]);
-
-  // const { data: todos } = useQuery<GetTodosRes[], AxiosError>({
-  //   queryKey: ['getTodos', selectedDate],
-  //   queryFn: () => getTodos(selectedDate),
-  // });
-
-  // @ 임시데이터
-  // const [todos, setTodos] = useState([
-  //   { todo: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡ', _id: '1', isChecked: false },
-  //   { todo: 'todo2', _id: '2', isChecked: false },
-  //   { todo: 'todo3', _id: '3', isChecked: true },
-  //   { todo: 'todo4', _id: '4', isChecked: true },
-  //   { todo: 'todo5', _id: '5', isChecked: true },
-  //   { todo: 'todo6', _id: '6', isChecked: true },
-  //   { todo: 'todo7', _id: '7', isChecked: true },
-  //   { todo: 'todo8', _id: '8', isChecked: true },
-  //   { todo: 'todo9', _id: '9', isChecked: true },
-  //   { todo: 'todo10', _id: '10', isChecked: true },
-  //   { todo: 'todo11', _id: '11', isChecked: true },
-  //   { todo: 'todo12', _id: '12', isChecked: true },
-  // ]);
-
-  // const putMutation = useMutation({
-  //   mutationFn: ({ _id, data }: { data: PutPostTodoReq; _id: string }) =>
-  //     putTodo(data, _id),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['getTodos', selectedDate],
-  //     });
-  //   },
-  // });
-
-  // const postMutation = useMutation({
-  //   mutationFn: ({ data, date }: { data: PutPostTodoReq; date: string }) =>
-  //     postTodo(data, date),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['getTodos', selectedDate],
-  //     });
-  //   },
-  // });
-
   const handleLeftArrow = () => {
     if (
       isWithinOneDay(
@@ -94,6 +51,7 @@ const Todos = () => {
       setSelectedDate(
         dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD')
       );
+      socket?.emit('responseGetPlanner', selectedDate);
     }
   };
 
@@ -102,6 +60,7 @@ const Todos = () => {
       isWithinOneDay(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'))
     ) {
       setSelectedDate(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'));
+      socket?.emit('responseGetPlanner', selectedDate);
     }
   };
 
@@ -135,25 +94,18 @@ const Todos = () => {
     setEditingTodo(null);
   };
 
-  const handleCheckBoxChange = (checked: boolean, todoId: string) => {
-    // @ 임시데이터의 체크박스값 수정
-    // setTodos((prevTodos) =>
-    //   prevTodos.map((todo) =>
-    //     todo._id === todoId ? { ...todo, isChecked: checked } : todo
-    //   )
-    // );
-    // @ 백엔드에 데이터 수정 요청 코드 추가
+  const handleCheckBoxChange = (todoId: string) => {
+    toggleTodoComplete(todoId);
   };
 
   const onPutSubmit = (data: PutPostTodoReq, todo: ServerToClientPlanner) => {
     if (data.todo !== todo.todo) {
-      // const _id = todo._id;
-      // putMutation.mutate({ data, _id });
       const payload = {
         plannerId: todo._id,
         todo: data.todo,
-        isCompleted: data.isComplete,
+        isComplete: data.isComplete,
       };
+      // console.log(payload);
       socket?.emit('modifyPlanner', payload);
     }
     setEditingTodo(null);
@@ -177,27 +129,35 @@ const Todos = () => {
   const updatePlanner = (updateTodo: ServerToClientPlanner) => {
     updateTodos(updateTodo);
   };
+
   // 임시 socket 코드 작성
   useEffect(() => {
     if (!socket) {
       return;
     }
+    socket.emit('getPlanner', { date: selectedDate });
 
-    socket.on('responseCreateTodo', (data) => {
-      createPlanner(data);
+    socket.on('responseGetPlanner', (data) => {
       // console.log(data);
+      setTodos(data);
     });
 
-    socket.on('responseUpdatePlanner', (data) => {
+    socket.on('responseCreatePlanner', (data) => {
+      console.log(data);
+      createPlanner(data);
+    });
+
+    socket.on('responseModifyPlanner', (data) => {
+      console.log(data);
       updatePlanner(data);
-      // console.log(data);
     });
 
     return () => {
-      socket.off('responseCreateTodo');
-      socket.off('responseUpdatePlanner');
+      socket.off('responseGetPlanner');
+      socket.off('responseCreatePlanner');
+      socket.off('responseModifyPlanner');
     };
-  }, [socket, todos]);
+  }, [socket, selectedDate]);
   // end
 
   return (
@@ -229,7 +189,7 @@ const Todos = () => {
             >
               <CheckBox
                 defaultChecked={todo.isComplete}
-                onChange={(checked) => handleCheckBoxChange(checked, todo._id)}
+                onChange={() => handleCheckBoxChange(todo._id)}
               />
               {editingTodo === todo._id ? (
                 <S.TodoForm

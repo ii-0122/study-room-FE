@@ -1,7 +1,4 @@
-import {
-  // GetTodosRes,
-  ServerToClientPlanner,
-} from '@/models/studyRoomTodos.model';
+import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -12,6 +9,7 @@ interface StudyRoomState {
   setTodos: (todos: ServerToClientPlanner[]) => void;
   addTodos: (newTodo: ServerToClientPlanner) => void;
   updateTodos: (updateTodo: ServerToClientPlanner) => void;
+  toggleTodoComplete: (todoId: string) => void;
 }
 
 const useStudyRoomStore = create<StudyRoomState>()(
@@ -30,6 +28,14 @@ const useStudyRoomStore = create<StudyRoomState>()(
         set((state) => ({
           todos: state.todos.map((todo) =>
             todo._id === updateTodo._id ? updateTodo : todo
+          ),
+        })),
+      toggleTodoComplete: (todoId: string) =>
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo._id === todoId
+              ? { ...todo, isComplete: !todo.isComplete }
+              : todo
           ),
         })),
     }),

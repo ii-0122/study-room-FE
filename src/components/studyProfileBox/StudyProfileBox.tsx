@@ -3,7 +3,7 @@ import * as S from './StudyProfileBox.style';
 
 interface StudyProfileBoxProps {
   isGroup: boolean;
-  isMe: boolean;
+  isMe?: boolean;
   userId?: string;
   initialCurrentTaskTime?: string;
   initialTotalStudyTime?: string;

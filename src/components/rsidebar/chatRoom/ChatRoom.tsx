@@ -3,15 +3,14 @@ import Chatting from './chatting/Chatting';
 import { ChatReq, ChatRes } from '@/models/chat.model';
 import * as S from './ChatRoom.style';
 import { useEffect, useRef, useState } from 'react';
-import { useAuthStore } from '@/stores';
-
 import dayjs from 'dayjs';
 import { useSocket } from '@/socket/SocketContext';
 import useChatStore from '@/stores/chat.store';
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function ChatRoom() {
   const user = useAuthStore((state) => state.user);
-  const myNickname = user.nickname;
+  const myNickname = user?.nickname;
   const socket = useSocket();
   const chatArray = useChatStore((state) => state.chatArray);
   const setChatArray = useChatStore.getState().setChatArray;
@@ -70,10 +69,9 @@ export default function ChatRoom() {
       socket.off('responseChat');
       socket.off('notice');
     };
-  }, [socket, myNickname]);
+  }, [socket, user]);
 
   const sendMessage = (message: string) => {
-    // console.log('채팅보내지는중');
     if (message) {
       const payload = { message };
       socket?.emit('sendChat', payload);
