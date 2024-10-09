@@ -18,7 +18,7 @@ export default function Router() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/planner" element={<Planner />} />
       <Route path="/study-rooms" element={<StudyRooms />} />
-      <Route path="/ranking" element={<Ranking />}></Route>
+      <Route path="/ranking" element={<Ranking />} />
       <Route path="/study-room/:id" element={<PrivateStudyRoom />} />
     </Routes>
   );

@@ -18,7 +18,7 @@ export interface FetchRoomsParams {
   search?: string;
   isPublic?: boolean;
   isPossible?: boolean;
-  limit?: number;
+  limit: number;
   offset?: number;
 }
 
