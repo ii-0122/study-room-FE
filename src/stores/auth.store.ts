@@ -8,7 +8,6 @@ interface AuthState {
     nickname: string;
     imageUrl?: string;
     introduction?: string;
-    dDay?: string;
   } | null;
   setAuthData: (
     accessToken: string,
@@ -17,7 +16,6 @@ interface AuthState {
       nickname: string;
       imageUrl?: string;
       introduction?: string;
-      dDay?: string;
     } | null
   ) => void;
   clearAuthData: () => void;
@@ -25,18 +23,22 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: Cookies.get('accessToken') || null,
-  user: null,
+  user: Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : null,
+
   setAuthData: (accessToken, user) => {
     set(() => ({ accessToken, user }));
-    if (accessToken) {
+    if (accessToken && user) {
       Cookies.set('accessToken', accessToken, { expires: 0.0104 });
+      Cookies.set('user', JSON.stringify(user), { expires: 1 });
     } else {
       Cookies.remove('accessToken');
+      Cookies.remove('user');
     }
   },
 
   clearAuthData: () => {
     set({ accessToken: null, user: null });
     Cookies.remove('accessToken');
+    Cookies.remove('user');
   },
 }));

@@ -17,6 +17,7 @@ export interface GetTodosRes {
   timelineList?: StartEndTime[] | undefined;
   totalTime: number;
   repeatEndDate: string;
+  // userId: string;
 }
 
 export interface PutPostTodoReq {
