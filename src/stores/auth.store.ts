@@ -28,7 +28,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuthData: (accessToken, user) => {
     set(() => ({ accessToken, user }));
     if (accessToken && user) {
-      Cookies.set('accessToken', accessToken, { expires: 0.0104 });
+      Cookies.set('accessToken', accessToken, { expires: 1 });
       Cookies.set('user', JSON.stringify(user), { expires: 1 });
     } else {
       Cookies.remove('accessToken');
