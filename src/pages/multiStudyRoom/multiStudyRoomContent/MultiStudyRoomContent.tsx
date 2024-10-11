@@ -1,112 +1,29 @@
 import StudyProfileBox from '@/components/studyProfileBox/StudyProfileBox';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import StartPauseButton from './components/button/StartPauseButton';
+import * as S from './MultiStudyRoomContent.style';
 import { useNavigate } from 'react-router-dom';
-import LeaveButton from './components/button/LeaveButton';
-import * as S from './PrivateStudyRoomContentStyle';
-import Header from '@/components/header/Header';
+import StartPauseButton from '../../privateStudyRoom/components/button/StartPauseButton';
+import LeaveButton from '../../privateStudyRoom/components/button/LeaveButton';
 import RSidebar from '@/components/rsidebar/RSidebar';
-import { throttle } from 'lodash';
 import { useSocket } from '@/socket/SocketContext';
 import {
   CurrentTodoTimer,
   StudyRoomInfo,
   TimerInfo,
 } from '@/models/studyRoom.model';
+import Header from '@/components/header/Header';
 import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
+import { throttle } from 'lodash';
 import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
 
-const PrivateStudyRoomContent = () => {
-  // const initialCurrentTaskTime = '00:00:00'; // 초기 현재 작업 시간
-  // const initialTotalStudyTime = '00:05:00'; // 초기 총 공부 시간
-  // const profileImage =
-  //   'https://product.cdn.cevaws.com/var/storage/images/_aliases/reference/media/feliway-2017/images/kor-kr/1_gnetb-7sfmbx49emluey4a/6341829-1-kor-KR/1_gNETb-7SfMBX49EMLUeY4A.jpg'; // 프로필 이미지 URL
-
-  // const navigate = useNavigate();
-  // const [isActive, setIsActive] = useState(false);
-  // const [currentTaskTime, setCurrentTaskTime] = useState(
-  //   initialCurrentTaskTime
-  // );
-  // const [totalStudyTime, setTotalStudyTime] = useState(initialTotalStudyTime);
-  // const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // const updateTimers = () => {
-  //   setCurrentTaskTime((prevTime) => {
-  //     const [hours, minutes, seconds] = prevTime.split(':').map(Number);
-  //     const newSeconds = seconds + 1;
-  //     const newMinutes = minutes + Math.floor(newSeconds / 60);
-  //     const newHours = hours + Math.floor(newMinutes / 60);
-  //     return `${String(newHours).padStart(2, '0')}:${String(newMinutes % 60).padStart(2, '0')}:${String(newSeconds % 60).padStart(2, '0')}`;
-  //   });
-
-  //   setTotalStudyTime((prevTotalTime) => {
-  //     const [totalHours, totalMinutes, totalSeconds] = prevTotalTime
-  //       .split(':')
-  //       .map(Number);
-  //     const totalElapsedSeconds =
-  //       totalHours * 3600 + totalMinutes * 60 + totalSeconds; // 기존 총 시간(초로 변환)
-  //     const newTotalSeconds = totalElapsedSeconds + 1; // 1초 추가
-
-  //     const newHours = Math.floor(newTotalSeconds / 3600);
-  //     const newMinutes = Math.floor((newTotalSeconds % 3600) / 60);
-  //     const newSecs = newTotalSeconds % 60;
-
-  //     return `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}:${String(newSecs).padStart(2, '0')}`;
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (isActive) {
-  //     intervalRef.current = setInterval(updateTimers, 1000);
-  //   }
-  //   return () => {
-  //     if (intervalRef.current) clearInterval(intervalRef.current);
-  //   };
-  // }, [isActive]);
-
-  // const handleStartPause = () => {
-  //   const localTime = new Date().toLocaleString(); // 현재 로컬 시간
-  //   if (!isActive) {
-  //     // 시작 버튼 클릭 시 전송할 데이터
-  //     setIsActive(true);
-  //     const data = {
-  //       userId,
-  //       currentTaskTime,
-  //       localStartTime: localTime,
-  //     };
-  //     console.log('시작 버튼 클릭:', JSON.stringify(data));
-  //   } else {
-  //     // 일시 정지 버튼 클릭 시 전송할 데이터
-  //     setIsActive(false);
-  //     const data = {
-  //       userId,
-  //       currentTaskTime,
-  //       localPauseTime: localTime,
-  //     };
-  //     console.log('일시 정지 버튼 클릭:', JSON.stringify(data));
-  //   }
-  // };
-
-  // const handleLeaveRoom = () => {
-  //   const data = {
-  //     userId,
-  //     totalStudyTime,
-  //     currentTaskTime,
-  //     exitTime: new Date().toLocaleString(),
-  //   };
-
-  //   console.log('나가기 버튼 클릭: ', JSON.stringify(data));
-
-  //   navigate('/study-rooms');
-  // };
-
+const MultiStudyRoomContent = () => {
   const navigate = useNavigate();
+
   // zustand state 연결
   const user = useAuthStore((state) => state.user);
   const selectedTodo = useStudyRoomStore((state) => state.selectedTodo);
   const previousTodo = useRef<ServerToClientPlanner | null>(null);
-  // const todos = useStudyRoomStore((state) => state.todos);
   const setSelectedTodo = useStudyRoomStore((state) => state.setSelectedTodo);
   const updateTodos = useStudyRoomStore((state) => state.updateTodos);
 
@@ -128,6 +45,7 @@ const PrivateStudyRoomContent = () => {
     totalTime: 0,
     timer: '00:00:00',
   });
+  const [usersTimerInfo, setUsersTimerInfo] = useState<TimerInfo[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const numberToTimer = (totalTime: number) => {
@@ -171,6 +89,38 @@ const PrivateStudyRoomContent = () => {
     updateMyTotalStudyTime();
   };
 
+  const updateOthersTimer = useCallback(() => {
+    setUsersTimerInfo((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.state === 'start') {
+          return {
+            ...user,
+            totalTime: user.totalTime + 1,
+            timer: numberToTimer(user.totalTime + 1),
+          };
+        }
+        return user; // 'stop'일 경우 변경하지 않음
+      })
+    );
+  }, []);
+
+  const updateUserState = (data) => {
+    console.log(numberToTimer(data.totalTime));
+    setUsersTimerInfo((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.nickname === data.nickname) {
+          return {
+            ...user,
+            state: data.state === 'stop' ? 'stop' : 'start',
+            totalTime: data.totalTime,
+            timer: numberToTimer(data.totalTime),
+          };
+        }
+        return user; // 조건에 맞지 않으면 기존 사용자 반환
+      })
+    );
+  };
+
   // 타이머 초 증가
   useEffect(() => {
     if (myTimerInfo?.state === 'start') {
@@ -181,6 +131,17 @@ const PrivateStudyRoomContent = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [myTimerInfo?.state]);
+
+  // 다른 유저의 타이머 start, stop 관리
+  useEffect(() => {
+    if (!usersTimerInfo) {
+      return;
+    }
+
+    const intervalId = setInterval(updateOthersTimer, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [updateOthersTimer]);
 
   const handleStartPause = () => {
     if (myTimerInfo?.state === 'stop') {
@@ -310,24 +271,93 @@ const PrivateStudyRoomContent = () => {
     };
   }, [socket, user]);
 
+  // 유저 입장 및 타이머 정보 응답
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    const handleAddMemberAndRequestUserInfo = throttle((data) => {
+      console.log(data);
+      const userData = {
+        ...data,
+        timer: numberToTimer(data.totalTime),
+      };
+      setUsersTimerInfo((prevUsers) => [...prevUsers, userData]);
+
+      const payload = {
+        socketId: data.socketId,
+        totalTime: myTimerInfo?.totalTime,
+        state: myTimerInfo?.state,
+      };
+      socket.emit('responseUserInfo', payload);
+    }, 300);
+
+    const handleResponseUserInfo = throttle((data) => {
+      console.log(data);
+      const userData = {
+        ...data,
+        timer: numberToTimer(data.totalTime),
+      };
+      setUsersTimerInfo((prevUsers) => [...prevUsers, userData]);
+    }, 300);
+
+    socket.on('addMemberAndRequestUserInfo', handleAddMemberAndRequestUserInfo);
+    socket.on('responseUserInfo', handleResponseUserInfo);
+    socket.on('updateUserState', (data) => {
+      console.log(data);
+      updateUserState(data);
+    });
+    socket.on('subMember', (data) => {
+      const disconnectedUserNickname = data.nickname;
+      console.log(disconnectedUserNickname);
+      setUsersTimerInfo((prevUsers) =>
+        prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
+      );
+    });
+
+    return () => {
+      socket.off('addMemberAndRequestUserInfo');
+      socket.off('responseUserInfo');
+      socket.off('updateUserState');
+      socket.off('subMember');
+    };
+  }, [socket, user, myTimerInfo]);
+
   const handleLeaveRoom = () => {
     navigate('/study-rooms');
   };
 
   return (
-    <S.PrivateStudyRoomStyle>
+    <S.MultiStudyRoomStyle>
       <S.MainContentArea>
         <Header title="개인 공부방" />
         <S.StudyRoomWrap>
-          <StudyProfileBox
-            isGroup={false}
-            userId={myTimerInfo?.nickname}
-            initialCurrentTaskTime={currentTaskTime.timer}
-            initialTotalStudyTime={myTimerInfo?.timer}
-            profileImage={myTimerInfo?.imageUrl}
-            profileImageWidth="400px"
-            profileImageHeight="400px"
-          />
+          <S.UserProfileContainer>
+            <StudyProfileBox
+              isGroup={true}
+              isMe={true}
+              userId={myTimerInfo?.nickname}
+              initialCurrentTaskTime={currentTaskTime.timer}
+              initialTotalStudyTime={myTimerInfo?.timer}
+              profileImage={myTimerInfo?.imageUrl}
+              profileImageWidth="120px"
+              profileImageHeight="120px"
+            />
+            {usersTimerInfo
+              ? usersTimerInfo.map((data) => (
+                  <StudyProfileBox
+                    isGroup={true}
+                    userId={data.nickname}
+                    initialCurrentTaskTime={'00:00:00'}
+                    initialTotalStudyTime={data.timer}
+                    profileImage={data.imageUrl}
+                    profileImageWidth="120px"
+                    profileImageHeight="120px"
+                  />
+                ))
+              : null}
+          </S.UserProfileContainer>
           <S.InstructionText>
             우측 사이드바의 할 일을 선택하면 타이머가 시작됩니다.
           </S.InstructionText>
@@ -341,8 +371,8 @@ const PrivateStudyRoomContent = () => {
         </S.StudyRoomWrap>
       </S.MainContentArea>
       <RSidebar />
-    </S.PrivateStudyRoomStyle>
+    </S.MultiStudyRoomStyle>
   );
 };
 
-export default PrivateStudyRoomContent;
+export default MultiStudyRoomContent;
