@@ -60,7 +60,8 @@ export const CreatedTime = styled.div.withConfig({
 export const Notice = styled.div`
   display: flex;
   width: 100%;
-  height: 40px;
+  margin-top: 5%;
+  margin-bottom: 5%;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -68,5 +69,6 @@ export const Notice = styled.div`
 `;
 
 export const NoticeText = styled.text`
+  height: 40px;
   font-size: 18px;
 `;

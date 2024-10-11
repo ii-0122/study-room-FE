@@ -4,7 +4,8 @@ import * as S from './Chatting.style';
 interface ChattingProps {
   nickname: string;
   message: string;
-  time?: string;
+  time: string;
+  imageUrl: string;
 }
 
 export default function Chatting({
