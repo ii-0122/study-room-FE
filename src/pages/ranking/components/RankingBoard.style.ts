@@ -79,7 +79,9 @@ export const ContentWrapper = styled.div`
   }
 `;
 
-export const GridItem = styled.div`
+export const GridItem = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMine'].includes(prop),
+})<{ isMine?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,6 +110,11 @@ export const GridItem = styled.div`
   &:nth-last-child(3) {
     border-top: 1px solid black;
   }
+
+  ${(props) =>
+    props.isMine
+      ? `background-color : ${props.theme.color.main}`
+      : 'background-color : white'}
 `;
 
 export const CrownWrapper = styled.div`

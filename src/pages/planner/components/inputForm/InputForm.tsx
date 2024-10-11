@@ -41,7 +41,12 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
 
     if (currentData) {
       // eslint-disable-next-line
-      const { totalTime: _1, timelineList: _2, ...putDatas } = currentData;
+      const {
+        totalTime: _1,
+        timelineList: _2,
+        _id: _3,
+        ...putDatas
+      } = currentData;
       defaultData = putDatas;
     }
     const {
@@ -74,7 +79,9 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     });
 
     useEffect(() => {
-      if (selectedDate.setHours(0, 0, 0, 0) < todayDate) {
+      const selectedDateMidnight = new Date(selectedDate).setHours(0, 0, 0, 0);
+
+      if (selectedDateMidnight < todayDate) {
         setDisableSaveButton(true);
       }
     }, [selectedDate, todayDate]);
@@ -223,7 +230,11 @@ export const InputForm = forwardRef<HTMLFormElement, InputFormProps>(
     };
 
     return (
-      <S.InputFormStyle>
+      <S.InputFormStyle
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <S.Form onSubmit={handleSubmit(onSubmit)} ref={ref}>
           <S.TodoArea>
             <S.LabelErrorWrapper>

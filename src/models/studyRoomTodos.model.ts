@@ -20,7 +20,6 @@ export interface GetTodosRes {
 }
 
 export interface PutPostTodoReq {
-  _id?: string;
   todo: string;
   date: string;
   subject?: string;
@@ -33,4 +32,17 @@ export interface PutPostTodoReq {
   isComplete?: boolean;
   // timelineList?: StartEndTime[] | undefined;
   // totalTime?: number;
+}
+
+export interface TodoStatistic {
+  todo: string;
+  totalTime: string;
+  percentage: number;
+}
+
+export interface GetStatisticsRes {
+  totalTime: string;
+  maxTime: string;
+  restTime: string;
+  planner: TodoStatistic[];
 }
