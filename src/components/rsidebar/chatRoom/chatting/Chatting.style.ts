@@ -56,3 +56,18 @@ export const CreatedTime = styled.div.withConfig({
 
   ${(props) => (props.isMine ? 'margin-left: auto;' : 'margin-right: auto;')}
 `;
+
+export const Notice = styled.div`
+  display: flex;
+  width: 100%;
+  height: 40px;
+  background-color: gray;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+export const NoticeText = styled.text`
+  font-size: 15px;
+`;

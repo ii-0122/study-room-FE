@@ -15,18 +15,27 @@ export default function Chatting({
   isMine: boolean;
 }) {
   const { nickname, message, time } = chatInfo;
+  const isNotice = nickname === 'notice' ? true : false;
 
   return (
-    <S.ChatWrapper isMine={isMine}>
-      <S.UserInfoArea>
-        {/* @TODO ProfileImageBox에 src(이미지url) 연결 필요*/}
-        <ProfileImageBox width="60px" height="60px" />
-        <S.Nickname>{nickname}</S.Nickname>
-      </S.UserInfoArea>
-      <S.ChatInfoArea>
-        <S.ChatBox isMine={isMine}>{message}</S.ChatBox>
-        <S.CreatedTime isMine={isMine}>{time}</S.CreatedTime>
-      </S.ChatInfoArea>
-    </S.ChatWrapper>
+    <>
+      {isNotice ? (
+        <S.Notice>
+          <text>{message}</text>
+        </S.Notice>
+      ) : (
+        <S.ChatWrapper isMine={isMine}>
+          <S.UserInfoArea>
+            {/* @TODO ProfileImageBox에 src(이미지url) 연결 필요*/}
+            <ProfileImageBox width="60px" height="60px" />
+            <S.Nickname>{nickname}</S.Nickname>
+          </S.UserInfoArea>
+          <S.ChatInfoArea>
+            <S.ChatBox isMine={isMine}>{message}</S.ChatBox>
+            <S.CreatedTime isMine={isMine}>{time}</S.CreatedTime>
+          </S.ChatInfoArea>
+        </S.ChatWrapper>
+      )}
+    </>
   );
 }

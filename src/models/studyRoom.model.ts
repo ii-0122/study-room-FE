@@ -40,6 +40,11 @@ export interface TimerInfo {
   state: string; // 'start' | 'stop';
 }
 
+export interface CurrentTodoTimer {
+  totalTime: number;
+  timer: string;
+}
+
 export interface TodoTimer {
   _id: string;
   totalTime: number;

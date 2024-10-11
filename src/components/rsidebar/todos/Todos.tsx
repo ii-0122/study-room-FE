@@ -105,7 +105,6 @@ const Todos = () => {
         todo: data.todo,
         isComplete: data.isComplete,
       };
-      // console.log(payload);
       socket?.emit('modifyPlanner', payload);
     }
     setEditingTodo(null);
@@ -113,7 +112,6 @@ const Todos = () => {
 
   const onPostSubmit = (data: PutPostTodoReq) => {
     const date = selectedDate;
-    // postMutation.mutate({ data, date });
     const payload = {
       date: date,
       todo: data.todo,

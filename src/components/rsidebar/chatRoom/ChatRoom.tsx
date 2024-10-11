@@ -1,12 +1,13 @@
 import { useForm } from 'react-hook-form';
 import Chatting from './chatting/Chatting';
-import { ChatReq, ChatRes } from '@/models/chat.model';
+import { ChatReq } from '@/models/chat.model';
 import * as S from './ChatRoom.style';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { useSocket } from '@/socket/SocketContext';
 import useChatStore from '@/stores/chat.store';
 import { useAuthStore } from '@/stores/auth.store';
+import { throttle } from 'lodash';
 
 export default function ChatRoom() {
   const user = useAuthStore((state) => state.user);
@@ -24,14 +25,13 @@ export default function ChatRoom() {
     mode: 'onSubmit',
   });
 
-  // const [chatArray, setChatArray] = useState<ChatRes[]>([]);
   const scrollBottomRef = useRef<HTMLDivElement>(null);
 
   const onSubmit = (data: ChatReq) => {
     setValue('message', '');
     const reqData = {
       ...data,
-      nickname: myNickname,
+      nickname: myNickname ? myNickname : '',
       time: dayjs().format('HH:mm'),
     };
     setChatArray(reqData);
@@ -50,19 +50,28 @@ export default function ChatRoom() {
       return;
     }
 
-    socket.on('notice', (data) => {
-      console.log(data);
-    });
-
-    socket.on('receiveChat', (data) => {
+    const handleReceiveChat = throttle((data) => {
       setChatArray(data);
       console.log(data);
-    });
+    }, 300);
+
+    const handleNotice = throttle((data) => {
+      console.log(data);
+      const noticeChat = {
+        nickname: 'notice',
+        message: data.message,
+        time: data.time,
+      };
+      setChatArray(noticeChat);
+    }, 300);
 
     socket.on('responseChat', (data) => {
       // 채팅이 잘 보내졌나 확인
       console.log(data);
     });
+
+    socket.on('notice', handleNotice);
+    socket.on('receiveChat', handleReceiveChat);
 
     return () => {
       socket.off('recieveChat');
@@ -87,7 +96,7 @@ export default function ChatRoom() {
           <Chatting
             key={index}
             chatInfo={chatInfo}
-            isMine={chatInfo.nickname == myNickname}
+            isMine={chatInfo.nickname === myNickname}
           />
         ))}
         <div ref={scrollBottomRef} />
@@ -115,21 +124,3 @@ export default function ChatRoom() {
     </S.ChatRoomWrapper>
   );
 }
-
-// const TMP_CHATS = [
-//   {
-//     nickname: 'abc',
-//     time: '08:53',
-//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-//   },
-//   {
-//     nickname: 'veryLongNickname123',
-//     time: '08:54',
-//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-//   },
-//   {
-//     nickname: '매우긴닉네임ㅡㅡㅡㅡ',
-//     time: '08:54',
-//     message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-//   },
-// ];
