@@ -35,7 +35,7 @@ export default function RankingBoard({
         <S.InformText>{informText[rankingType]}</S.InformText>
         <S.BoardWrapper bgColor={bgColor[rankingType]}>
           <S.Title>{title[rankingType]}</S.Title>
-          <S.ContentWrapper>
+          <S.ContentWrapper gridCellCount={userInfo ? 10 : 9}>
             {['순위', '닉네임', '공부 시간'].map((header, index) => {
               return (
                 <S.GridItem className="header" key={index}>
@@ -62,17 +62,17 @@ export default function RankingBoard({
                 </Fragment>
               );
             })}
-            <S.GridItem className="myRank">
-              {userInfo && userInfo.totalTime !== '00:00:00'
-                ? userInfo.rank
-                : ''}
-            </S.GridItem>
-            <S.GridItem className="myNickname">
-              {userInfo ? userInfo.nickname : ''}
-            </S.GridItem>
-            <S.GridItem className="myStudyTime">
-              {userInfo ? userInfo.totalTime : ''}
-            </S.GridItem>
+            {userInfo ? (
+              <>
+                <S.UserInfoGrid>
+                  {userInfo.totalTime !== '00:00:00' ? userInfo.rank : '-'}
+                </S.UserInfoGrid>
+                <S.UserInfoGrid>{userInfo.nickname}</S.UserInfoGrid>
+                <S.UserInfoGrid>{userInfo.totalTime}</S.UserInfoGrid>
+              </>
+            ) : (
+              <></>
+            )}
           </S.ContentWrapper>
         </S.BoardWrapper>
       </S.BoardAndInformWrapper>

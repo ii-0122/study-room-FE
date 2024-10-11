@@ -54,10 +54,7 @@ export default function Ranking() {
   );
 }
 
-const typeMapping: Record<
-  RankingType,
-  keyof Omit<RankingResponse, 'userInfo'>
-> = {
+const typeMapping: Record<RankingType, keyof RankingResponse> = {
   day: 'dayList',
   week: 'weekList',
   month: 'monthList',
