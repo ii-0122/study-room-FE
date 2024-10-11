@@ -192,6 +192,9 @@ const Todos = () => {
               {editingTodo === todo._id ? (
                 <S.TodoForm
                   onSubmit={handleSubmit((data) => onPutSubmit(data, todo))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
                   <S.TextAndErrorWrapper>
                     <S.TodoTextInput
