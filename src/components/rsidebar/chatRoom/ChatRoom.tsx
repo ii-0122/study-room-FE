@@ -34,7 +34,11 @@ export default function ChatRoom() {
       nickname: myNickname ? myNickname : '',
       time: dayjs().format('HH:mm'),
     };
-    setChatArray(reqData);
+    const newChat = {
+      ...reqData,
+      imageUrl: user?.imageUrl ? user.imageUrl : '',
+    };
+    setChatArray(newChat);
     sendMessage(data.message);
   };
 
@@ -61,6 +65,7 @@ export default function ChatRoom() {
         nickname: 'notice',
         message: data.message,
         time: data.time,
+        imageUrl: '',
       };
       setChatArray(noticeChat);
     }, 300);

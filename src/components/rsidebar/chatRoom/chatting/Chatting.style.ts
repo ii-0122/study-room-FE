@@ -61,7 +61,6 @@ export const Notice = styled.div`
   display: flex;
   width: 100%;
   height: 40px;
-  background-color: gray;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -69,5 +68,5 @@ export const Notice = styled.div`
 `;
 
 export const NoticeText = styled.text`
-  font-size: 15px;
+  font-size: 18px;
 `;

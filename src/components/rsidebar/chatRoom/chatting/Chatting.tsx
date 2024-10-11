@@ -14,7 +14,7 @@ export default function Chatting({
   chatInfo: ChattingProps;
   isMine: boolean;
 }) {
-  const { nickname, message, time } = chatInfo;
+  const { nickname, message, time, imageUrl } = chatInfo;
   const isNotice = nickname === 'notice' ? true : false;
 
   return (
@@ -27,7 +27,7 @@ export default function Chatting({
         <S.ChatWrapper isMine={isMine}>
           <S.UserInfoArea>
             {/* @TODO ProfileImageBox에 src(이미지url) 연결 필요*/}
-            <ProfileImageBox width="60px" height="60px" />
+            <ProfileImageBox src={imageUrl} width="60px" height="60px" />
             <S.Nickname>{nickname}</S.Nickname>
           </S.UserInfoArea>
           <S.ChatInfoArea>
