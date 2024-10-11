@@ -21,7 +21,7 @@ export default function Router() {
       <Route path="/study-rooms" element={<StudyRooms />} />
       <Route path="/ranking" element={<Ranking />}></Route>
       <Route path="/study-room/:id" element={<PrivateStudyRoom />} />
-      <Route path="/multi-study-room" element={<MultiStudyRoom />} />
+      <Route path="/multi-study-room/:id" element={<MultiStudyRoom />} />
     </Routes>
   );
 }

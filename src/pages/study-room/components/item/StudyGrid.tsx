@@ -126,7 +126,11 @@ function StudyGrid({
 
   const handleRoomClick = (room: Room) => {
     if (room.isPublic) {
-      navigate(`/study-room/${room._id}`);
+      if (room.maxNum === 1) {
+        navigate(`/study-room/${room._id}`);
+      } else if (room.maxNum > 1) {
+        navigate(`/multi-study-room/${room._id}`);
+      }
     } else {
       setSelectedRoom(room);
       setShowPasswordModal(true);

@@ -1,5 +1,4 @@
 import { useAuthStore } from '@/stores/auth.store';
-import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 
@@ -22,17 +21,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
 
   useEffect(() => {
     if (!roomId) return;
+    console.log(roomId);
 
     const newSocket = io(`${import.meta.env.VITE_REACT_APP_API_URL}/rooms`, {
       transports: ['websocket'],
       query: { roomId, nickname, imageUrl },
       auth: {
-        // token: Cookies.get('jwt'),
         token: `Bearer ${accessToken}`,
       },
     });
     setSocket(newSocket);
-    // console.log(Cookies.get('jwt'));
   }, [accessToken, user]);
 
   return (
