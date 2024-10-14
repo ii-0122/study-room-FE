@@ -10,4 +10,5 @@ export const API_ROUTES = {
   PLANNERS: '/planners',
   STATISTICS: '/statistics',
   RANKINGS: '/rankings',
+  IMAGE: '/images',
 };
