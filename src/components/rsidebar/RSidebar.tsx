@@ -7,7 +7,7 @@ import { useSocket } from '@/socket/SocketContext';
 import { throttle } from 'lodash';
 import useChatStore from '@/stores/chat.store';
 
-type Tabs = '노트' | '할 일' | '채팅';
+type Tabs = '할 일' | '채팅';
 
 const RSidebar = () => {
   const socket = useSocket();
@@ -24,15 +24,6 @@ const RSidebar = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleTabClick = (tab: Tabs) => {
-    if (tab === '노트') {
-      window.open('/', '_blank'); // 추후 노트작성 페이지로 연결
-      return;
-    } else {
-      setSelectedTab(tab);
-    }
-  };
 
   // socket
   useEffect(() => {
