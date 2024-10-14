@@ -9,13 +9,16 @@ export const RankingContainer = styled.div`
 
 export const BoardsArea = styled.div`
   display: flex;
-  height: 100%;
+  height: 90%;
+  width: 100%;
+  justify-content: space-evenly;
 `;
 
 export const Notice = styled.div`
+  flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center;
   font-size: max(1rem, 1.2vw);
   color: ${({ theme }) => theme.color.labelGray};
-  /* padding-bottom: 20px; */
 `;

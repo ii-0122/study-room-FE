@@ -46,8 +46,11 @@ export const ProfileImg = styled.img`
   border-radius: 50%;
   width: 32px;
   height: 32px;
-  cursor: pointer;
   border: 1px solid lightgray;
+`;
+
+export const ProfileImgWrapper = styled.div`
+  cursor: pointer;
 `;
 
 export const DropdownProfileImg = styled.img`
@@ -72,6 +75,8 @@ export const DropDownWrapper = styled.div<{ $isOpen: boolean }>`
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
+  z-index: 100;
+  pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
 `;
 
 export const UserInfo = styled.div`

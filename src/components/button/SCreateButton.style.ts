@@ -1,16 +1,23 @@
 import styled from 'styled-components';
 
 export const SCreateButtonStyle = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['borderRadius'].includes(prop),
+  shouldForwardProp: (prop) =>
+    !['borderRadius', 'backgroundColor', 'borderColor'].includes(prop),
 })<{
   borderRadius?: string;
   fontSize?: string;
   width?: string;
   height?: string;
+  backgroundColor?: string;
+  border?: string;
+  borderColor?: string;
+  color?: string;
 }>`
-  color: white;
-  border: none;
-  background-color: ${({ theme }) => theme.color.mainStrong};
+  color: ${({ color }) => color || 'white'};
+  border: ${({ borderColor }) =>
+    borderColor ? `1px solid ${borderColor}` : 'none'};
+  background-color: ${({ backgroundColor, theme }) =>
+    backgroundColor || theme.color.mainStrong};
   width: ${({ width }) => width || 'auto'};
   height: ${({ height }) => height || 'auto'};
   border-radius: ${({ theme, borderRadius }) =>

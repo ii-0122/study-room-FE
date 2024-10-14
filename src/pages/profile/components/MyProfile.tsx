@@ -3,12 +3,13 @@ import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useAuthStore } from '@/stores/auth.store';
 import { updateProfileFormData } from '@/types/updateProfile';
-import { updateProfile } from '@/apis/users.api';
+import { getUserProfile, updateProfile } from '@/apis/users.api';
 import { IoPersonCircle } from 'react-icons/io5';
 import { FaCamera } from 'react-icons/fa';
 import * as S from '../ProfilePage.style';
 import useDebounce from '@/hooks/useDebounce';
 import checkFieldDuplicate from '@/utils/checkFieldDuplicate';
+import { deleteImage, uploadImage, updateImage } from '@/apis/image.api';
 
 export default function MyProfile() {
   const {
@@ -18,21 +19,48 @@ export default function MyProfile() {
     control,
   } = useForm({ mode: 'onChange' });
 
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const [preview, setPreview] = useState<string | null>(user?.imageUrl || null);
   const [nicknameDuplicateError, setNicknameDuplicateError] = useState<
     string | null
   >(null);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        let updatedImageUrl;
+
+        if (preview) {
+          updatedImageUrl = await updateImage(file, preview);
+        } else {
+          updatedImageUrl = await uploadImage(file);
+        }
+
+        const cachedImageUrl = `${updatedImageUrl}?t=${new Date().getTime()}`;
+
+        setPreview(cachedImageUrl);
+      } catch (error) {
+        toast.error('이미지 처리 중 오류가 발생했습니다.');
+        console.error('이미 처리 중 오류', error);
+      }
+    } else {
+      console.error('선택된 파일이 없습니다.');
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    if (preview) {
+      try {
+        await deleteImage(preview);
+        setPreview(null);
+        toast.success('이미지가 성공적으로 삭제되었습니다.');
+      } catch (error) {
+        toast.error('이미지 삭제 중 오류가 발생했습니다.');
+        console.error(error);
+      }
     }
   };
 
@@ -50,6 +78,10 @@ export default function MyProfile() {
       introduction: data.introduction,
       imageUrl: preview || '',
     });
+
+    const updatedUser = await getUserProfile();
+    setUser(updatedUser);
+
     toast.success('프로필 수정 완료!');
   };
 
@@ -75,7 +107,7 @@ export default function MyProfile() {
               <FaCamera />
             </S.CameraIconButton>
           </S.ProfileImageWrapper>
-          <S.DeleteImageButton onClick={() => setPreview(null)}>
+          <S.DeleteImageButton onClick={handleDeleteImage}>
             이미지 삭제
           </S.DeleteImageButton>
         </S.ProfilePreviewWrapper>

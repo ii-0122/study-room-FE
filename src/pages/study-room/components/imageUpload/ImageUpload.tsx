@@ -9,15 +9,18 @@ import * as S from '@/pages/study-room/components/imageUpload/ImageUpload.style'
 import { LuUpload } from 'react-icons/lu';
 import { UseFormSetValue } from 'react-hook-form';
 import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
+import { uploadImage, updateImage } from '@/apis/image.api';
 
 interface ImageUploadButtonProps {
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
   setValue: UseFormSetValue<CreateStudyRoomFormData>;
+  imageUrl?: string;
 }
 
 const ImageUpload = forwardRef<HTMLInputElement, ImageUploadButtonProps>(
-  ({ onKeyDown, setValue }, ref) => {
+  ({ onKeyDown, setValue, imageUrl }, ref) => {
     const [fileName, setFileName] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string | null>(imageUrl || null);
 
     const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -28,16 +31,27 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadButtonProps>(
       }
     };
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
 
       if (file) {
         setFileName(file.name);
 
-        const imageUrl = URL.createObjectURL(file);
-        setValue('imageUrl', imageUrl);
+        try {
+          let updatedImageUrl;
+          if (preview) {
+            updatedImageUrl = await updateImage(file, preview);
+          } else {
+            updatedImageUrl = await uploadImage(file);
+          }
+          setPreview(updatedImageUrl);
+          setValue('imageUrl', updatedImageUrl);
+        } catch (error) {
+          console.error('이미지 업로드 실패', error);
+        }
       } else {
         setValue('imageUrl', '');
+        setPreview(null);
       }
     };
 

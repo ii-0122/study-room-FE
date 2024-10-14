@@ -55,3 +55,20 @@ export const patchCheckBox = async (plannerId: string) => {
     throw error;
   }
 };
+
+export const getStatistics = async (
+  year: number,
+  month: number,
+  day: number
+) => {
+  try {
+    const res = await axiosInstance.get(
+      `${API_ROUTES.STATISTICS}/my/daily?year=${year}&month=${month}&day=${day}`
+    );
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

@@ -8,4 +8,7 @@ export const API_ROUTES = {
   CHANGE_PASSWORD: '/auth/change-password',
   USER: '/users/me',
   PLANNERS: '/planners',
+  STATISTICS: '/statistics',
+  RANKINGS: '/rankings',
+  IMAGE: '/images',
 };

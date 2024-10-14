@@ -44,23 +44,21 @@ export default function TodoBox({
     <S.TodoBoxStyle onClick={onClick}>
       <S.ColorBarStyle barColor={barColor} />
       <S.InfoArea>
-        <S.InfoTextArea>
-          <S.TodoStyle>{todo}</S.TodoStyle>
-          <S.SubjectStyle>{subject}</S.SubjectStyle>
-          <S.RepeatContainer>
-            <S.RepeatIcon />
-            {repeatDays.length > 0 ? (
-              <>
-                반복종료일 : {repeatEndDate} / 반복 요일 :
-                {repeatDays.map((elem) => {
-                  return ' ' + elem;
-                })}
-              </>
-            ) : (
-              <>반복없음</>
-            )}
-          </S.RepeatContainer>
-        </S.InfoTextArea>
+        <S.TodoStyle>{todo}</S.TodoStyle>
+        <S.SubjectStyle>{subject}</S.SubjectStyle>
+        <S.RepeatContainer>
+          <S.RepeatIcon />
+          {repeatDays.length > 0 ? (
+            <>
+              반복종료일 : {repeatEndDate} / 반복 요일 :
+              {repeatDays.map((elem) => {
+                return ' ' + elem;
+              })}
+            </>
+          ) : (
+            <>반복없음</>
+          )}
+        </S.RepeatContainer>
       </S.InfoArea>
 
       <S.CheckBoxArea>

@@ -36,11 +36,11 @@ export default function CreateStudyRoomForm() {
 
     try {
       const result = await createStudyRoom(formattedData);
-      toast.success('공부방 생성 성공');
+      toast.success('스터디룸 생성 성공');
       navigate(`/study-room/${result._id}`);
     } catch (error) {
       console.error('방 생성 실패:', error);
-      toast.error('공부방 생성 실패');
+      toast.error('스터디룸 생성 실패');
     }
   };
 
@@ -57,20 +57,20 @@ export default function CreateStudyRoomForm() {
 
   return (
     <S.CreateFormWrapper>
-      <S.CreateTitle>공부방 추가</S.CreateTitle>
+      <S.CreateTitle>스터디룸 추가</S.CreateTitle>
 
       <S.CreateForm onSubmit={handleSubmit(onSubmit)}>
         <S.FormInputField>
           <S.FormLabel htmlFor="title">
-            공부방 이름
+            스터디룸 제목
             <FaStarOfLife size={6} color="#599BFC" />
           </S.FormLabel>
           <S.FormInput
             id="title"
-            placeholder="공부방 이름을 작성해 주세요."
+            placeholder="스터디룸 제목을 작성해 주세요."
             onKeyDown={handleKeyDown}
             {...register('title', {
-              required: '공부방 이름은 필수입니다.',
+              required: '스터디룸 제목을 필수입니다.',
               maxLength: {
                 value: 30,
                 message: '최대 30자까지 입력할 수 있습니다.',

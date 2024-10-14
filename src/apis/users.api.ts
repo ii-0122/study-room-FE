@@ -10,3 +10,8 @@ export const updateProfile = async (data: updateProfileFormData) => {
 export const deleteAccount = async () => {
   await axiosInstance.delete(API_ROUTES.USER);
 };
+
+export const getUserProfile = async () => {
+  const response = await axiosInstance.get(API_ROUTES.USER);
+  return response.data;
+};

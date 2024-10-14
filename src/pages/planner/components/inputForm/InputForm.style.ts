@@ -10,7 +10,7 @@ export const InputFormStyle = styled.div`
 export const TextInputBox = styled.input`
   padding: 0 1em;
   width: 100%;
-  height: 1.8em;
+  height: 2.2em;
   border-radius: 0.5em;
   border: ${({ theme }) => `1px solid ${theme.color.plannerGray}`};
   font-size: max(0.5rem, 1vw);
@@ -90,7 +90,7 @@ export const SubLabel = styled.label`
 export const InputTimeStyle = styled.input`
   font-size: max(0.8rem, 0.8vw);
 
-  height: 2em;
+  height: 2.2em;
   width: 10em;
   text-align: center;
   border-radius: 8px;

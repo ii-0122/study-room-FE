@@ -1,11 +1,12 @@
-import { RankingList, RankingType } from '@/types/ranking';
+import { RankingType, UserInfo } from '@/types/ranking';
 import * as S from './RankingBoard.style';
 import { Fragment } from 'react/jsx-runtime';
+import { useEffect, useState } from 'react';
 
 interface RankingBoardProps {
   rankingType: RankingType;
-  rankingList: RankingList[];
-  userInfo: RankingList;
+  rankingList: UserInfo[];
+  userInfo: UserInfo | undefined;
 }
 
 export default function RankingBoard({
@@ -13,10 +14,20 @@ export default function RankingBoard({
   rankingList,
   userInfo,
 }: RankingBoardProps) {
-  const processedRankingList: RankingList[] =
+  const processedRankingList: UserInfo[] =
     rankingList.length > 10
       ? rankingList.slice(0, 10)
       : [...rankingList, ...Array(10 - rankingList.length).fill({})];
+
+  const [myIndex, setMyIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    rankingList.forEach((rankInfo, index) => {
+      if (rankInfo.nickname === userInfo?.nickname) {
+        setMyIndex(index);
+      }
+    });
+  }, [rankingList, userInfo]);
 
   return (
     <S.BoardContainer>
@@ -24,7 +35,7 @@ export default function RankingBoard({
         <S.InformText>{informText[rankingType]}</S.InformText>
         <S.BoardWrapper bgColor={bgColor[rankingType]}>
           <S.Title>{title[rankingType]}</S.Title>
-          <S.ContentWrapper>
+          <S.ContentWrapper gridCellCount={userInfo ? 10 : 9}>
             {['순위', '닉네임', '공부 시간'].map((header, index) => {
               return (
                 <S.GridItem className="header" key={index}>
@@ -33,28 +44,35 @@ export default function RankingBoard({
               );
             })}
             {processedRankingList.map((rankInfo, index) => {
+              const isMine = myIndex === index;
               return (
                 <Fragment key={index}>
                   {rankInfo.rank < 4 ? (
-                    <S.GridItem>
+                    <S.GridItem isMine={isMine}>
                       <S.CrownWrapper>
                         <S.CrownText>{rankInfo.rank}</S.CrownText>
                         <S.CrownIcon rank={rankInfo.rank} />
                       </S.CrownWrapper>
                     </S.GridItem>
                   ) : (
-                    <S.GridItem>{rankInfo.rank}</S.GridItem>
+                    <S.GridItem isMine={isMine}>{rankInfo.rank}</S.GridItem>
                   )}
-                  <S.GridItem>{rankInfo.nickname}</S.GridItem>
-                  <S.GridItem>{rankInfo.studyTime}</S.GridItem>
+                  <S.GridItem isMine={isMine}>{rankInfo.nickname}</S.GridItem>
+                  <S.GridItem isMine={isMine}>{rankInfo.totalTime}</S.GridItem>
                 </Fragment>
               );
             })}
-            <S.GridItem className="myRank">{userInfo.rank}</S.GridItem>
-            <S.GridItem className="myNickname">{userInfo.nickname}</S.GridItem>
-            <S.GridItem className="myStudyTime">
-              {userInfo.studyTime}
-            </S.GridItem>
+            {userInfo ? (
+              <>
+                <S.UserInfoGrid>
+                  {userInfo.totalTime !== '00:00:00' ? userInfo.rank : '-'}
+                </S.UserInfoGrid>
+                <S.UserInfoGrid>{userInfo.nickname}</S.UserInfoGrid>
+                <S.UserInfoGrid>{userInfo.totalTime}</S.UserInfoGrid>
+              </>
+            ) : (
+              <></>
+            )}
           </S.ContentWrapper>
         </S.BoardWrapper>
       </S.BoardAndInformWrapper>

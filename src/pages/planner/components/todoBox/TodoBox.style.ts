@@ -30,19 +30,13 @@ export const InfoArea = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-`;
-
-export const InfoTextArea = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
   justify-content: space-around;
 `;
 
 export const TodoStyle = styled.div`
   font-size: clamp(0.8rem, 1.2vw, 1.3rem);
   font-weight: 600;
+  margin-top: 0.3em;
 `;
 export const SubjectStyle = styled.div`
   font-size: clamp(0.8rem, 1.1vw, 1.2rem);

@@ -35,7 +35,11 @@ const CustomInput = forwardRef<HTMLDivElement, CustomInputProps>(
     };
 
     return (
-      <S.PlannerInputWrapper>
+      <S.PlannerInputWrapper
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <IoIosArrowBack className="changeButton" onClick={handlePreviousDate} />
         <div className="datePickerInput" onClick={onClick} ref={ref}>
           {value}

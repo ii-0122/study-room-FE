@@ -3,7 +3,7 @@ import { PiCrownSimpleFill } from 'react-icons/pi';
 
 export const BoardContainer = styled.div`
   display: flex;
-  width: 25vw;
+  width: 27vw;
   height: 100%;
   justify-content: center;
   align-items: center;
@@ -14,9 +14,9 @@ export const BoardAndInformWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   width: 100%;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
-  gap: 3%;
+  gap: 20px;
 `;
 
 export const InformText = styled.div`
@@ -32,8 +32,7 @@ export const BoardWrapper = styled.div.withConfig({
   align-items: center;
   justify-content: space-evenly;
   width: 80%;
-  height: 80%;
-  border: 1px solid black;
+  height: 90%;
   border-radius: 0.8rem;
   background-color: ${(props) => props.bgColor};
   box-shadow: 2px 2px 4px 1px rgb(0 0 0 / 20%);
@@ -44,46 +43,32 @@ export const Title = styled.div`
   font-weight: 600;
 `;
 
-export const ContentWrapper = styled.div`
-  /* display: flex;
-  flex-direction: column; */
+export const ContentWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['gridCellCount'].includes(prop),
+})<{ gridCellCount: number }>`
   display: grid;
   grid-template-columns: 2fr 4fr 4fr;
-  grid-template-rows: 1fr repeat(10, 1fr) 1fr;
 
-  /* align-items: center; */
+  grid-template-rows: 1fr repeat(${(props) => props.gridCellCount}, 1fr) 1fr;
+  font-size: max(0.5rem, 0.8vw);
+
   width: 90%;
   height: 90%;
-  background-color: white;
   border-radius: 0.8rem;
-  border: 2px dotted ${({ theme }) => theme.color.bgGray};
+  background-color: white;
+  border: 2px solid ${({ theme }) => theme.color.bgGray};
 
   .header {
-    /* font-size : 1rem; */
     font-weight: 600;
-  }
-
-  .myRank {
-    grid-column: 1/2;
-    grid-row: 12/13;
-  }
-
-  .myNickname {
-    grid-column: 2/3;
-    grid-row: 12/13;
-  }
-
-  .myStudyTime {
-    grid-column: 3/4;
-    grid-row: 12/13;
   }
 `;
 
-export const GridItem = styled.div`
+export const GridItem = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isMine'].includes(prop),
+})<{ isMine?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: max(0.5rem, 0.8vw);
 
   &:nth-child(3n + 2):nth-child(n + 4) {
     border-left: 1px solid ${({ theme }) => theme.color.bgGray};
@@ -103,11 +88,27 @@ export const GridItem = styled.div`
     font-size: max(0.5rem, 0.9vw);
   }
 
-  &:nth-last-child(1),
-  &:nth-last-child(2),
-  &:nth-last-child(3) {
-    border-top: 1px solid black;
+  &:nth-child(1) {
+    border-radius: 0.8rem 0 0 0;
   }
+  &:nth-child(3) {
+    border-radius: 0 0.8rem 0 0;
+  }
+  &:nth-last-child(1) {
+    border-radius: 0 0 0.8rem 0;
+  }
+  &:nth-last-child(3) {
+    border-radius: 0 0 0 0.8rem;
+  }
+
+  ${(props) =>
+    props.isMine
+      ? `background-color : ${props.theme.color.main}`
+      : 'background-color : white'}
+`;
+
+export const UserInfoGrid = styled(GridItem)`
+  border-top: 1px solid black;
 `;
 
 export const CrownWrapper = styled.div`

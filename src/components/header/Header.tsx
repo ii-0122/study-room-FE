@@ -79,9 +79,9 @@ export default function Header({ title }: HeaderProps) {
       <S.ButtonWrapper>
         {accessToken ? (
           <>
-            <div ref={profileRef} onClick={toggleDropdown}>
+            <S.ProfileImgWrapper ref={profileRef} onClick={toggleDropdown}>
               {renderProfileImage()}
-            </div>
+            </S.ProfileImgWrapper>
             {renderDropdown()}
           </>
         ) : (
