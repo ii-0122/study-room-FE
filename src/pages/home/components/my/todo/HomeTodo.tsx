@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import * as S from './HomeTodo.style';
 import { getTodos, patchCheckBox } from '@/apis/planners.api';
 import dayjs from 'dayjs';
 import Loader from '@/components/loader/Loader';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface Todo {
   _id: string;
@@ -11,61 +11,52 @@ interface Todo {
 }
 
 function HomeTodo() {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const today = dayjs().format('YYYY-MM-DD');
 
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const today = dayjs().format('YYYY-MM-DD');
-        const fetchedTodos = await getTodos(today);
-        setTodos(fetchedTodos);
-      } catch (error) {
-        console.error('할 일을 불러오는 중 오류 발생:', error);
-        setError('할 일을 불러오는 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: todos,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Todo[], Error>({
+    queryKey: ['todos', today],
+    queryFn: () => getTodos(today),
+  });
 
-    fetchTodos();
-  }, []);
-
-  const handleCheckboxChange = async (id: string, isComplete: boolean) => {
-    try {
-      await patchCheckBox(id);
-
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo._id === id ? { ...todo, isComplete: !isComplete } : todo
-        )
-      );
-    } catch (error) {
+  const mutation = useMutation({
+    mutationFn: (id: string) => patchCheckBox(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['todos', today],
+      });
+    },
+    onError: (error: Error) => {
       console.error('체크박스 업데이트 중 오류 발생:', error);
-      setError('체크박스 업데이트 중 오류가 발생했습니다.');
-    }
+    },
+  });
+
+  const handleCheckboxChange = (id: string) => {
+    mutation.mutate(id);
   };
 
   return (
     <S.HomeTodoStyle>
       <S.Title>오늘의 할 일</S.Title>
-      {loading ? (
+      {isLoading ? (
         <Loader />
-      ) : error ? (
-        <p>{error}</p>
+      ) : isError ? (
+        <p>{error?.message || '할 일을 불러오는 중 오류가 발생했습니다.'}</p>
       ) : (
         <S.TodoWrap>
-          {todos.length > 0 ? (
+          {todos && todos.length > 0 ? (
             <S.TodoItem>
               {todos.map((todo) => (
                 <S.Todo key={todo._id}>
                   <S.Checkbox
                     type="checkbox"
                     checked={todo.isComplete}
-                    onChange={() =>
-                      handleCheckboxChange(todo._id, todo.isComplete)
-                    }
+                    onChange={() => handleCheckboxChange(todo._id)}
                   />
                   {todo.todo}
                 </S.Todo>
