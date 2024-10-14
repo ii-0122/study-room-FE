@@ -1,6 +1,6 @@
 import React from 'react';
-import { IconType } from 'react-icons';
 import * as S from './SCreateButton.style';
+import { IconType } from 'react-icons/lib';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
