@@ -24,13 +24,13 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
 }) => {
   return (
     <S.StudyProfileBoxStyle $isGroup={isGroup}>
-      <S.ContentDisplay $isGroup={isGroup}>
+      <S.ContentDisplay $isGroup={isGroup} $isMe={isMe ? isMe : false}>
         {(!isGroup || isMe) && (
           <div className="content">선택된 할 일 공부 시간</div>
         )}
         <div className="content">전체 공부 시간</div>
       </S.ContentDisplay>
-      <S.TimeDisplay $isGroup={isGroup}>
+      <S.TimeDisplay $isGroup={isGroup} $isMe={isMe ? isMe : false}>
         {(!isGroup || isMe) && (
           <div className="time">{initialCurrentTaskTime}</div>
         )}

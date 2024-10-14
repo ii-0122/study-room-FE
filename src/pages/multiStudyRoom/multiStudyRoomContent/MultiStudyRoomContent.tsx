@@ -16,6 +16,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { throttle } from 'lodash';
 import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
+import StudyRoomNotice from '../component/studyRoomNotice';
 
 const MultiStudyRoomContent = () => {
   const navigate = useNavigate();
@@ -331,7 +332,10 @@ const MultiStudyRoomContent = () => {
   return (
     <S.MultiStudyRoomStyle>
       <S.MainContentArea>
-        <Header title="개인 공부방" />
+        <Header
+          title={studyRoomInfo ? studyRoomInfo.title : '[그룹] 스터디 룸'}
+        />
+        <StudyRoomNotice allInfo={studyRoomInfo} />
         <S.StudyRoomWrap>
           <S.UserProfileContainer>
             <StudyProfileBox

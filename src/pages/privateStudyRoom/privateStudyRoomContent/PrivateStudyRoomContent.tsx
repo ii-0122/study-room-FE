@@ -234,7 +234,9 @@ const PrivateStudyRoomContent = () => {
   return (
     <S.PrivateStudyRoomStyle>
       <S.MainContentArea>
-        <Header title="개인 공부방" />
+        <Header
+          title={studyRoomInfo ? studyRoomInfo.title : '[개인] 스터디 룸'}
+        />
         <S.StudyRoomWrap>
           <StudyProfileBox
             isGroup={false}

@@ -26,22 +26,20 @@ export const StudyRoomWrap = styled.div`
 `;
 
 export const UserProfileContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  height: 50vh;
   max-width: 70vw;
   max-height: 60vh;
   overflow-y: auto;
   overflow-x: hidden;
 `;
 
-export const UserProfileBox = styled.div``;
-
 export const InstructionText = styled.div`
   text-align: center;
   margin: 20px 0;
-  font-size: 35px;
+  font-size: 16px;
 `;
 
 export const ButtonContainer = styled.div`
