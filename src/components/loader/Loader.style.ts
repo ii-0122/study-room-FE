@@ -6,8 +6,8 @@ const spin = keyframes`
 `;
 
 export const Loader = styled.div`
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #599bfc;
   border-radius: 50%;
   width: 50px;
   height: 50px;

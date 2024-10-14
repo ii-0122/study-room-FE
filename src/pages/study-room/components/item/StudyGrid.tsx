@@ -1,52 +1,18 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import StudyItem from './StudyItem';
-import axios from 'axios';
 import { FetchRoomsParams, Room } from '@/types/studyRoom';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@/components/modal/Modal';
 import PasswordInput from '../form/PasswordInput';
-import axiosInstance from '@/apis/axiosInstance.api';
 import * as S from './StudyGrid.style';
+import { checkStudyRoomPassword, fetchRooms } from '@/apis/studyRooms.api';
 
 interface ResData {
   rooms: Room[];
   offset: number;
   hasMore: boolean;
 }
-
-// API 요청 함수
-const fetchRooms = async (params: FetchRoomsParams, pageParam: number) => {
-  const { search, isPublic, isPossible, limit } = params;
-
-  const query = new URLSearchParams({
-    search: search || '',
-    isPublic: isPublic !== undefined ? String(isPublic) : '',
-    isPossible: isPossible !== undefined ? String(isPossible) : '',
-    limit: String(limit),
-    offset: String(pageParam),
-  }).toString();
-
-  const url = `${import.meta.env.VITE_REACT_APP_API_URL}/rooms?${query}`;
-  console.log('Fetching URL:', url);
-  const res = await axios.get(url);
-  const rooms: Room[] = res.data;
-  const data = {
-    rooms: rooms,
-    offset: rooms.length + pageParam,
-    hasMore: rooms.length < limit ? false : true,
-  };
-  return data;
-};
-
-const checkPassword = async (roomId: string, password: string) => {
-  const response = await axiosInstance.post(
-    `${import.meta.env.VITE_REACT_APP_API_URL}/rooms/checkPassword/${roomId}`,
-    { password }
-  );
-  console.log(response.data);
-  return response.data;
-};
 
 function StudyGrid({
   filter,
@@ -137,7 +103,10 @@ function StudyGrid({
   const handlePasswordSubmit = async () => {
     if (selectedRoom) {
       try {
-        const response = await checkPassword(selectedRoom._id, password);
+        const response = await checkStudyRoomPassword(
+          selectedRoom._id,
+          password
+        );
         if (response.message === '비밀번호 확인 완료') {
           navigate(`/study-room/${selectedRoom._id}`);
         } else {

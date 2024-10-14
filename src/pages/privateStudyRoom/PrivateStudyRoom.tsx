@@ -100,7 +100,7 @@ const PrivateStudyRoom: React.FC<PrivateStudyRoomProps> = ({
   return (
     <S.PrivateStudyRoomStyle>
       <S.MainContentArea>
-        <Header title="개인 공부방" />
+        <Header title="개인 스터디룸" />
         <S.StudyRoomWrap>
           <StudyProfileBox
             isGroup={false}

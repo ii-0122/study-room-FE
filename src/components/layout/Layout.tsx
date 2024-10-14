@@ -21,7 +21,7 @@ export default function Layout({ children }: LayoutProps) {
     '/': '홈',
     '/profile': '프로필',
     '/planner': '플래너',
-    '/study-rooms': '공부방',
+    '/study-rooms': '스터디룸',
     '/ranking': '랭킹',
   };
 

@@ -30,7 +30,7 @@ export const ItemContainer = styled.div.withConfig({
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.07);
+    background-color: rgba(0, 0, 0, 0.08);
     border-radius: 7px;
     z-index: 0;
   }

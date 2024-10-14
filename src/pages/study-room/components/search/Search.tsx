@@ -28,7 +28,7 @@ function Search({ onSearchChange }: SearchProps) {
       <input
         type="text"
         id="searchInput"
-        placeholder="공부방 이름을 검색해보세요."
+        placeholder="스터디룸을 검색해보세요."
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         onKeyDown={handleKeyDown}

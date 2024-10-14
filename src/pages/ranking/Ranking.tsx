@@ -6,7 +6,6 @@ import {
 import RankingBoard from './components/RankingBoard';
 import { useQuery } from '@tanstack/react-query';
 import { getRankings, getRankingsWithJWT } from '@/apis/ranking.api';
-import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/auth.store';
 import Loader from '@/components/loader/Loader';
 import * as S from './Ranking.style';

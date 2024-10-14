@@ -7,9 +7,9 @@ interface SelectBoxProps {
 }
 
 const options = [
-  { value: 'all', label: '전체 공부방' },
-  { value: 'public', label: '공개 공부방' },
-  { value: 'secret', label: '비공개 공부방' },
+  { value: 'all', label: '전체 스터디룸' },
+  { value: 'public', label: '공개 스터디룸' },
+  { value: 'secret', label: '비공개 스터디룸' },
 ];
 
 function SelectBox({ onFilterChange }: SelectBoxProps) {

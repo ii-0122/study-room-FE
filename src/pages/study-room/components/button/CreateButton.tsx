@@ -8,7 +8,7 @@ interface CreateButtonProps {
 function CreateButton({ onClick }: CreateButtonProps) {
   return (
     <SCreateButton
-      label="공부방 개설"
+      label="스터디룸 개설"
       width="250px"
       height="46px"
       Icon={FaPlus}

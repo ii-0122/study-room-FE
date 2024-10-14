@@ -15,8 +15,7 @@ export const getRankings = async () => {
 export const getRankingsWithJWT = async () => {
   try {
     const res = await axiosInstance.get(`${API_ROUTES.RANKINGS}/jwt`);
-    console.log(res);
-
+    //console.log(res);
     return res.data;
   } catch (error) {
     console.log(error);

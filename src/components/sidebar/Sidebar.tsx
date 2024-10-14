@@ -40,7 +40,7 @@ export default function Sidebar() {
         $focused={selectedMenu === '/study-rooms'}
       >
         <AiOutlineComment />
-        <span>공부방</span>
+        <span>스터디룸</span>
       </S.SidebarItem>
       <S.SidebarItem to="/planner" $focused={selectedMenu === '/planner'}>
         <AiOutlineCarryOut />

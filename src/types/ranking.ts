@@ -16,7 +16,9 @@ export interface RankingWithJWTResponse {
   dayList: { top10: UserInfo[]; userInfo: UserInfo };
   weekList: { top10: UserInfo[]; userInfo: UserInfo };
   monthList: { top10: UserInfo[]; userInfo: UserInfo };
+  prevPrevUserInfo: UserInfo;
   prevUserInfo: UserInfo;
-  nextUserInfo: UserInfo;
   userInfo: UserInfo;
+  nextUserInfo: UserInfo;
+  nextNextUserInfo: UserInfo;
 }
