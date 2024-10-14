@@ -62,6 +62,10 @@ const RSidebar = () => {
     };
   }, [socket]);
 
+  const handleTabClick = (tab: Tabs) => {
+    setSelectedTab(tab);
+  };
+
   return (
     <S.RSidebarStyle>
       <S.Wrapper>

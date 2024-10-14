@@ -1,4 +1,4 @@
-import * as S from './studyRoomNotice.style';
+import * as S from './StudyRoomNotice.style';
 import { IoChevronDownOutline, IoChevronUpOutline } from 'react-icons/io5';
 
 // Props로 공부방 정보를 받을 예정

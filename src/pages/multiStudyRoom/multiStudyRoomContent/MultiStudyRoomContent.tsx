@@ -16,7 +16,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { throttle } from 'lodash';
 import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
-import StudyRoomNotice from '../component/studyRoomNotice';
+import StudyRoomNotice from '../component/StudyRoomNotice';
 
 const MultiStudyRoomContent = () => {
   const navigate = useNavigate();
