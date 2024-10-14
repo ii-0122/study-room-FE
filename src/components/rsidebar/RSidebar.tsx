@@ -79,7 +79,7 @@ const RSidebar = () => {
           {selectedTab === '할 일' ? <Todos /> : <ChatRoom />}
         </S.ContentWrapper>
         <S.TabsWrapper>
-          {['노트', '할 일', '채팅'].map((tab, index) => {
+          {['할 일', '채팅'].map((tab, index) => {
             let isSelected = false;
             if (selectedTab === tab) {
               isSelected = true;
