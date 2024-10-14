@@ -3,10 +3,16 @@ import * as S from './RSidebar.style';
 import Todos from './todos/Todos';
 import ChatRoom from './chatRoom/ChatRoom';
 import { formatDateTime } from './utils/dateFormat';
+import { useSocket } from '@/socket/SocketContext';
+import { throttle } from 'lodash';
+import useChatStore from '@/stores/chat.store';
 
-type Tabs = '노트' | '할 일' | '채팅';
+type Tabs = '할 일' | '채팅';
 
-export default function RSidebar() {
+const RSidebar = () => {
+  const socket = useSocket();
+  const setChatArray = useChatStore.getState().setChatArray;
+
   const [currentDateTime, setCurrentDateTime] =
     useState<string>(formatDateTime());
 
@@ -19,14 +25,42 @@ export default function RSidebar() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleTabClick = (tab: Tabs) => {
-    if (tab === '노트') {
-      window.open('/', '_blank'); // 추후 노트작성 페이지로 연결
+  // socket
+  useEffect(() => {
+    if (!socket) {
       return;
-    } else {
-      setSelectedTab(tab);
     }
-  };
+
+    const handleReceiveChat = throttle((data) => {
+      setChatArray(data);
+      // console.log(data);
+    }, 300);
+
+    const handleNotice = throttle((data) => {
+      // console.log(data);
+      const noticeChat = {
+        nickname: 'notice',
+        message: data.message,
+        time: data.time,
+        imageUrl: '',
+      };
+      setChatArray(noticeChat);
+    }, 300);
+
+    socket.on('responseChat', (data) => {
+      // 채팅이 잘 보내졌나 확인
+      console.log(data);
+    });
+
+    socket.on('notice', handleNotice);
+    socket.on('receiveChat', handleReceiveChat);
+
+    return () => {
+      socket.off('recieveChat');
+      socket.off('responseChat');
+      socket.off('notice');
+    };
+  }, [socket]);
 
   return (
     <S.RSidebarStyle>
@@ -36,7 +70,7 @@ export default function RSidebar() {
           {selectedTab === '할 일' ? <Todos /> : <ChatRoom />}
         </S.ContentWrapper>
         <S.TabsWrapper>
-          {['노트', '할 일', '채팅'].map((tab, index) => {
+          {['할 일', '채팅'].map((tab, index) => {
             let isSelected = false;
             if (selectedTab === tab) {
               isSelected = true;
@@ -56,4 +90,6 @@ export default function RSidebar() {
       </S.Wrapper>
     </S.RSidebarStyle>
   );
-}
+};
+
+export default RSidebar;

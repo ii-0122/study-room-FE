@@ -2,7 +2,8 @@ import ProfileImageBox from './imagebox/ProfileImageBox';
 import * as S from './StudyProfileBox.style';
 
 interface StudyProfileBoxProps {
-  isGroup?: boolean;
+  isGroup: boolean;
+  isMe?: boolean;
   userId?: string;
   initialCurrentTaskTime?: string;
   initialTotalStudyTime?: string;
@@ -12,7 +13,8 @@ interface StudyProfileBoxProps {
 }
 
 const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
-  isGroup = false,
+  isGroup,
+  isMe,
   userId,
   initialCurrentTaskTime = '00:00:00',
   initialTotalStudyTime = '00:00:00',
@@ -22,12 +24,16 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
 }) => {
   return (
     <S.StudyProfileBoxStyle $isGroup={isGroup}>
-      <S.ContentDisplay $isGroup={isGroup}>
-        {!isGroup && <div className="content">선택된 할 일 공부 시간</div>}
+      <S.ContentDisplay $isGroup={isGroup} $isMe={isMe ? isMe : false}>
+        {(!isGroup || isMe) && (
+          <div className="content">선택된 할 일 공부 시간</div>
+        )}
         <div className="content">전체 공부 시간</div>
       </S.ContentDisplay>
-      <S.TimeDisplay $isGroup={isGroup}>
-        {!isGroup && <div className="time">{initialCurrentTaskTime}</div>}
+      <S.TimeDisplay $isGroup={isGroup} $isMe={isMe ? isMe : false}>
+        {(!isGroup || isMe) && (
+          <div className="time">{initialCurrentTaskTime}</div>
+        )}
         <div className="time">{initialTotalStudyTime}</div>
       </S.TimeDisplay>
       <ProfileImageBox

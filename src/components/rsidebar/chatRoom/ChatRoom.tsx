@@ -2,11 +2,18 @@ import { useForm } from 'react-hook-form';
 import Chatting from './chatting/Chatting';
 import { ChatReq } from '@/models/chat.model';
 import * as S from './ChatRoom.style';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
+import { useSocket } from '@/socket/SocketContext';
+import useChatStore from '@/stores/chat.store';
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function ChatRoom() {
-  const myNickname = 'myNickName'; // 추후 닉네임 불러와서 사용
+  const user = useAuthStore((state) => state.user);
+  const myNickname = user?.nickname;
+  const socket = useSocket();
+  const chatArray = useChatStore((state) => state.chatArray);
+  const setChatArray = useChatStore.getState().setChatArray;
 
   const {
     register,
@@ -17,21 +24,19 @@ export default function ChatRoom() {
     mode: 'onSubmit',
   });
 
-  // 추후 TMP_CHATS 대신 빈 배열
-  const [chatArray, setChatArray] = useState(TMP_CHATS);
   const scrollBottomRef = useRef<HTMLDivElement>(null);
 
   const onSubmit = (data: ChatReq) => {
     setValue('message', '');
     const reqData = {
       ...data,
-      nickname: myNickname,
+      nickname: myNickname ? myNickname : '',
       time: dayjs().format('HH:mm'),
+      imageUrl: user?.imageUrl ? user.imageUrl : '',
     };
-    setChatArray([...chatArray, reqData]);
 
-    // 여기에 송신 api 요청
-    console.log(reqData);
+    setChatArray(reqData);
+    sendMessage(data.message);
   };
 
   useEffect(() => {
@@ -40,19 +45,23 @@ export default function ChatRoom() {
     }
   }, [chatArray]);
 
+  const sendMessage = (message: string) => {
+    if (message) {
+      const payload = { message };
+      socket?.emit('sendChat', payload);
+    }
+  };
+
   return (
     <S.ChatRoomWrapper>
       <S.ChatArea>
-        {/* {추후 채팅들 배열로 가져와서 사용} */}
-        {chatArray.map((chatInfo, index) => {
-          return (
-            <Chatting
-              key={index}
-              chatInfo={chatInfo}
-              isMine={chatInfo.nickname === myNickname}
-            />
-          );
-        })}
+        {chatArray?.map((chatInfo, index) => (
+          <Chatting
+            key={index}
+            chatInfo={chatInfo}
+            isMine={chatInfo.nickname === myNickname}
+          />
+        ))}
         <div ref={scrollBottomRef} />
       </S.ChatArea>
 
@@ -78,21 +87,3 @@ export default function ChatRoom() {
     </S.ChatRoomWrapper>
   );
 }
-
-const TMP_CHATS = [
-  {
-    nickname: 'abc',
-    time: '08:53',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-  {
-    nickname: 'veryLongNickname123',
-    time: '08:54',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-  {
-    nickname: '매우긴닉네임ㅡㅡㅡㅡ',
-    time: '08:54',
-    message: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-  },
-];

@@ -1,17 +1,29 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+// import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { getTodos, postTodo, putTodo } from '@/apis/planners.api';
-import { GetTodosRes, PutPostTodoReq } from '@/models/studyRoomTodos.model';
+import {
+  PutPostTodoReq,
+  ServerToClientPlanner,
+} from '@/models/studyRoomTodos.model';
 import { formatDateTime, isWithinOneDay } from '../utils/dateFormat';
-import { AxiosError } from 'axios';
+// import { AxiosError } from 'axios';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import CheckBox from '@/components/checkBox/CheckBox';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { useForm } from 'react-hook-form';
 import * as S from './Todos.style';
+import { useSocket } from '@/socket/SocketContext';
 
-export default function Todos() {
+const Todos = () => {
+  const socket = useSocket();
+  const todos = useStudyRoomStore((state) => state.todos);
+  const updateTodos = useStudyRoomStore((state) => state.updateTodos);
+  const addTodos = useStudyRoomStore((state) => state.addTodos);
+  const setTodos = useStudyRoomStore((state) => state.setTodos);
+  const toggleTodoComplete = useStudyRoomStore(
+    (state) => state.toggleTodoComplete
+  );
+
   const { selectedTodo, setSelectedTodo } = useStudyRoomStore();
   const [selectedDate, setSelectedDate] = useState(
     dayjs().format('YYYY-MM-DD')
@@ -19,7 +31,7 @@ export default function Todos() {
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
   const [isAddFormOpened, setIsAddFormOpened] = useState(false);
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -28,47 +40,6 @@ export default function Todos() {
     setValue,
   } = useForm<PutPostTodoReq>({
     mode: 'onSubmit',
-  });
-
-  // const { data: todos } = useQuery<GetTodosRes[], AxiosError>({
-  //   queryKey: ['getTodos', selectedDate],
-  //   queryFn: () => getTodos(selectedDate),
-  // });
-
-  // @ 임시데이터
-  const [todos, setTodos] = useState([
-    { todo: 'ㅡㅡㅡㅡㅡㅡㅡㅡㅡ', _id: '1', isChecked: false },
-    { todo: 'todo2', _id: '2', isChecked: false },
-    { todo: 'todo3', _id: '3', isChecked: true },
-    { todo: 'todo4', _id: '4', isChecked: true },
-    { todo: 'todo5', _id: '5', isChecked: true },
-    { todo: 'todo6', _id: '6', isChecked: true },
-    { todo: 'todo7', _id: '7', isChecked: true },
-    { todo: 'todo8', _id: '8', isChecked: true },
-    { todo: 'todo9', _id: '9', isChecked: true },
-    { todo: 'todo10', _id: '10', isChecked: true },
-    { todo: 'todo11', _id: '11', isChecked: true },
-    { todo: 'todo12', _id: '12', isChecked: true },
-  ]);
-
-  const putMutation = useMutation({
-    mutationFn: ({ _id, data }: { data: PutPostTodoReq; _id: string }) =>
-      putTodo(data, _id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['getTodos', selectedDate],
-      });
-    },
-  });
-
-  const postMutation = useMutation({
-    mutationFn: ({ data, date }: { data: PutPostTodoReq; date: string }) =>
-      postTodo(data, date),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['getTodos', selectedDate],
-      });
-    },
   });
 
   const handleLeftArrow = () => {
@@ -80,6 +51,7 @@ export default function Todos() {
       setSelectedDate(
         dayjs(selectedDate).subtract(1, 'day').format('YYYY-MM-DD')
       );
+      socket?.emit('responseGetPlanner', selectedDate);
     }
   };
 
@@ -88,10 +60,14 @@ export default function Todos() {
       isWithinOneDay(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'))
     ) {
       setSelectedDate(dayjs(selectedDate).add(1, 'day').format('YYYY-MM-DD'));
+      socket?.emit('responseGetPlanner', selectedDate);
     }
   };
 
-  const handleEditButton = (e: MouseEvent<SVGElement>, todo: GetTodosRes) => {
+  const handleEditButton = (
+    e: MouseEvent<SVGElement>,
+    todo: ServerToClientPlanner
+  ) => {
     e.stopPropagation();
     setEditingTodo(todo._id);
     setIsAddFormOpened(false);
@@ -118,30 +94,69 @@ export default function Todos() {
     setEditingTodo(null);
   };
 
-  const handleCheckBoxChange = (checked: boolean, todoId: string) => {
-    // @ 임시데이터의 체크박스값 수정
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo._id === todoId ? { ...todo, isChecked: checked } : todo
-      )
-    );
-
-    // @ 백엔드에 데이터 수정 요청 코드 추가
+  const handleCheckBoxChange = (todoId: string) => {
+    toggleTodoComplete(todoId);
   };
 
-  const onPutSubmit = (data: PutPostTodoReq, todo: GetTodosRes) => {
+  const onPutSubmit = (data: PutPostTodoReq, todo: ServerToClientPlanner) => {
     if (data.todo !== todo.todo) {
-      const _id = todo._id;
-      putMutation.mutate({ data, _id });
+      const payload = {
+        plannerId: todo._id,
+        todo: data.todo,
+        isComplete: data.isComplete,
+      };
+      socket?.emit('modifyPlanner', payload);
     }
     setEditingTodo(null);
   };
 
   const onPostSubmit = (data: PutPostTodoReq) => {
     const date = selectedDate;
-    postMutation.mutate({ data, date });
+    const payload = {
+      date: date,
+      todo: data.todo,
+    };
+    socket?.emit('createPlanner', payload);
     setIsAddFormOpened(false);
   };
+
+  const createPlanner = (newTodo: ServerToClientPlanner) => {
+    addTodos(newTodo);
+  };
+
+  const updatePlanner = (updateTodo: ServerToClientPlanner) => {
+    updateTodos(updateTodo);
+  };
+
+  // 임시 socket 코드 작성
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    socket.emit('getPlanner', { date: selectedDate });
+
+    socket.on('responseGetPlanner', (data) => {
+      // console.log(data);
+      setTodos(data);
+    });
+
+    socket.on('responseCreatePlanner', (data) => {
+      console.log(data);
+      createPlanner(data);
+    });
+
+    socket.on('responseModifyPlanner', (data) => {
+      console.log(data);
+      updatePlanner(data);
+    });
+
+    return () => {
+      socket.off('responseGetPlanner');
+      socket.off('responseCreatePlanner');
+      socket.off('responseModifyPlanner');
+    };
+  }, [socket, selectedDate]);
+  // end
 
   return (
     <S.Wrapper>
@@ -171,12 +186,15 @@ export default function Todos() {
               isSelected={selectedTodo?._id === todo._id ? true : false}
             >
               <CheckBox
-                defaultChecked={todo.isChecked}
-                onChange={(checked) => handleCheckBoxChange(checked, todo._id)}
+                defaultChecked={todo.isComplete}
+                onChange={() => handleCheckBoxChange(todo._id)}
               />
               {editingTodo === todo._id ? (
                 <S.TodoForm
                   onSubmit={handleSubmit((data) => onPutSubmit(data, todo))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
                   <S.TextAndErrorWrapper>
                     <S.TodoTextInput
@@ -208,7 +226,7 @@ export default function Todos() {
                 </S.TodoForm>
               ) : (
                 <>
-                  <S.TodoTextArea isChecked={todo.isChecked}>
+                  <S.TodoTextArea isChecked={todo.isComplete}>
                     {todoText}
                   </S.TodoTextArea>
                   <S.TodoEditIcon onClick={(e) => handleEditButton(e, todo)} />
@@ -254,7 +272,9 @@ export default function Todos() {
       </S.AddButton>
     </S.Wrapper>
   );
-}
+};
+
+export default Todos;
 
 const omitLongText = (text: string, limitLength: number) => {
   if (text.length > limitLength) {

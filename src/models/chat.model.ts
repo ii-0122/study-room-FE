@@ -6,5 +6,6 @@ export interface ChatReq {
 export interface ChatRes {
   nickname: string;
   message: string;
+  imageUrl: string;
   time: string;
 }

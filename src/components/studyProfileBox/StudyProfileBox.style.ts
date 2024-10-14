@@ -12,11 +12,10 @@ export const StudyProfileBoxStyle = styled.div<{ $isGroup: boolean }>`
   background-color: ${({ theme }) => theme.color.bgGray};
 `;
 
-export const ContentDisplay = styled.div<{ $isGroup: boolean }>`
+export const ContentDisplay = styled.div<{ $isGroup: boolean; $isMe: boolean }>`
   position: absolute;
   display: flex;
-  justify-content: ${({ $isGroup }) =>
-    $isGroup ? 'flex-end' : 'space-between'};
+  justify-content: ${({ $isMe }) => ($isMe ? 'space-between' : 'flex-end')};
   width: 100%;
   font-size: ${({ $isGroup }) => ($isGroup ? '10px' : '20px')};
   top: ${({ $isGroup }) => ($isGroup ? '10px' : '30px')};
@@ -27,11 +26,10 @@ export const ContentDisplay = styled.div<{ $isGroup: boolean }>`
   }
 `;
 
-export const TimeDisplay = styled.div<{ $isGroup: boolean }>`
+export const TimeDisplay = styled.div<{ $isGroup: boolean; $isMe: boolean }>`
   position: absolute;
   display: flex;
-  justify-content: ${({ $isGroup }) =>
-    $isGroup ? 'flex-end' : 'space-between'};
+  justify-content: ${({ $isMe }) => ($isMe ? 'space-between' : 'flex-end')};
   width: 100%;
   font-size: ${({ $isGroup }) => ($isGroup ? '20px' : '50px')};
   top: ${({ $isGroup }) => ($isGroup ? '25px' : '60px')};

@@ -2,6 +2,7 @@ export interface StartEndTime {
   startTime: { date: string; time: string };
   endTime: { date: string; time: string };
 }
+
 export interface GetTodosRes {
   _id: string;
   todo: string;
@@ -26,12 +27,17 @@ export interface PutPostTodoReq {
   startTime?: string;
   endTime?: string;
   repeatDays?: string[];
-  // repeatWeeks?: number;
   repeatEndDate?: string;
   parentObjectId?: string | undefined;
   isComplete?: boolean;
-  // timelineList?: StartEndTime[] | undefined;
-  // totalTime?: number;
+}
+
+export interface ServerToClientPlanner {
+  _id: string;
+  todo: string;
+  isComplete: boolean;
+  date: string;
+  totalTime: number;
 }
 
 export interface TodoStatistic {

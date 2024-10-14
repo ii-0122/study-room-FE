@@ -1,16 +1,16 @@
 import { SocketProvider } from '@/socket/SocketContext';
-import PrivateStudyRoomContent from './privateStudyRoomContent/PrivateStudyRoomContent';
+import StudyRoomContent from './multiStudyRoomContent/MultiStudyRoomContent';
 import { useParams } from 'react-router-dom';
 
 // Props로 공부방 정보를 받을 예정
-const PrivateStudyRoom = () => {
+const MultiStudyRoom = () => {
   const { id } = useParams();
 
   return (
     <SocketProvider studyRoomId={id}>
-      <PrivateStudyRoomContent />
+      <StudyRoomContent />
     </SocketProvider>
   );
 };
 
-export default PrivateStudyRoom;
+export default MultiStudyRoom;
