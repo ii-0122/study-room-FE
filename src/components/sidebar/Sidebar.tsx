@@ -6,7 +6,6 @@ import {
   AiOutlinePieChart,
   AiOutlineCarryOut,
   AiOutlineTrophy,
-  AiOutlineRead,
   AiOutlineUser,
   AiOutlineComment,
 } from 'react-icons/ai';
@@ -18,12 +17,7 @@ export default function Sidebar() {
   const location = useLocation();
   const selectedMenu = location.pathname;
 
-  const [isNoteDropdownOpen, setIsNoteDropdownOpen] = useState(false);
   const [isStatsDropdownOpen, setIsStatsDropdownOpen] = useState(false);
-
-  const toggleNoteDropdown = () => {
-    setIsNoteDropdownOpen(!isNoteDropdownOpen);
-  };
 
   const toggleStatsDropdown = () => {
     setIsStatsDropdownOpen(!isStatsDropdownOpen);
@@ -46,24 +40,6 @@ export default function Sidebar() {
         <AiOutlineCarryOut />
         <span>플래너</span>
       </S.SidebarItem>
-      <S.DropdownToggle onClick={toggleNoteDropdown}>
-        <AiOutlineRead />
-        <span>노트</span>
-        <S.IconWrapper>
-          {isNoteDropdownOpen ? <AiOutlineMinus /> : <AiOutlinePlus />}
-        </S.IconWrapper>
-      </S.DropdownToggle>
-      <S.DropdownItems $isOpen={isNoteDropdownOpen}>
-        <S.SidebarItem to="/notes/my" $focused={selectedMenu === '/notes/my'}>
-          내 노트 조회
-        </S.SidebarItem>
-        <S.SidebarItem to="/notes/all" $focused={selectedMenu === '/notes/all'}>
-          전체 노트 조회
-        </S.SidebarItem>
-        <S.SidebarItem to="/notes/new" $focused={selectedMenu === '/notes/new'}>
-          노트 작성하기
-        </S.SidebarItem>
-      </S.DropdownItems>
       <S.SidebarItem to="/ranking" $focused={selectedMenu === '/ranking'}>
         <AiOutlineTrophy />
         랭킹
@@ -76,10 +52,16 @@ export default function Sidebar() {
         </S.IconWrapper>
       </S.DropdownToggle>
       <S.DropdownItems $isOpen={isStatsDropdownOpen}>
-        <S.SidebarItem to="/stats/my" $focused={selectedMenu === '/stats/my'}>
+        <S.SidebarItem
+          to="/statistics/my"
+          $focused={selectedMenu === '/statistics/my'}
+        >
           나의 통계
         </S.SidebarItem>
-        <S.SidebarItem to="/stats/all" $focused={selectedMenu === '/stats/all'}>
+        <S.SidebarItem
+          to="/statistics/all"
+          $focused={selectedMenu === '/statistics/all'}
+        >
           전체 통계
         </S.SidebarItem>
       </S.DropdownItems>
