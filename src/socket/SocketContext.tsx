@@ -2,7 +2,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const SocketContext = createContext<typeof Socket | null>(null);
+const SocketContext = createContext<Socket | null>(null);
 
 interface SocketProviderProps {
   studyRoomId: string | undefined;
@@ -13,7 +13,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({
   studyRoomId,
   children,
 }) => {
-  const [socket, setSocket] = useState<typeof Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const { accessToken, user } = useAuthStore();
   const roomId = studyRoomId; // 방 ID
   const nickname = user ? user.nickname : ''; // 사용자 닉네임
