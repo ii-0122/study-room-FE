@@ -12,9 +12,10 @@ import {
 
 interface HeaderProps {
   title: string;
+  hasLogo?: boolean;
 }
 
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title, hasLogo = false }: HeaderProps) {
   const navigate = useNavigate();
   const { accessToken, user, clearAuthData } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +76,16 @@ export default function Header({ title }: HeaderProps) {
 
   return (
     <S.HeaderContainer>
-      <S.HeaderTitle>{title}</S.HeaderTitle>
+      <S.ImgTitleWrapper>
+        {hasLogo && (
+          <S.LogoImg
+            src="logoImg.png"
+            alt="Logo"
+            onClick={() => navigate('/')}
+          />
+        )}
+        <S.HeaderTitle>{title}</S.HeaderTitle>
+      </S.ImgTitleWrapper>
       <S.ButtonWrapper>
         {accessToken ? (
           <>

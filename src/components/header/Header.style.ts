@@ -28,6 +28,20 @@ export const HeaderTitle = styled.h1`
   }
 `;
 
+export const ImgTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 40px;
+`;
+
+export const LogoImg = styled.img`
+  width: 150px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export const Button = styled.button`
   border-style: none;
   background-color: white;
