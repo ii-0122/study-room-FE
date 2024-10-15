@@ -15,7 +15,10 @@ import Header from '@/components/header/Header';
 import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { throttle } from 'lodash';
-import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
+import {
+  ServerToClientPlanner,
+  UserStateRes,
+} from '@/models/studyRoomTodos.model';
 import StudyRoomNotice from '../component/StudyRoomNotice';
 
 const MultiStudyRoomContent = () => {
@@ -105,7 +108,7 @@ const MultiStudyRoomContent = () => {
     );
   }, []);
 
-  const updateUserState = (data) => {
+  const updateUserState = (data: UserStateRes) => {
     console.log(numberToTimer(data.totalTime));
     setUsersTimerInfo((prevUsers) =>
       prevUsers.map((user) => {

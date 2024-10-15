@@ -37,7 +37,11 @@ export default function CreateStudyRoomForm() {
     try {
       const result = await createStudyRoom(formattedData);
       toast.success('스터디룸 생성 성공');
-      navigate(`/study-room/${result._id}`);
+      if (result.maxNum === 1) {
+        navigate(`/study-room/${result._id}`);
+      } else if (result.maxNum > 1) {
+        navigate(`/multi-study-room/${result._id}`);
+      }
     } catch (error) {
       console.error('방 생성 실패:', error);
       toast.error('스터디룸 생성 실패');

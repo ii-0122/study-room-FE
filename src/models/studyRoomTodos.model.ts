@@ -52,3 +52,9 @@ export interface GetStatisticsRes {
   restTime: string;
   planner: TodoStatistic[];
 }
+
+export interface UserStateRes {
+  nickname: string;
+  totalTime: number;
+  state: string;
+}

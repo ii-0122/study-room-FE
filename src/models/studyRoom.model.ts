@@ -4,7 +4,7 @@ export interface StudyRoomInfo {
   title: string;
   notice: string;
   password: string;
-  roomManager: string; // ObjectId
+  roomManager: string; // 닉네임
   currentMember: string[]; // ObjectId
   planner: ServerToClientPlanner[]; // 내 할 일 목록
   totalTime: number; // 나의 하루 총 공부시간
