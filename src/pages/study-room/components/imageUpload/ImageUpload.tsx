@@ -10,10 +10,11 @@ import { LuUpload } from 'react-icons/lu';
 import { UseFormSetValue } from 'react-hook-form';
 import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
 import { uploadImage, updateImage } from '@/apis/image.api';
+import { UpdateStudyRoomFormData } from '@/types/updateStudyRoom';
 
 interface ImageUploadButtonProps {
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
-  setValue: UseFormSetValue<CreateStudyRoomFormData>;
+  setValue: UseFormSetValue<CreateStudyRoomFormData | UpdateStudyRoomFormData>;
   imageUrl?: string;
 }
 
