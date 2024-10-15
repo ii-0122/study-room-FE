@@ -34,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <LayoutStyle>
       {!authPagePath && !studyRoomPagePath && !multiStudyRoomPagePath_temp && (
-        <Header title={pageTitle} />
+        <Header title={pageTitle} hasLogo={true} />
       )}
       <MainContentArea>
         {!authPagePath &&
