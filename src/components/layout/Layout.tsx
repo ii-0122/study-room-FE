@@ -22,6 +22,8 @@ export default function Layout({ children }: LayoutProps) {
   const pageTitles: { [key: string]: string } = {
     '/': '홈',
     '/profile': '프로필',
+    '/statistics/all': '전체 통계',
+    '/statistics/my': '나의 통계',
     '/planner': '플래너',
     '/study-rooms': '스터디룸',
     '/ranking': '랭킹',
