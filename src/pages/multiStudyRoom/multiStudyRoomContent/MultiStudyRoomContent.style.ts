@@ -1,3 +1,4 @@
+import { scrollMixin } from '@/styles/mixins';
 import styled from 'styled-components';
 
 export const MultiStudyRoomStyle = styled.div`
@@ -32,8 +33,8 @@ export const UserProfileContainer = styled.div`
   height: 50vh;
   max-width: 70vw;
   max-height: 60vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  ${scrollMixin.customScrollbar()}
+  padding-right : 5px;
 `;
 
 export const InstructionText = styled.div`

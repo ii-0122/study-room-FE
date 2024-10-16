@@ -10,6 +10,7 @@ interface StudyProfileBoxProps {
   profileImage?: string;
   profileImageWidth?: string;
   profileImageHeight?: string;
+  isManager?: boolean;
 }
 
 const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
@@ -21,6 +22,7 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
   profileImage = '',
   profileImageWidth = '',
   profileImageHeight = '',
+  isManager,
 }) => {
   return (
     <S.StudyProfileBoxStyle $isGroup={isGroup}>
@@ -42,7 +44,10 @@ const StudyProfileBox: React.FC<StudyProfileBoxProps> = ({
         height={profileImageHeight}
       />
       {isGroup && userId && (
-        <S.UserIdDisplay $isGroup={isGroup}>{userId}</S.UserIdDisplay>
+        <S.UserIdDisplay $isGroup={isGroup}>
+          {isManager && <S.ManagerIcon />}
+          {userId}
+        </S.UserIdDisplay>
       )}
     </S.StudyProfileBoxStyle>
   );

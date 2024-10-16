@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { RiVipCrown2Fill } from 'react-icons/ri';
 
 export const StudyProfileBoxStyle = styled.div<{ $isGroup: boolean }>`
   position: relative;
@@ -62,4 +63,12 @@ export const UserIdDisplay = styled.div<{ $isGroup: boolean }>`
   font-size: ${({ $isGroup }) => ($isGroup ? '12px' : '50px')};
   left: ${({ $isGroup }) => ($isGroup ? '10px' : '40px')};
   bottom: ${({ $isGroup }) => ($isGroup ? '10px' : '40px')};
+`;
+
+export const ManagerIcon = styled(RiVipCrown2Fill)`
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 15px;
+  color: gold;
 `;
