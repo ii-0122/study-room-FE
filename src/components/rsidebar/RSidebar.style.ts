@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const RSidebarStyle = styled.div`
   min-width: 350px;
   max-width: 350px;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: ${({ theme }) => theme.color.main};
   justify-content: center;
 `;

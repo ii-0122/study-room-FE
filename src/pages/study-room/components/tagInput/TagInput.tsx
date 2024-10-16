@@ -47,7 +47,6 @@ const TagInput = forwardRef<HTMLInputElement, TagInputProps>(
     const removeTag = (indexToRemove: number) => {
       const newTags = value.filter((_, index) => index !== indexToRemove);
       onChange(newTags);
-      setError('tagList', { type: 'manual', message: '' });
     };
 
     return (

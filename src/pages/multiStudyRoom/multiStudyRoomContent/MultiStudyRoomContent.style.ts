@@ -1,10 +1,10 @@
 import { scrollMixin } from '@/styles/mixins';
 import styled from 'styled-components';
 
-export const MultiStudyRoomStyle = styled.div`
-  width: 100vw;
-  height: 100vh;
+export const MultiStudyRoomContentStyle = styled.div`
   display: flex;
+  width: 100%;
+  height: 100vh;
   align-items: center;
   justify-content: center;
 `;
@@ -14,7 +14,7 @@ export const MainContentArea = styled.div`
   flex-direction: column;
   align-items: center;
   flex: 1;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const StudyRoomWrap = styled.div`
@@ -22,19 +22,19 @@ export const StudyRoomWrap = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 100vh;
-  margin: 60px 0;
+  height: 100%;
+  width: 100%;
+  padding-top: 100px;
+  padding-bottom: 30px;
 `;
 
 export const UserProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  height: 50vh;
-  max-width: 70vw;
-  max-height: 60vh;
-  ${scrollMixin.customScrollbar()}
-  padding-right : 5px;
+  gap: 30px;
+  height: 70%;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const InstructionText = styled.div`
@@ -47,10 +47,4 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 564px;
-`;
-
-export const RSideBarStyle = styled.div`
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%); /* 수직 중앙 정렬 */
 `;

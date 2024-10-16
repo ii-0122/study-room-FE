@@ -22,7 +22,7 @@ export default function Chatting({
     <>
       {isNotice ? (
         <S.Notice>
-          <text>{message}</text>
+          <p>{message}</p>
         </S.Notice>
       ) : (
         <S.ChatWrapper isMine={isMine}>

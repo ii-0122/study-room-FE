@@ -333,7 +333,7 @@ const MultiStudyRoomContent = () => {
   };
 
   return (
-    <S.MultiStudyRoomStyle>
+    <S.MultiStudyRoomContentStyle>
       <S.MainContentArea>
         <Header
           title={studyRoomInfo ? studyRoomInfo.title : '[그룹] 스터디 룸'}
@@ -380,7 +380,7 @@ const MultiStudyRoomContent = () => {
         </S.StudyRoomWrap>
       </S.MainContentArea>
       <RSidebar />
-    </S.MultiStudyRoomStyle>
+    </S.MultiStudyRoomContentStyle>
   );
 };
 
