@@ -8,7 +8,9 @@ import RSidebar from '@/components/rsidebar/RSidebar';
 import { useSocket } from '@/socket/SocketContext';
 import {
   CurrentTodoTimer,
+  ModifiedRoomInfo,
   StudyRoomInfo,
+  SubMember,
   TimerInfo,
 } from '@/models/studyRoom.model';
 import Header from '@/components/header/Header';
@@ -20,6 +22,9 @@ import {
   UserStateRes,
 } from '@/models/studyRoomTodos.model';
 import StudyRoomNotice from '../component/StudyRoomNotice';
+import { IoSettingsOutline } from 'react-icons/io5';
+import Modal from '@/components/modal/Modal';
+import UpdateStudyRoomForm from '../component/updateStudyRoomForm/UpdateStudyRoomForm';
 
 const MultiStudyRoomContent = () => {
   const navigate = useNavigate();
@@ -42,6 +47,21 @@ const MultiStudyRoomContent = () => {
     totalTime: 0,
     timer: '00:00:00',
     state: 'stop',
+  };
+
+  const initStudyRoomInfo = {
+    title: '',
+    notice: '',
+    password: '',
+    tagList: [],
+    maxNum: 0,
+    isChat: true,
+    isPublic: true,
+    imageUrl: '',
+    roomManager: '',
+    currentMember: [],
+    planner: [],
+    totalTime: 0,
   };
 
   // 내 타이머 정보 state
@@ -269,9 +289,23 @@ const MultiStudyRoomContent = () => {
       setMyTimerInfo(userData);
     });
 
+    socket.on('modifiedRoomInfo', (data: ModifiedRoomInfo) => {
+      setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
+        const prevData = prevInfo || initStudyRoomInfo;
+        const newData: StudyRoomInfo = {
+          ...data,
+          currentMember: prevData.currentMember,
+          planner: prevData.planner,
+          totalTime: prevData.totalTime,
+        };
+        return newData;
+      });
+    });
+
     return () => {
       socket.disconnect();
       socket.off('getRoomAndMyInfo');
+      socket.off('modifiedRoomInfo');
     };
   }, [socket, user]);
 
@@ -312,12 +346,19 @@ const MultiStudyRoomContent = () => {
       console.log(data);
       updateUserState(data);
     });
-    socket.on('subMember', (data) => {
+    socket.on('subMember', (data: SubMember) => {
       const disconnectedUserNickname = data.nickname;
       console.log(disconnectedUserNickname);
       setUsersTimerInfo((prevUsers) =>
         prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
       );
+      setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
+        const prevData = prevInfo || initStudyRoomInfo;
+        return {
+          ...prevData,
+          roomManager: data.roomManager,
+        };
+      });
     });
 
     return () => {
@@ -332,6 +373,11 @@ const MultiStudyRoomContent = () => {
     navigate('/study-rooms');
   };
 
+  const settingModal = useStudyRoomStore((state) => state.settingModal);
+  const toggleSettingModal = useStudyRoomStore(
+    (state) => state.toggleSettingModal
+  );
+
   return (
     <S.MultiStudyRoomStyle>
       <S.MainContentArea>
@@ -339,6 +385,16 @@ const MultiStudyRoomContent = () => {
           title={studyRoomInfo ? studyRoomInfo.title : '[그룹] 스터디 룸'}
         />
         <StudyRoomNotice allInfo={studyRoomInfo} />
+        {settingModal && (
+          <Modal onClose={() => toggleSettingModal()}>
+            <UpdateStudyRoomForm studyRoomInfo={studyRoomInfo} />
+          </Modal>
+        )}
+        {studyRoomInfo?.roomManager === user?.nickname ? (
+          <S.SettingIconWrapper>
+            <IoSettingsOutline size={36} onClick={() => toggleSettingModal()} />
+          </S.SettingIconWrapper>
+        ) : null}
         <S.StudyRoomWrap>
           <S.UserProfileContainer>
             <StudyProfileBox

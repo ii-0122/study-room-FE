@@ -3,7 +3,7 @@ import * as S from '@/pages/study-room/components/toggleButton/ToggleButton.styl
 
 interface ToggleButtonProps {
   id: string;
-  checked: boolean;
+  checked: boolean | undefined;
   onChange: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }

@@ -33,6 +33,7 @@ export default function CreateStudyRoomForm() {
       ...data,
       maxNum: Number(data.maxNum),
     };
+    console.log(formattedData);
 
     try {
       const result = await createStudyRoom(formattedData);

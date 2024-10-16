@@ -2,23 +2,23 @@ import { KeyboardEvent, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as S from './UpdateStudyRoomForm.style';
 import Button from '@/components/button/Button';
-import { FaPlus, FaStarOfLife } from 'react-icons/fa6';
+import { FaStarOfLife } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
 import TagInput from '@/pages/study-room/components/tagInput/TagInput';
 import Radio from '@/pages/study-room/components/radio/Radio';
 import ToggleButton from '@/pages/study-room/components/toggleButton/ToggleButton';
-import ImageUpload from '@/pages/study-room/components/imageUpload/ImageUpload';
 import { UpdateStudyRoomFormData } from '@/types/updateStudyRoom';
 import { StudyRoomInfo } from '@/models/studyRoom.model';
+import UpdateImageUpload from './updateImageUpload/UpdateImageUpload';
+import useStudyRoomStore from '@/stores/studyRoom.store';
+import { useSocket } from '@/socket/SocketContext';
 
 interface UpdateStudyRoomFormProps {
-  studyRoomInfo: StudyRoomInfo; // 초기값으로 사용할 데이터
-  onSubmit: (data: UpdateStudyRoomFormData) => Promise<void>; // 제출 시 호출될 함수
+  studyRoomInfo: StudyRoomInfo | undefined; // 초기값으로 사용할 데이터
 }
 
 export default function UpdateStudyRoomForm({
   studyRoomInfo,
-  onSubmit,
 }: UpdateStudyRoomFormProps) {
   const {
     register,
@@ -30,12 +30,21 @@ export default function UpdateStudyRoomForm({
   } = useForm<UpdateStudyRoomFormData>({
     mode: 'onSubmit',
     defaultValues: {
-      isPublic: true,
+      title: studyRoomInfo?.title,
+      notice: studyRoomInfo?.notice,
+      tagList: studyRoomInfo?.tagList || [],
+      isPublic: studyRoomInfo?.isPublic,
+      isChat: studyRoomInfo?.isChat,
+      imageUrl: studyRoomInfo?.imageUrl,
+      password: studyRoomInfo?.password,
     },
   });
 
-  const prevStudyRoomInfo = studyRoomInfo;
-  console.log(prevStudyRoomInfo);
+  const toggleSettingModal = useStudyRoomStore(
+    (state) => state.toggleSettingModal
+  );
+
+  const socket = useSocket();
 
   const handleFormSubmit: SubmitHandler<UpdateStudyRoomFormData> = async (
     data
@@ -43,12 +52,14 @@ export default function UpdateStudyRoomForm({
     console.log(data);
 
     try {
-      // 스터디 룸 설정 변경 socket
-      toast.success('스터디룸 생성 성공');
+      socket?.emit('modifyRoomInfo', data);
+      toast.success('스터디룸 설정 변경 성공');
     } catch (error) {
-      console.error('방 생성 실패:', error);
+      console.error('스터디룸 설정 변경 실패:', error);
       toast.error('스터디룸 설정 변경 실패');
     }
+
+    toggleSettingModal();
   };
 
   const handleKeyDown = (
@@ -59,7 +70,7 @@ export default function UpdateStudyRoomForm({
     }
   };
 
-  const isPublic = watch('isPublic', true);
+  const isPublic = watch('isPublic', false);
   const ImageInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -74,7 +85,7 @@ export default function UpdateStudyRoomForm({
           </S.UpdateFormLabel>
           <S.UpdateFormInput
             id="title"
-            placeholder="스터디룸 제목을 작성해 주세요."
+            placeholder={studyRoomInfo?.title}
             onKeyDown={handleKeyDown}
             {...register('title', {
               required: '스터디룸 제목을 필수입니다.',
@@ -93,7 +104,7 @@ export default function UpdateStudyRoomForm({
           <S.UpdateFormLabel htmlFor="tagList">태그</S.UpdateFormLabel>
           <TagInput
             id="tagList"
-            value={watch('tagList') || []}
+            value={watch('tagList')}
             onChange={(newTags) => setValue('tagList', newTags)}
             setError={setError}
           />
@@ -106,14 +117,14 @@ export default function UpdateStudyRoomForm({
           <S.UpdateFormLabel htmlFor="maxNum">
             최대 인원 <FaStarOfLife size={6} color="#599BFC" />
           </S.UpdateFormLabel>
-          <p></p>
+          <p>{studyRoomInfo?.maxNum}</p>
         </S.UpdateFormInputField>
 
         <S.UpdateFormInputField>
           <S.UpdateFormLabel htmlFor="notice">공지사항</S.UpdateFormLabel>
           <S.UpdateFormInput
             id="notice"
-            placeholder="공지사항을 작성해 주세요."
+            placeholder={studyRoomInfo?.notice}
             onKeyDown={handleKeyDown}
             {...register('notice')}
           />
@@ -141,7 +152,7 @@ export default function UpdateStudyRoomForm({
                   <S.PasswordInputLabel>비밀번호</S.PasswordInputLabel>
                   <S.PasswordInput
                     type="password"
-                    placeholder="비밀번호를 입력해주세요."
+                    placeholder={studyRoomInfo?.password}
                     onKeyDown={handleKeyDown}
                     {...register('password', {
                       required: '비밀번호는 필수입니다.',
@@ -167,7 +178,7 @@ export default function UpdateStudyRoomForm({
           <ToggleButton
             id="isChat"
             {...register('isChat')}
-            checked={watch('isChat', false)}
+            checked={watch('isChat', studyRoomInfo?.isChat)}
             onChange={() => setValue('isChat', !watch('isChat'))}
             onKeyDown={handleKeyDown}
           />
@@ -178,7 +189,7 @@ export default function UpdateStudyRoomForm({
 
         <S.UpdateFormInputField>
           <S.UpdateFormLabel htmlFor="bgImage">배경사진</S.UpdateFormLabel>
-          <ImageUpload
+          <UpdateImageUpload
             setValue={setValue}
             onKeyDown={handleKeyDown}
             ref={ImageInputRef}
@@ -189,8 +200,7 @@ export default function UpdateStudyRoomForm({
         )}
 
         <Button type="submit" size="large">
-          <FaPlus />
-          추가하기
+          설정 변경
         </Button>
       </S.UpdateForm>
     </S.UpdateFormWrapper>

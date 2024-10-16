@@ -25,6 +25,14 @@ export const StudyRoomWrap = styled.div`
   margin: 60px 0;
 `;
 
+export const SettingIconWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-left: 3vw;
+  margin-top: 3vh;
+`;
+
 export const UserProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -15,6 +15,14 @@ export const MainContentArea = styled.div`
   height: 100vh;
 `;
 
+export const SettingIconWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-left: 3vw;
+  margin-top: 3vh;
+`;
+
 export const StudyRoomWrap = styled.div`
   display: flex;
   flex-direction: column;

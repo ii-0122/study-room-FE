@@ -8,16 +8,16 @@ import {
 import * as S from '@/pages/study-room/components/imageUpload/ImageUpload.style';
 import { LuUpload } from 'react-icons/lu';
 import { UseFormSetValue } from 'react-hook-form';
-import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
 import { uploadImage, updateImage } from '@/apis/image.api';
+import { UpdateStudyRoomFormData } from '@/types/updateStudyRoom';
 
 interface ImageUploadButtonProps {
   onKeyDown: (e: KeyboardEvent<HTMLButtonElement>) => void;
-  setValue: UseFormSetValue<CreateStudyRoomFormData>;
+  setValue: UseFormSetValue<UpdateStudyRoomFormData>;
   imageUrl?: string;
 }
 
-const ImageUpload = forwardRef<HTMLInputElement, ImageUploadButtonProps>(
+const UpdateImageUpload = forwardRef<HTMLInputElement, ImageUploadButtonProps>(
   ({ onKeyDown, setValue, imageUrl }, ref) => {
     const [fileName, setFileName] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(imageUrl || null);
@@ -74,4 +74,4 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadButtonProps>(
   }
 );
 
-export default ImageUpload;
+export default UpdateImageUpload;

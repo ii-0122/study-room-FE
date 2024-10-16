@@ -5,11 +5,14 @@ import { devtools } from 'zustand/middleware';
 interface StudyRoomState {
   selectedTodo: ServerToClientPlanner | null;
   todos: ServerToClientPlanner[];
+  settingModal: boolean;
+
   setSelectedTodo: (todo: ServerToClientPlanner) => void;
   setTodos: (todos: ServerToClientPlanner[]) => void;
   addTodos: (newTodo: ServerToClientPlanner) => void;
   updateTodos: (updateTodo: ServerToClientPlanner) => void;
   toggleTodoComplete: (todoId: string) => void;
+  toggleSettingModal: () => void;
 }
 
 const useStudyRoomStore = create<StudyRoomState>()(
@@ -17,6 +20,8 @@ const useStudyRoomStore = create<StudyRoomState>()(
     (set) => ({
       selectedTodo: null,
       todos: [],
+      settingModal: false,
+
       setSelectedTodo: (todo: ServerToClientPlanner) =>
         set({ selectedTodo: todo }),
       setTodos: (todos: ServerToClientPlanner[]) => set({ todos: todos }),
@@ -38,7 +43,10 @@ const useStudyRoomStore = create<StudyRoomState>()(
               : todo
           ),
         })),
+      toggleSettingModal: () =>
+        set((state) => ({ settingModal: !state.settingModal })),
     }),
+
     { name: 'StudyRoom Store' }
   )
 );
