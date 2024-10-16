@@ -8,6 +8,7 @@ import PasswordInput from '../form/PasswordInput';
 import * as S from './StudyGrid.style';
 import { checkStudyRoomPassword, fetchRooms } from '@/apis/studyRooms.api';
 import Loader from '@/components/loader/Loader';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface ResData {
   rooms: Room[];
@@ -33,6 +34,8 @@ function StudyGrid({
     isPublic: filter.isPublic,
     isPossible: filter.isPossible,
   };
+
+  const user = useAuthStore((state) => state.user);
 
   const { data, isLoading, fetchNextPage, hasNextPage, error } =
     useInfiniteQuery<ResData, Error>({
@@ -92,36 +95,48 @@ function StudyGrid({
   }, []);
 
   const handleRoomClick = (room: Room) => {
-    if (room.isPublic) {
-      if (room.maxNum === 1) {
-        navigate(`/study-room/${room._id}`);
-      } else if (room.maxNum > 1) {
-        navigate(`/multi-study-room/${room._id}`);
+    if (user) {
+      if (room.isPublic) {
+        if (room.maxNum === 1) {
+          navigate(`/study-room/${room._id}`);
+        } else if (room.maxNum > 1) {
+          navigate(`/multi-study-room/${room._id}`);
+        }
+      } else {
+        setSelectedRoom(room);
+        setShowPasswordModal(true);
       }
     } else {
-      setSelectedRoom(room);
-      setShowPasswordModal(true);
+      alert('로그인이 필요합니다');
     }
   };
 
   // 비밀번호 일치할 경우 : 비밀번호 확인 완료 message 받음
   const handlePasswordSubmit = async () => {
-    if (selectedRoom) {
-      try {
-        const response = await checkStudyRoomPassword(
-          selectedRoom._id,
-          password
-        );
-        if (response.message === '비밀번호 확인 완료') {
-          navigate(`/study-room/${selectedRoom._id}`);
-        } else {
-          alert('비밀번호가 일치하지 않습니다.');
+    if (user) {
+      if (selectedRoom) {
+        try {
+          const response = await checkStudyRoomPassword(
+            selectedRoom._id,
+            password
+          );
+          if (response.message === '비밀번호 확인 완료') {
+            if (selectedRoom.maxNum === 1) {
+              navigate(`/study-room/${selectedRoom._id}`);
+            } else if (selectedRoom.maxNum > 1) {
+              navigate(`/multi-study-room/${selectedRoom._id}`);
+            }
+          } else {
+            alert('비밀번호가 일치하지 않습니다.');
+          }
+        } catch (error) {
+          console.error('비밀번호 확인 중 오류 발생:', error);
+          alert('비밀번호 확인 중 오류가 발생했습니다.');
         }
-      } catch (error) {
-        console.error('비밀번호 확인 중 오류 발생:', error);
-        alert('비밀번호 확인 중 오류가 발생했습니다.');
+        setShowPasswordModal(false);
       }
-      setShowPasswordModal(false);
+    } else {
+      alert('로그인이 필요합니다.');
     }
   };
 

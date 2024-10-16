@@ -1,19 +1,25 @@
 import { KeyboardEvent, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import * as S from '@/pages/study-room/components/form/CreateStudyRoomForm.style';
+import * as S from './UpdateStudyRoomForm.style';
 import Button from '@/components/button/Button';
-import TagInput from '../tagInput/TagInput';
-import Radio from '../radio/Radio';
-import ToggleButton from '../toggleButton/ToggleButton';
-import ImageUpload from '../imageUpload/ImageUpload';
-import { FaPlus, FaStarOfLife } from 'react-icons/fa6';
-import type { CreateStudyRoomFormData } from '@/types/createStudyRoom';
-import { createStudyRoom } from '@/apis/studyRooms.api';
-import { useNavigate } from 'react-router-dom';
+import { FaStarOfLife } from 'react-icons/fa6';
 import { toast } from 'react-toastify';
+import TagInput from '@/pages/study-room/components/tagInput/TagInput';
+import Radio from '@/pages/study-room/components/radio/Radio';
+import ToggleButton from '@/pages/study-room/components/toggleButton/ToggleButton';
+import { UpdateStudyRoomFormData } from '@/types/updateStudyRoom';
+import { StudyRoomInfo } from '@/models/studyRoom.model';
+import UpdateImageUpload from './updateImageUpload/UpdateImageUpload';
+import useStudyRoomStore from '@/stores/studyRoom.store';
+import { useSocket } from '@/socket/SocketContext';
 
-export default function CreateStudyRoomForm() {
-  const navigate = useNavigate();
+interface UpdateStudyRoomFormProps {
+  studyRoomInfo: StudyRoomInfo | undefined; // 초기값으로 사용할 데이터
+}
+
+export default function UpdateStudyRoomForm({
+  studyRoomInfo,
+}: UpdateStudyRoomFormProps) {
   const {
     register,
     handleSubmit,
@@ -21,32 +27,39 @@ export default function CreateStudyRoomForm() {
     watch,
     setValue,
     setError,
-  } = useForm<CreateStudyRoomFormData>({
+  } = useForm<UpdateStudyRoomFormData>({
     mode: 'onSubmit',
     defaultValues: {
-      isPublic: true,
+      title: studyRoomInfo?.title,
+      notice: studyRoomInfo?.notice,
+      tagList: studyRoomInfo?.tagList || [],
+      isPublic: studyRoomInfo?.isPublic,
+      isChat: studyRoomInfo?.isChat,
+      imageUrl: studyRoomInfo?.imageUrl,
+      password: studyRoomInfo?.password,
     },
   });
 
-  const onSubmit: SubmitHandler<CreateStudyRoomFormData> = async (data) => {
-    const formattedData = {
-      ...data,
-      maxNum: Number(data.maxNum),
-    };
-    console.log(formattedData);
+  const toggleSettingModal = useStudyRoomStore(
+    (state) => state.toggleSettingModal
+  );
+
+  const socket = useSocket();
+
+  const handleFormSubmit: SubmitHandler<UpdateStudyRoomFormData> = async (
+    data
+  ) => {
+    console.log(data);
 
     try {
-      const result = await createStudyRoom(formattedData);
-      toast.success('스터디룸 생성 성공');
-      if (result.maxNum === 1) {
-        navigate(`/study-room/${result._id}`);
-      } else if (result.maxNum > 1) {
-        navigate(`/multi-study-room/${result._id}`);
-      }
+      socket?.emit('modifyRoomInfo', data);
+      toast.success('스터디룸 설정 변경 성공');
     } catch (error) {
-      console.error('방 생성 실패:', error);
-      toast.error('스터디룸 생성 실패');
+      console.error('스터디룸 설정 변경 실패:', error);
+      toast.error('스터디룸 설정 변경 실패');
     }
+
+    toggleSettingModal();
   };
 
   const handleKeyDown = (
@@ -57,22 +70,22 @@ export default function CreateStudyRoomForm() {
     }
   };
 
-  const isPublic = watch('isPublic', true);
+  const isPublic = watch('isPublic', false);
   const ImageInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <S.CreateFormWrapper>
-      <S.CreateTitle>스터디룸 추가</S.CreateTitle>
+    <S.UpdateFormWrapper>
+      <S.UpdateTitle>스터디룸 설정 변경</S.UpdateTitle>
 
-      <S.CreateForm onSubmit={handleSubmit(onSubmit)}>
-        <S.FormInputField>
-          <S.FormLabel htmlFor="title">
+      <S.UpdateForm onSubmit={handleSubmit(handleFormSubmit)}>
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="title">
             스터디룸 제목
             <FaStarOfLife size={6} color="#599BFC" />
-          </S.FormLabel>
-          <S.FormInput
+          </S.UpdateFormLabel>
+          <S.UpdateFormInput
             id="title"
-            placeholder="스터디룸 제목을 작성해 주세요."
+            placeholder={studyRoomInfo?.title}
             onKeyDown={handleKeyDown}
             {...register('title', {
               required: '스터디룸 제목은 필수입니다.',
@@ -82,58 +95,45 @@ export default function CreateStudyRoomForm() {
               },
             })}
           />
-        </S.FormInputField>
+        </S.UpdateFormInputField>
         {errors.title && (
           <S.ErrorMessage>{errors.title.message}</S.ErrorMessage>
         )}
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="tagList">태그</S.FormLabel>
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="tagList">태그</S.UpdateFormLabel>
           <TagInput
             id="tagList"
-            value={watch('tagList') || []}
+            value={watch('tagList')}
             onChange={(newTags) => setValue('tagList', newTags)}
             setError={setError}
           />
-        </S.FormInputField>
+        </S.UpdateFormInputField>
         {errors.tagList && (
           <S.ErrorMessage>{errors.tagList.message}</S.ErrorMessage>
         )}
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="maxNum">
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="maxNum">
             최대 인원 <FaStarOfLife size={6} color="#599BFC" />
-          </S.FormLabel>
-          <S.FormInput
-            id="maxNum"
-            type="number"
-            placeholder="최대 12명"
-            onKeyDown={handleKeyDown}
-            {...register('maxNum', {
-              required: '최대 인원 수는 필수입니다.',
-              min: { value: 1, message: '최소 1명 이상이어야 합니다.' },
-              max: { value: 12, message: '최대 12명을 초과할 수 없습니다.' },
-            })}
-          />
-        </S.FormInputField>
-        {errors.maxNum && (
-          <S.ErrorMessage>{errors.maxNum.message}</S.ErrorMessage>
-        )}
+          </S.UpdateFormLabel>
+          <p>{studyRoomInfo?.maxNum}</p>
+        </S.UpdateFormInputField>
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="notice">공지사항</S.FormLabel>
-          <S.FormInput
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="notice">공지사항</S.UpdateFormLabel>
+          <S.UpdateFormInput
             id="notice"
-            placeholder="공지사항을 작성해 주세요."
+            placeholder={studyRoomInfo?.notice}
             onKeyDown={handleKeyDown}
             {...register('notice')}
           />
-        </S.FormInputField>
+        </S.UpdateFormInputField>
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="isPublic">
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="isPublic">
             공개 여부 <FaStarOfLife size={6} color="#599BFC" />
-          </S.FormLabel>
+          </S.UpdateFormLabel>
           <S.RadioGroupWrapper>
             <Radio
               id="isPublic"
@@ -152,7 +152,7 @@ export default function CreateStudyRoomForm() {
                   <S.PasswordInputLabel>비밀번호</S.PasswordInputLabel>
                   <S.PasswordInput
                     type="password"
-                    placeholder="비밀번호를 입력해주세요."
+                    placeholder={studyRoomInfo?.password}
                     onKeyDown={handleKeyDown}
                     {...register('password', {
                       required: '비밀번호는 필수입니다.',
@@ -169,41 +169,40 @@ export default function CreateStudyRoomForm() {
               </S.PrivateInput>
             )}
           </S.RadioGroupWrapper>
-        </S.FormInputField>
+        </S.UpdateFormInputField>
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="isChat">
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="isChat">
             채팅 여부 <FaStarOfLife size={6} color="#599BFC" />
-          </S.FormLabel>
+          </S.UpdateFormLabel>
           <ToggleButton
             id="isChat"
             {...register('isChat')}
-            checked={watch('isChat', false)}
+            checked={watch('isChat', studyRoomInfo?.isChat)}
             onChange={() => setValue('isChat', !watch('isChat'))}
             onKeyDown={handleKeyDown}
           />
-        </S.FormInputField>
+        </S.UpdateFormInputField>
         {errors.isChat && (
           <S.ErrorMessage>{errors.isChat.message}</S.ErrorMessage>
         )}
 
-        <S.FormInputField>
-          <S.FormLabel htmlFor="bgImage">배경사진</S.FormLabel>
-          <ImageUpload
+        <S.UpdateFormInputField>
+          <S.UpdateFormLabel htmlFor="bgImage">배경사진</S.UpdateFormLabel>
+          <UpdateImageUpload
             setValue={setValue}
             onKeyDown={handleKeyDown}
             ref={ImageInputRef}
           />
-        </S.FormInputField>
+        </S.UpdateFormInputField>
         {errors.imageUrl && (
           <S.ErrorMessage>{errors.imageUrl.message}</S.ErrorMessage>
         )}
 
         <Button type="submit" size="large">
-          <FaPlus />
-          추가하기
+          설정 변경
         </Button>
-      </S.CreateForm>
-    </S.CreateFormWrapper>
+      </S.UpdateForm>
+    </S.UpdateFormWrapper>
   );
 }

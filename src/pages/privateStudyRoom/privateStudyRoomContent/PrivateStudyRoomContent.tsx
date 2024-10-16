@@ -9,12 +9,16 @@ import RSidebar from '@/components/rsidebar/RSidebar';
 import { useSocket } from '@/socket/SocketContext';
 import {
   CurrentTodoTimer,
+  ModifiedRoomInfo,
   StudyRoomInfo,
   TimerInfo,
 } from '@/models/studyRoom.model';
 import { useAuthStore } from '@/stores/auth.store';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import { ServerToClientPlanner } from '@/models/studyRoomTodos.model';
+import UpdateStudyRoomForm from '@/pages/multiStudyRoom/component/updateStudyRoomForm/UpdateStudyRoomForm';
+import Modal from '@/components/modal/Modal';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 const PrivateStudyRoomContent = () => {
   const navigate = useNavigate();
@@ -38,6 +42,20 @@ const PrivateStudyRoomContent = () => {
     totalTime: 0,
     timer: '00:00:00',
     state: 'stop',
+  };
+  const initStudyRoomInfo = {
+    title: '',
+    notice: '',
+    password: '',
+    tagList: [],
+    maxNum: 0,
+    isChat: true,
+    isPublic: true,
+    imageUrl: '',
+    roomManager: '',
+    currentMember: [],
+    planner: [],
+    totalTime: 0,
   };
 
   // 내 타이머 정보 state
@@ -221,9 +239,23 @@ const PrivateStudyRoomContent = () => {
       setMyTimerInfo(userData);
     });
 
+    socket.on('modifiedRoomInfo', (data: ModifiedRoomInfo) => {
+      setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
+        const prevData = prevInfo || initStudyRoomInfo;
+        const newData: StudyRoomInfo = {
+          ...data,
+          currentMember: prevData.currentMember,
+          planner: prevData.planner,
+          totalTime: prevData.totalTime,
+        };
+        return newData;
+      });
+    });
+
     return () => {
       socket.disconnect();
       socket.off('getRoomAndMyInfo');
+      socket.off('modifiedRoomInfo');
     };
   }, [socket, user]);
 
@@ -231,15 +263,31 @@ const PrivateStudyRoomContent = () => {
     navigate('/study-rooms');
   };
 
+  const settingModal = useStudyRoomStore((state) => state.settingModal);
+  const toggleSettingModal = useStudyRoomStore(
+    (state) => state.toggleSettingModal
+  );
+
   return (
     <S.PrivateStudyRoomStyle>
       <S.MainContentArea>
         <Header
           title={studyRoomInfo ? studyRoomInfo.title : '[개인] 스터디 룸'}
         />
+        {settingModal && (
+          <Modal onClose={() => toggleSettingModal()}>
+            <UpdateStudyRoomForm studyRoomInfo={studyRoomInfo} />
+          </Modal>
+        )}
+        {studyRoomInfo?.roomManager === user?.nickname ? (
+          <S.SettingIconWrapper>
+            <IoSettingsOutline size={36} onClick={() => toggleSettingModal()} />
+          </S.SettingIconWrapper>
+        ) : null}
         <S.StudyRoomWrap>
           <StudyProfileBox
             isGroup={false}
+            isMe={true}
             userId={myTimerInfo?.nickname}
             initialCurrentTaskTime={currentTaskTime.timer}
             initialTotalStudyTime={myTimerInfo?.timer}

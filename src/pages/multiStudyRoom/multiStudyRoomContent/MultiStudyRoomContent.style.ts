@@ -1,6 +1,7 @@
 import { scrollMixin } from '@/styles/mixins';
 import styled from 'styled-components';
 
+
 export const MultiStudyRoomContentStyle = styled.div`
   display: flex;
   width: 100%;
@@ -26,6 +27,14 @@ export const StudyRoomWrap = styled.div`
   width: 100%;
   padding-top: 100px;
   padding-bottom: 30px;
+`;
+
+export const SettingIconWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-left: 3vw;
+  margin-top: 3vh;
 `;
 
 export const UserProfileContainer = styled.div`
