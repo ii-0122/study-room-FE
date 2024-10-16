@@ -7,7 +7,7 @@ interface StudyRoomState {
   todos: ServerToClientPlanner[];
   settingModal: boolean;
 
-  setSelectedTodo: (todo: ServerToClientPlanner) => void;
+  setSelectedTodo: (todo: ServerToClientPlanner | null) => void;
   setTodos: (todos: ServerToClientPlanner[]) => void;
   addTodos: (newTodo: ServerToClientPlanner) => void;
   updateTodos: (updateTodo: ServerToClientPlanner) => void;
@@ -22,7 +22,7 @@ const useStudyRoomStore = create<StudyRoomState>()(
       todos: [],
       settingModal: false,
 
-      setSelectedTodo: (todo: ServerToClientPlanner) =>
+      setSelectedTodo: (todo: ServerToClientPlanner | null) =>
         set({ selectedTodo: todo }),
       setTodos: (todos: ServerToClientPlanner[]) => set({ todos: todos }),
       addTodos: (newTodo: ServerToClientPlanner) =>

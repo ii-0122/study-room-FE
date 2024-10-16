@@ -75,7 +75,7 @@ export default function CreateStudyRoomForm() {
             placeholder="스터디룸 제목을 작성해 주세요."
             onKeyDown={handleKeyDown}
             {...register('title', {
-              required: '스터디룸 제목을 필수입니다.',
+              required: '스터디룸 제목은 필수입니다.',
               maxLength: {
                 value: 30,
                 message: '최대 30자까지 입력할 수 있습니다.',

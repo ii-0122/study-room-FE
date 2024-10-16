@@ -3,6 +3,8 @@ import PrivateStudyRoomContent from './privateStudyRoomContent/PrivateStudyRoomC
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { refreshTokenAPI } from '@/apis/refreshToken.api';
+import useStudyRoomStore from '@/stores/studyRoom.store';
+import useChatStore from '@/stores/chat.store';
 
 // Props로 공부방 정보를 받을 예정
 const PrivateStudyRoom = () => {
@@ -22,6 +24,19 @@ const PrivateStudyRoom = () => {
 
     fetchData();
   }, []);
+
+  const setTodos = useStudyRoomStore((state) => state.setTodos);
+  const setSelectedTodo = useStudyRoomStore((state) => state.setSelectedTodo);
+  const initChatArray = useChatStore((state) => state.initChatArray);
+
+  // 페이지 언마운트 시 zustand 초기화
+  useEffect(() => {
+    return () => {
+      setSelectedTodo(null); // selectedTodo 초기화
+      setTodos([]);
+      initChatArray();
+    };
+  }, [setSelectedTodo, setTodos, initChatArray]);
 
   if (loading) {
     return <div>Loading...</div>; // 로딩 중일 때 표시할 내용

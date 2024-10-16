@@ -5,6 +5,7 @@ import { devtools } from 'zustand/middleware';
 interface chatRoomState {
   chatArray: ChatRes[];
   setChatArray: (chatData: ChatRes) => void;
+  initChatArray: () => void;
 }
 
 const useChatStore = create<chatRoomState>()(
@@ -15,6 +16,7 @@ const useChatStore = create<chatRoomState>()(
         set((state) => ({
           chatArray: [...state.chatArray, chatData],
         })),
+      initChatArray: () => set({ chatArray: [] }),
     }),
     { name: 'StudyRoom Store' }
   )
