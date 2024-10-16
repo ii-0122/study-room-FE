@@ -1,10 +1,11 @@
 import { SocketProvider } from '@/socket/SocketContext';
-import StudyRoomContent from './multiStudyRoomContent/MultiStudyRoomContent';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { refreshTokenAPI } from '@/apis/refreshToken.api';
 import useStudyRoomStore from '@/stores/studyRoom.store';
 import useChatStore from '@/stores/chat.store';
+import MultiStudyRoomContent from './multiStudyRoomContent/MultiStudyRoomContent';
+import * as S from './MultiStudyRoom.style';
 
 const MultiStudyRoom = () => {
   const { id } = useParams();
@@ -42,9 +43,11 @@ const MultiStudyRoom = () => {
   }
 
   return (
-    <SocketProvider studyRoomId={id}>
-      <StudyRoomContent />
-    </SocketProvider>
+    <S.MultiStudyRoomStyle>
+      <SocketProvider studyRoomId={id}>
+        <MultiStudyRoomContent />
+      </SocketProvider>
+    </S.MultiStudyRoomStyle>
   );
 };
 

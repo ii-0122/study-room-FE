@@ -17,23 +17,19 @@ const StudyRoomNotice: React.FC<StudyRoomNoticeProps> = ({ allInfo }) => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <S.StudyRoomNoticeStyle>
       {isNoticeOpen ? (
-        <S.NoticeDivOpen>
-          <p>{notice}</p>
-          <S.OpenButton>
-            <IoChevronUpOutline onClick={toggleDiv} />
-          </S.OpenButton>
+        <S.NoticeDivOpen onClick={toggleDiv}>
+          <S.OpenText>{notice}</S.OpenText>
+          <IoChevronUpOutline />
         </S.NoticeDivOpen>
       ) : (
-        <S.NoticeDivClosed>
-          <p>{notice}</p>
-          <S.OpenButton>
-            <IoChevronDownOutline onClick={toggleDiv} />
-          </S.OpenButton>
+        <S.NoticeDivClosed onClick={toggleDiv}>
+          <S.CloseText>{notice}</S.CloseText>
+          <IoChevronDownOutline />
         </S.NoticeDivClosed>
       )}
-    </div>
+    </S.StudyRoomNoticeStyle>
   );
 };
 

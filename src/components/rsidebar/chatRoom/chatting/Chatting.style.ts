@@ -6,7 +6,7 @@ export const ChatWrapper = styled.div.withConfig({
   display: flex;
   width: 100%;
   padding: 0 13px;
-
+  flex-direction: row;
   gap: 5px;
 
   ${(props) => props.isMine && 'flex-direction : row-reverse'}
@@ -21,8 +21,7 @@ export const UserInfoArea = styled.div`
 `;
 
 export const Nickname = styled.div`
-  font-size: 12px;
-  margin-top: 10px;
+  font-size: 11px;
   word-break: break-all;
 `;
 
@@ -30,6 +29,7 @@ export const ChatInfoArea = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 5px;
 `;
 
 export const ChatBox = styled.div.withConfig({
@@ -50,8 +50,8 @@ export const ChatBox = styled.div.withConfig({
 export const CreatedTime = styled.div.withConfig({
   shouldForwardProp: (prop) => !['isMine'].includes(prop),
 })<{ isMine: boolean }>`
-  margin-top: 2px;
-  padding: 0px 5px;
+  display: flex;
+  padding: 0px 3px;
   font-size: 13px;
 
   ${(props) => (props.isMine ? 'margin-left: auto;' : 'margin-right: auto;')}
