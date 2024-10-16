@@ -384,7 +384,9 @@ const MultiStudyRoomContent = () => {
         <Header
           title={studyRoomInfo ? studyRoomInfo.title : '[그룹] 스터디 룸'}
         />
-        <StudyRoomNotice allInfo={studyRoomInfo} />
+        {studyRoomInfo?.notice === '' ? null : (
+          <StudyRoomNotice allInfo={studyRoomInfo} />
+        )}
         {settingModal && (
           <Modal onClose={() => toggleSettingModal()}>
             <UpdateStudyRoomForm studyRoomInfo={studyRoomInfo} />
