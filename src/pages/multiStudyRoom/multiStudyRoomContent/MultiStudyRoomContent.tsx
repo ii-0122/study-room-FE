@@ -353,13 +353,13 @@ const MultiStudyRoomContent = () => {
       setUsersTimerInfo((prevUsers) =>
         prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
       );
+      
       setStudyRoomInfo((prevInfo: StudyRoomInfo) => {
         const { roomManager, ...prevData } = prevInfo;
         const test = {
           ...prevData,
-          roomManager: data.roomManager,
+          roomManager: data.nickname,
         };
-        console.log(test);
         return test;
       });
     });

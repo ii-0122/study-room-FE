@@ -1,6 +1,4 @@
-import { scrollMixin } from '@/styles/mixins';
 import styled from 'styled-components';
-
 
 export const MultiStudyRoomContentStyle = styled.div`
   display: flex;
@@ -12,6 +10,7 @@ export const MultiStudyRoomContentStyle = styled.div`
 
 export const MainContentArea = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   flex: 1;
