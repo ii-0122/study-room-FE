@@ -28,12 +28,13 @@ export const StudyRoomWrap = styled.div`
   padding-bottom: 30px;
 `;
 
-export const SettingIconWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
+export const SettingIconWrapper = styled.div<{ $isNoticeEmpty: boolean }>`
+  position: absolute;
+  left: 10px;
+  top: ${({ $isNoticeEmpty }) => ($isNoticeEmpty ? '100px' : '160px')};
   width: 100%;
-  margin-left: 3vw;
-  margin-top: 3vh;
+  height: auto;
+  z-index: 10;
 `;
 
 export const UserProfileContainer = styled.div`

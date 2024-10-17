@@ -353,12 +353,12 @@ const MultiStudyRoomContent = () => {
       setUsersTimerInfo((prevUsers) =>
         prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
       );
-      
+
       setStudyRoomInfo((prevInfo: StudyRoomInfo) => {
         const { roomManager, ...prevData } = prevInfo;
         const test = {
           ...prevData,
-          roomManager: data.nickname,
+          roomManager: data.roomManager,
         };
         return test;
       });
@@ -396,7 +396,7 @@ const MultiStudyRoomContent = () => {
           </Modal>
         )}
         {studyRoomInfo.roomManager === user?.nickname ? (
-          <S.SettingIconWrapper>
+          <S.SettingIconWrapper $isNoticeEmpty={studyRoomInfo.notice === ''}>
             <IoSettingsOutline size={36} onClick={() => toggleSettingModal()} />
           </S.SettingIconWrapper>
         ) : null}
