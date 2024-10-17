@@ -31,11 +31,6 @@ const PrivateStudyRoomContent = () => {
   const setSelectedTodo = useStudyRoomStore((state) => state.setSelectedTodo);
   const updateTodos = useStudyRoomStore((state) => state.updateTodos);
 
-  // 내 유저 정보 state
-  const [studyRoomInfo, setStudyRoomInfo] = useState<StudyRoomInfo>();
-  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo | undefined>(
-    undefined
-  );
   const initInfo = {
     nickname: '',
     imageUrl: '',
@@ -57,6 +52,12 @@ const PrivateStudyRoomContent = () => {
     planner: [],
     totalTime: 0,
   };
+  // 내 유저 정보 state
+  const [studyRoomInfo, setStudyRoomInfo] =
+    useState<StudyRoomInfo>(initStudyRoomInfo);
+  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo | undefined>(
+    undefined
+  );
 
   // 내 타이머 정보 state
   const [currentTaskTime, setCurrentTaskTime] = useState<CurrentTodoTimer>({
