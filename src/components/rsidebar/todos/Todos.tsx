@@ -181,7 +181,12 @@ const Todos = () => {
             <S.TodoBox
               key={todo._id}
               onClick={() => {
-                setSelectedTodo(todo);
+                console.log(dayjs(new Date()).format('YYYY-MM-DD'));
+                if (todo.date === dayjs(new Date()).format('YYYY-MM-DD')) {
+                  setSelectedTodo(todo);
+                } else {
+                  alert('오늘 날짜에 해당하지 않는 할 일은 선택할 수 없습니다');
+                }
               }}
               isSelected={selectedTodo?._id === todo._id ? true : false}
             >

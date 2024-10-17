@@ -14,7 +14,7 @@ import useStudyRoomStore from '@/stores/studyRoom.store';
 import { useSocket } from '@/socket/SocketContext';
 
 interface UpdateStudyRoomFormProps {
-  studyRoomInfo: StudyRoomInfo | undefined; // 초기값으로 사용할 데이터
+  studyRoomInfo: StudyRoomInfo; // 초기값으로 사용할 데이터
 }
 
 export default function UpdateStudyRoomForm({
