@@ -88,7 +88,9 @@ export default function MyLineChart() {
   return (
     <>
       <S.ArrowGraphContainer>
-        <IoIosArrowBack onClick={handlePrev} />
+        <S.ArrowButton onClick={handlePrev}>
+          <IoIosArrowBack />
+        </S.ArrowButton>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={graphData}>
             <XAxis dataKey="date" />
@@ -128,7 +130,9 @@ export default function MyLineChart() {
             />
           </LineChart>
         </ResponsiveContainer>
-        <IoIosArrowForward onClick={handleNext} />
+        <S.ArrowButton>
+          <IoIosArrowForward onClick={handleNext} />
+        </S.ArrowButton>
       </S.ArrowGraphContainer>
       <CustomLegend />
     </>

@@ -6,6 +6,7 @@ export const StudyItemStyle = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export const ItemContainer = styled.div.withConfig({
