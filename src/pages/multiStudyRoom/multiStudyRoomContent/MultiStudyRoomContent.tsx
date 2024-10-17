@@ -353,8 +353,9 @@ const MultiStudyRoomContent = () => {
       setUsersTimerInfo((prevUsers) =>
         prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
       );
-      setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
-        const prevData = prevInfo || initStudyRoomInfo;
+      
+      setStudyRoomInfo((prevInfo: StudyRoomInfo) => {
+        const { roomManager, ...prevData } = prevInfo;
         const test = {
           ...prevData,
           roomManager: data.nickname,
@@ -394,7 +395,7 @@ const MultiStudyRoomContent = () => {
             <UpdateStudyRoomForm studyRoomInfo={studyRoomInfo} />
           </Modal>
         )}
-        {studyRoomInfo?.roomManager === user?.nickname ? (
+        {studyRoomInfo.roomManager === user?.nickname ? (
           <S.SettingIconWrapper>
             <IoSettingsOutline size={36} onClick={() => toggleSettingModal()} />
           </S.SettingIconWrapper>
