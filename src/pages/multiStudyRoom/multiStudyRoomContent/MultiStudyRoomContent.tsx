@@ -355,11 +355,10 @@ const MultiStudyRoomContent = () => {
       );
       setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
         const prevData = prevInfo || initStudyRoomInfo;
-        const test = {
+        return {
           ...prevData,
-          roomManager: data.nickname,
+          roomManager: data.roomManager,
         };
-        return test;
       });
     });
 
