@@ -36,11 +36,6 @@ const MultiStudyRoomContent = () => {
   const setSelectedTodo = useStudyRoomStore((state) => state.setSelectedTodo);
   const updateTodos = useStudyRoomStore((state) => state.updateTodos);
 
-  // 내 유저 정보 state
-  const [studyRoomInfo, setStudyRoomInfo] = useState<StudyRoomInfo>();
-  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo | undefined>(
-    undefined
-  );
   const initInfo = {
     nickname: '',
     imageUrl: '',
@@ -63,6 +58,12 @@ const MultiStudyRoomContent = () => {
     planner: [],
     totalTime: 0,
   };
+  // 내 유저 정보 state
+  const [studyRoomInfo, setStudyRoomInfo] =
+    useState<StudyRoomInfo>(initStudyRoomInfo);
+  const [myTimerInfo, setMyTimerInfo] = useState<TimerInfo | undefined>(
+    undefined
+  );
 
   // 내 타이머 정보 state
   const [currentTaskTime, setCurrentTaskTime] = useState<CurrentTodoTimer>({
@@ -329,7 +330,7 @@ const MultiStudyRoomContent = () => {
         state: myTimerInfo?.state,
       };
       socket.emit('responseUserInfo', payload);
-    }, 300);
+    }, 100);
 
     const handleResponseUserInfo = throttle((data) => {
       console.log(data);
@@ -338,7 +339,7 @@ const MultiStudyRoomContent = () => {
         timer: numberToTimer(data.totalTime),
       };
       setUsersTimerInfo((prevUsers) => [...prevUsers, userData]);
-    }, 300);
+    }, 100);
 
     socket.on('addMemberAndRequestUserInfo', handleAddMemberAndRequestUserInfo);
     socket.on('responseUserInfo', handleResponseUserInfo);
@@ -348,16 +349,17 @@ const MultiStudyRoomContent = () => {
     });
     socket.on('subMember', (data: SubMember) => {
       const disconnectedUserNickname = data.nickname;
-      console.log(disconnectedUserNickname);
+      console.log(data);
       setUsersTimerInfo((prevUsers) =>
         prevUsers.filter((user) => user.nickname !== disconnectedUserNickname)
       );
       setStudyRoomInfo((prevInfo: StudyRoomInfo | undefined) => {
         const prevData = prevInfo || initStudyRoomInfo;
-        return {
+        const test = {
           ...prevData,
-          roomManager: data.roomManager,
+          roomManager: data.nickname,
         };
+        return test;
       });
     });
 
