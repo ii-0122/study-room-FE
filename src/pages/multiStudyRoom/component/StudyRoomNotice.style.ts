@@ -3,16 +3,17 @@ import styled from 'styled-components';
 export const StudyRoomNoticeStyle = styled.div`
   display: flex;
   position: absolute;
-  box-sizing: border-box;
   background-color: #ffdada;
+  width: 100%;
   padding: 24px;
   top: 80px;
-  z-index: 1000;
+  z-index: 15;
 `;
 
 export const NoticeDivOpen = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100%;
   gap: 10px;
   left: 0;
 `;
@@ -30,7 +31,6 @@ export const OpenText = styled.div`
   height: auto;
   white-space: normal;
   font-size: 1.2rem;
-  line-height: 1.5;
 `;
 
 export const CloseText = styled.div`
