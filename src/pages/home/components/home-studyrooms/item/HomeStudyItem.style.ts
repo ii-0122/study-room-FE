@@ -46,11 +46,12 @@ export const ItemContainer = styled.div.withConfig({
 `;
 
 export const Title = styled.div`
-  font-size: 1.2rem;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  font-size: 1.2rem;
 `;
 
 export const Footer = styled.div`
