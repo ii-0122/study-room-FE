@@ -70,7 +70,7 @@ export default function UpdateStudyRoomForm({
     }
   };
 
-  const isPublic = watch('isPublic', false);
+  const isPublic = watch('isPublic', true);
   const ImageInputRef = useRef<HTMLInputElement>(null);
 
   return (

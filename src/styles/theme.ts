@@ -30,6 +30,9 @@ interface DefaultTheme {
   shadow: {
     boxShadow: string;
   };
+  layout: {
+    logoImgHeight: string;
+  };
 }
 
 export const theme: DefaultTheme = {
@@ -72,5 +75,9 @@ export const theme: DefaultTheme = {
 
   shadow: {
     boxShadow: '0px 2px 4px 0px rgb(0 0 0 / 12%)',
+  },
+
+  layout: {
+    logoImgHeight: '51px',
   },
 };

@@ -23,7 +23,11 @@ axiosInstance.interceptors.response.use(
     if (!accessToken) {
       alert('로그인이 필요한 서비스입니다.');
 
-      window.location.href = `${import.meta.env.VITE_REACT_APP_URL}/login`;
+      if (`${import.meta.env.NODE_ENV}` === 'production') {
+        window.location.href = `/login`;
+      } else {
+        window.location.href = `${import.meta.env.VITE_REACT_APP_URL}/login`;
+      }
       return Promise.reject(error);
     }
 

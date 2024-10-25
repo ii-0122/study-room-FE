@@ -23,26 +23,11 @@ const RankDisplay = ({
 
   const renderRank = () => {
     if (rank === 1) {
-      return (
-        <img
-          src="src/pages/home/components/home-ranking/item/1_medal.png"
-          alt="1st"
-        />
-      );
+      return <img src="1_medal.png" alt="1st" />;
     } else if (rank === 2) {
-      return (
-        <img
-          src="src/pages/home/components/home-ranking/item/2_medal.png"
-          alt="2nd"
-        />
-      );
+      return <img src="2_medal.png" alt="2nd" />;
     } else if (rank === 3) {
-      return (
-        <img
-          src="src/pages/home/components/home-ranking/item/3_medal.png"
-          alt="3rd"
-        />
-      );
+      return <img src="3_medal.png" alt="3rd" />;
     } else {
       return rank;
     }

@@ -35,7 +35,7 @@ export const ImgTitleWrapper = styled.div`
 `;
 
 export const LogoImg = styled.img`
-  width: 150px;
+  height: ${({ theme }) => theme.layout.logoImgHeight};
 
   &:hover {
     cursor: pointer;

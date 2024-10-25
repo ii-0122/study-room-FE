@@ -1,7 +1,7 @@
 import { MdPerson } from 'react-icons/md';
 import * as S from './StudyItem.style';
 import { useRef, useState } from 'react';
-import { StudyItem } from '@/types/studyRoom';
+import { StudyItem as StudyItemType } from '@/types/studyRoom';
 import { FaLock, FaUnlock } from 'react-icons/fa6';
 
 function StudyItem({
@@ -11,7 +11,7 @@ function StudyItem({
   isPublic,
   maxNum,
   currentNum,
-}: StudyItem) {
+}: StudyItemType) {
   const hashtagsRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);

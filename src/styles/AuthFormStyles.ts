@@ -4,10 +4,34 @@ import styled from 'styled-components';
 export const Container = styled.main`
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+`;
+
+export const LogoWrapper = styled.div`
+  display: flex;
+  height: calc(80px - 1px);
+  flex-shrink: 0;
+  padding-left: 32px;
+  align-items: center;
+`;
+
+export const LogoImg = styled.img`
+  margin-right: auto;
+  height: ${({ theme }) => theme.layout.logoImgHeight};
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const Contents = styled.div`
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  margin: auto;
+  height: 100%;
+  margin-bottom: calc(80px - 1px);
 `;
 
 export const Title = styled.h1`

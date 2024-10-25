@@ -1,38 +1,60 @@
 import { useEffect, useState } from 'react';
-import * as S from './RSidebar.style';
+import { throttle } from 'lodash';
 import Todos from './todos/Todos';
 import ChatRoom from './chatRoom/ChatRoom';
 import { formatDateTime } from './utils/dateFormat';
 import { useSocket } from '@/socket/SocketContext';
-import { throttle } from 'lodash';
 import useChatStore from '@/stores/chat.store';
+import { ChatRes } from '@/models/chat.model';
+import * as S from './RSidebar.style';
 
 type Tabs = '할 일' | '채팅';
 
 const RSidebar = () => {
   const socket = useSocket();
   const setChatArray = useChatStore.getState().setChatArray;
+  const [hasNewChat, setHasNewChat] = useState(false);
 
   const [currentDateTime, setCurrentDateTime] =
     useState<string>(formatDateTime());
 
   const [selectedTab, setSelectedTab] = useState<Tabs>('할 일');
 
+  const [isNtfAllowed, setIsNtfAllowed] = useState(true);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(formatDateTime());
     }, 1000);
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    setHasNewChat(false);
+  }, [selectedTab]);
 
   // socket
   useEffect(() => {
     if (!socket) {
       return;
     }
+    const showNotification = (nickname: string, message: string) => {
+      console.log(`isNtf : ${isNtfAllowed}`);
+      if (isNtfAllowed && Notification.permission === 'granted') {
+        new Notification(nickname, {
+          body: message,
+          icon: '/favicon.png',
+        });
+      }
+    };
 
-    const handleReceiveChat = throttle((data) => {
+    const handleReceiveChat = throttle((data: ChatRes) => {
       setChatArray(data);
+      setHasNewChat(true);
+      showNotification(data.nickname, data.message);
       // console.log(data);
     }, 300);
 
@@ -56,23 +78,46 @@ const RSidebar = () => {
     socket.on('receiveChat', handleReceiveChat);
 
     return () => {
-      socket.off('recieveChat');
+      socket.off('receiveChat');
       socket.off('responseChat');
       socket.off('notice');
     };
-  }, [socket]);
+  }, [socket, isNtfAllowed]);
 
   const handleTabClick = (tab: Tabs) => {
     setSelectedTab(tab);
   };
 
+  const handleNtf = () => {
+    if (
+      Notification.permission === 'denied' ||
+      Notification.permission === 'default'
+    ) {
+      return Notification.requestPermission();
+    }
+
+    setIsNtfAllowed(!isNtfAllowed);
+  };
+
+  useEffect(() => {
+    console.log(isNtfAllowed);
+  }, [isNtfAllowed]);
+
   return (
     <S.RSidebarStyle>
       <S.Wrapper>
         <S.CurrentTime>{currentDateTime}</S.CurrentTime>
-        <S.ContentWrapper>
-          {selectedTab === '할 일' ? <Todos /> : <ChatRoom />}
-        </S.ContentWrapper>
+        <S.ContentConfigsWrapper>
+          <S.ConfigsWrapper>
+            <S.NotificationConfig onClick={handleNtf}>
+              <span>백그라운드 알림</span>
+              {isNtfAllowed ? <S.BellIcon /> : <S.SlashBellIcon />}
+            </S.NotificationConfig>
+          </S.ConfigsWrapper>
+          <S.ContentWrapper>
+            {selectedTab === '할 일' ? <Todos /> : <ChatRoom />}
+          </S.ContentWrapper>
+        </S.ContentConfigsWrapper>
         <S.TabsWrapper>
           {['할 일', '채팅'].map((tab, index) => {
             let isSelected = false;
@@ -80,12 +125,15 @@ const RSidebar = () => {
               isSelected = true;
             }
 
+            const isNeedAlert =
+              selectedTab !== '채팅' && tab === '채팅' && hasNewChat;
             return (
               <S.Tab
                 key={index}
                 isSelected={isSelected}
                 onClick={() => handleTabClick(tab as Tabs)}
               >
+                {isNeedAlert && <S.newChatAlert />}
                 {tab}
               </S.Tab>
             );
